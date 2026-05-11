@@ -23,7 +23,7 @@ Goal: run Once Campfire safely on the Mac mini (`100.96.43.39`, `mini.tail148d59
 Internet
   -> Cloudflare TLS / Cloudflare Tunnel for gammalabs.cc
   -> cloudflared on Mac mini
-  -> localhost-bound Kamal proxy on Mac mini
+  -> localhost-bound Kamal proxy on Mac mini (`127.0.0.1:18080`)
   -> Campfire app container
   -> persistent Docker volume mounted at /rails/storage
 ```
@@ -51,10 +51,11 @@ Security goals:
 - The mini user's non-interactive SSH PATH was fixed via `~/.zshenv` so Kamal can find `/usr/local/bin/docker`.
 - GHCR image push now works.
 - `bin/kamal setup --skip-push` deployed Campfire successfully to the mini.
-- Kamal proxy is running on the mini at `127.0.0.1:8080` and routes `Host: gammalabs.cc` to the Campfire container.
+- Kamal proxy was moved off port 8080 to `127.0.0.1:18080` because an existing ngrok process forwards local port 8080.
 - Local health check via the proxy succeeds (`/up` returns 200).
-- First-run admin creation is still pending; `/first_run` is available locally through the proxy.
-- Remaining hard blocker: Cloudflare Tunnel credentials/config so `gammalabs.cc` can reach `127.0.0.1:8080`.
+- `cloudflared` is installed and running as a user LaunchAgent for the `mini` account, forwarding to `http://127.0.0.1:18080` with `Host: gammalabs.cc`.
+- Public health check succeeds at `https://gammalabs.cc/up`.
+- A temporary initial admin was created so the public first-run page cannot be claimed by a random visitor.
 
 ## Step-by-step plan
 
@@ -79,7 +80,7 @@ ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILTqHbs23NNr5//FKNIZN2Rl1zUuAaD1iPsCZPeW4/+j
 
 ### 2. Inspect and prepare the Mac mini
 
-Status: **done initial inspection**. The mini is macOS 26.3.1 arm64 with 16GB RAM and about 410GiB free on `/`. Docker is available through OrbStack at `/usr/local/bin/docker`. `cloudflared` is now installed with Homebrew. An existing `ngrok` process is forwarding local port 8080; decide whether to stop it or move Campfire's proxy port before public bootstrap.
+Status: **done initial inspection**. The mini is macOS 26.3.1 arm64 with 16GB RAM and about 410GiB free on `/`. Docker is available through OrbStack at `/usr/local/bin/docker`. `cloudflared` is now installed with Homebrew. An existing `ngrok` process is forwarding local port 8080, so Campfire's proxy port is being moved to `127.0.0.1:18080`.
 
 Tasks after SSH works:
 
@@ -167,8 +168,8 @@ proxy:
   healthcheck:
     path: /up
   run:
-    http_port: 8080
-    https_port: 8443
+    http_port: 18080
+    https_port: 18443
     bind_ips:
       - 127.0.0.1
 
@@ -227,26 +228,27 @@ Secrets must not be committed.
 
 ### 7. Configure Cloudflare Tunnel safely
 
-Status: **blocked by tunnel credentials/config**. `cloudflared` is now installed on the mini via Homebrew, but no running tunnel service/config was found. Public probes still return Cloudflare `530`, so the Cloudflare side exists but the tunnel/origin is unavailable or mispointed.
+Status: **done for current logged-in `mini` user session**. `cloudflared` is installed on the mini via Homebrew and running as user LaunchAgent. It forwards the tunnel to `http://127.0.0.1:18080` with `Host: gammalabs.cc`. Public probes return `200` for `/up`.
 
 Tasks:
 
 - Inspect current tunnel config on the mini.
-- Point `gammalabs.cc` to the local Kamal proxy, likely:
+- Point `gammalabs.cc` to the local Kamal proxy:
 
 ```yaml
 ingress:
   - hostname: gammalabs.cc
-    service: http://127.0.0.1:8080
+    service: http://127.0.0.1:18080
   - service: http_status:404
 ```
 
 - Keep Cloudflare as the public TLS endpoint.
 - Prefer Cloudflare Access during first run so random internet visitors cannot claim the first admin account.
+- Current caveat: cloudflared is installed as a user LaunchAgent because passwordless sudo was not available. It runs while the `mini` user is logged in. For boot-time startup, run the service install with sudo locally on the mini and ensure OrbStack/Docker also starts at boot/login.
 
 ### 8. First deployment
 
-Status: **done**. App image `ghcr.io/tjansn/once-campfire:38cdf947edba86a2f7bd701afa5dcf0666e54b85` is running on the mini as `campfire-web-...`; `kamal-proxy` is running with `127.0.0.1:8080->80` and `127.0.0.1:8443->443`.
+Status: **done**. App image `ghcr.io/tjansn/once-campfire:38cdf947edba86a2f7bd701afa5dcf0666e54b85` is running on the mini as `campfire-web-...`; `kamal-proxy` should run with `127.0.0.1:18080->80` and `127.0.0.1:18443->443`.
 
 Tasks:
 
@@ -266,6 +268,20 @@ curl -I https://gammalabs.cc/up
 ```
 
 ### 9. First-run admin bootstrap
+
+Status: **done with temporary credentials**. A `Gamma Labs Admin` user was created with email `admin@gammalabs.cc`. The generated password is stored at `/rails/storage/bootstrap/initial-admin.txt` inside the persistent app volume. Retrieve it over Kamal/SSH, log in, change the email/password, then delete that file.
+
+Retrieve credentials:
+
+```bash
+bin/kamal app exec --reuse "bash -lc 'cat storage/bootstrap/initial-admin.txt'"
+```
+
+After changing the password in Campfire, delete the bootstrap file:
+
+```bash
+bin/kamal app exec --reuse "bash -lc 'rm -f storage/bootstrap/initial-admin.txt'"
+```
 
 Tasks:
 

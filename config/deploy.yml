@@ -24,8 +24,8 @@ proxy:
     timeout: 3
   run:
     # Cloudflare Tunnel should connect to this local-only listener.
-    http_port: 8080
-    https_port: 8443
+    http_port: 18080
+    https_port: 18443
     bind_ips:
       - 127.0.0.1
 
