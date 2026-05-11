@@ -30,8 +30,9 @@
 # Ignore development credentials
 /config/credentials.yml.enc
 
-# Ignore deployment files
+# Ignore deployment files and secrets
 /config/deploy*.yml
+/.kamal/
 /bin/deploy
 /bin/deploy-*
 /bin/release
@@ -45,8 +46,9 @@
 # Ignore ignore
 .dockerignore
 
-# Don't include our README
+# Don't include docs that aren't needed at runtime
 /README.md
+/PLAN.md
 
 # Ignore test files
 /test/

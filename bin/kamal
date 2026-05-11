@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if command -v nix >/dev/null 2>&1; then
+  exec nix shell nixpkgs#kamal -c kamal "$@"
+fi
+
+if command -v kamal >/dev/null 2>&1; then
+  exec kamal "$@"
+fi
+
+cat >&2 <<'MSG'
+Kamal is not installed and nix is not available.
+Install Kamal 2.x, then retry. See: https://kamal-deploy.org/docs/installation
+MSG
+exit 127

@@ -1,0 +1,72 @@
+# Deploy Once Campfire to the Mac mini via Kamal.
+# Public ingress is expected to be Cloudflare Tunnel -> http://127.0.0.1:8080.
+
+service: campfire
+image: tjansn/once-campfire
+
+servers:
+  web:
+    hosts:
+      - mini.tail148d59.ts.net
+
+ssh:
+  user: <%= ENV.fetch("KAMAL_SSH_USER", "tom") %>
+
+proxy:
+  host: gammalabs.cc
+  app_port: 80
+  ssl: false
+  forward_headers: true
+  response_timeout: 300
+  healthcheck:
+    path: /up
+    interval: 3
+    timeout: 3
+  run:
+    # Cloudflare Tunnel should connect to this local-only listener.
+    http_port: 8080
+    https_port: 8443
+    bind_ips:
+      - 127.0.0.1
+
+registry:
+  server: ghcr.io
+  username: <%= ENV.fetch("KAMAL_REGISTRY_USERNAME", "tjansn") %>
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
+builder:
+  arch: arm64
+  context: .
+  dockerfile: Dockerfile
+  args:
+    OCI_SOURCE: https://github.com/tjansn/once-campfire
+    OCI_DESCRIPTION: Campfire is a web-based chat application deployed for Gamma Labs.
+    APP_VERSION: <%= `git rev-parse --short HEAD`.strip %>
+    GIT_REVISION: <%= `git rev-parse HEAD`.strip %>
+
+volumes:
+  - campfire_storage:/rails/storage
+
+env:
+  clear:
+    # Keep Rails in SSL-assuming mode behind Cloudflare TLS.
+    DISABLE_SSL: ""
+    SKIP_TELEMETRY: "1"
+    RAILS_LOG_LEVEL: info
+    RAILS_MAX_THREADS: "5"
+    WEB_CONCURRENCY: "2"
+  secret:
+    - SECRET_KEY_BASE
+    - VAPID_PUBLIC_KEY
+    - VAPID_PRIVATE_KEY
+
+aliases:
+  shell: app exec --interactive --reuse "bash"
+  rails: app exec --interactive --reuse "bin/rails"
+  logs: app logs --follow
+  backup: app exec --reuse "script/admin/prepare-backup"
+
+retain_containers: 3
+deploy_timeout: 120
+drain_timeout: 30
