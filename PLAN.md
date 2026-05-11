@@ -218,6 +218,8 @@ Secrets must not be committed.
 
 ### 7. Configure Cloudflare Tunnel safely
 
+Status: **blocked by mini access**. Public probes currently return Cloudflare `530`, so the Cloudflare side exists but the tunnel/origin is unavailable or mispointed.
+
 Tasks:
 
 - Inspect current tunnel config on the mini.
