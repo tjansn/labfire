@@ -15,7 +15,7 @@ Goal: run Once Campfire safely on the Mac mini (`100.96.43.39`, `mini.tail148d59
 - Local Docker is running via OrbStack.
 - Kamal is available through `bin/kamal`, which currently uses Nix-provided Kamal 2.10.1.
 - The mini is reachable over Tailscale and port 22 is open, but SSH authentication currently fails.
-- `gammalabs.cc` is Cloudflare-proxied and currently returns Cloudflare `530`, consistent with an unavailable tunnel/origin.
+- `gammalabs.cc` is Cloudflare-proxied and still returns Cloudflare `530`, consistent with an unavailable tunnel/origin.
 
 ## Target architecture
 
@@ -49,7 +49,12 @@ Security goals:
 - Smoke-tested the built container locally on `http://127.0.0.1:8081/up`.
 - SSH key access works when using the 1Password SSH agent; `bin/kamal` now selects it automatically if the default agent is empty.
 - The mini user's non-interactive SSH PATH was fixed via `~/.zshenv` so Kamal can find `/usr/local/bin/docker`.
-- Remaining hard blockers: Cloudflare Tunnel credentials/config and a GHCR token with `write:packages` for image pushes.
+- GHCR image push now works.
+- `bin/kamal setup --skip-push` deployed Campfire successfully to the mini.
+- Kamal proxy is running on the mini at `127.0.0.1:8080` and routes `Host: gammalabs.cc` to the Campfire container.
+- Local health check via the proxy succeeds (`/up` returns 200).
+- First-run admin creation is still pending; `/first_run` is available locally through the proxy.
+- Remaining hard blocker: Cloudflare Tunnel credentials/config so `gammalabs.cc` can reach `127.0.0.1:8080`.
 
 ## Step-by-step plan
 
@@ -74,7 +79,7 @@ ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILTqHbs23NNr5//FKNIZN2Rl1zUuAaD1iPsCZPeW4/+j
 
 ### 2. Inspect and prepare the Mac mini
 
-Status: **done initial inspection**. The mini is macOS 26.3.1 arm64 with 16GB RAM and about 410GiB free on `/`. Docker is available through OrbStack at `/usr/local/bin/docker`. `cloudflared` is not currently installed/found. An `ngrok` process is listening for local port 8080, but the target architecture for this deployment remains Cloudflare Tunnel.
+Status: **done initial inspection**. The mini is macOS 26.3.1 arm64 with 16GB RAM and about 410GiB free on `/`. Docker is available through OrbStack at `/usr/local/bin/docker`. `cloudflared` is now installed with Homebrew. An existing `ngrok` process is forwarding local port 8080; decide whether to stop it or move Campfire's proxy port before public bootstrap.
 
 Tasks after SSH works:
 
@@ -117,7 +122,7 @@ git fetch --all
 
 ### 4. Install local deployment tooling
 
-Status: **mostly done**. Docker is running and `bin/kamal` works via Nix. A GHCR token with `write:packages` is still needed before pushing/deploying.
+Status: **done**. Docker is running, `bin/kamal` works via Nix, and GHCR push works with the current GitHub token.
 
 Tasks:
 
@@ -200,7 +205,7 @@ Notes:
 
 ### 6. Generate and store secrets
 
-Status: **partial**. `SECRET_KEY_BASE` and VAPID keys are generated locally in ignored `.kamal/secrets`; a GHCR token with package scopes still needs to be supplied.
+Status: **done for app secrets**. `SECRET_KEY_BASE` and VAPID keys are generated locally in ignored `.kamal/secrets`; `KAMAL_REGISTRY_PASSWORD` is read from `gh auth token`.
 
 Required:
 
@@ -222,7 +227,7 @@ Secrets must not be committed.
 
 ### 7. Configure Cloudflare Tunnel safely
 
-Status: **blocked by mini access**. Public probes currently return Cloudflare `530`, so the Cloudflare side exists but the tunnel/origin is unavailable or mispointed.
+Status: **blocked by tunnel credentials/config**. `cloudflared` is now installed on the mini via Homebrew, but no running tunnel service/config was found. Public probes still return Cloudflare `530`, so the Cloudflare side exists but the tunnel/origin is unavailable or mispointed.
 
 Tasks:
 
@@ -240,6 +245,8 @@ ingress:
 - Prefer Cloudflare Access during first run so random internet visitors cannot claim the first admin account.
 
 ### 8. First deployment
+
+Status: **done**. App image `ghcr.io/tjansn/once-campfire:38cdf947edba86a2f7bd701afa5dcf0666e54b85` is running on the mini as `campfire-web-...`; `kamal-proxy` is running with `127.0.0.1:8080->80` and `127.0.0.1:8443->443`.
 
 Tasks:
 
@@ -268,6 +275,8 @@ Tasks:
 - Only then open public access policy as desired.
 
 ### 10. Backups and recovery
+
+Status: **initial backup command tested**. `script/admin/prepare-backup` successfully created `storage/backups/production.sqlite3` inside the persistent storage volume.
 
 Tasks:
 
