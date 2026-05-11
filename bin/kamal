@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# This project deploys over SSH. On Tom's Macs, the deploy key lives in the
+# 1Password SSH agent, while the launchd-provided SSH_AUTH_SOCK may be empty.
+one_password_agent="$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+if [ -S "$one_password_agent" ] && ! ssh-add -L >/dev/null 2>&1; then
+  export SSH_AUTH_SOCK="$one_password_agent"
+fi
+
 if command -v nix >/dev/null 2>&1; then
   exec nix shell nixpkgs#kamal -c kamal "$@"
 fi

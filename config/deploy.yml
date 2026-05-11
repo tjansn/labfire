@@ -10,7 +10,7 @@ servers:
       - mini.tail148d59.ts.net
 
 ssh:
-  user: <%= ENV.fetch("KAMAL_SSH_USER", "tom") %>
+  user: <%= ENV.fetch("KAMAL_SSH_USER", "mini") %>
 
 proxy:
   host: gammalabs.cc

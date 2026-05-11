@@ -47,21 +47,23 @@ Security goals:
 - Validated Kamal config.
 - Built the production Docker image locally for `linux/arm64`.
 - Smoke-tested the built container locally on `http://127.0.0.1:8081/up`.
-- Remaining hard blockers: SSH access to the mini and a GHCR token with `write:packages` for image pushes.
+- SSH key access works when using the 1Password SSH agent; `bin/kamal` now selects it automatically if the default agent is empty.
+- The mini user's non-interactive SSH PATH was fixed via `~/.zshenv` so Kamal can find `/usr/local/bin/docker`.
+- Remaining hard blockers: Cloudflare Tunnel credentials/config and a GHCR token with `write:packages` for image pushes.
 
 ## Step-by-step plan
 
 ### 1. Establish SSH access to the Mac mini
 
-Status: **blocked** until SSH auth works. `bin/kamal server exec 'whoami; hostname'` reaches the mini but prompts for `tom`'s password; non-interactive key auth is not accepted yet.
+Status: **done** for user `mini`.
 
 Tasks:
 
-- Add this machine's public SSH key to the correct user on the mini, or enable Tailscale SSH.
-- Verify access with:
+- Added this machine's public SSH key to the `mini` user on the mini.
+- Verified access with:
 
 ```bash
-ssh <user>@mini.tail148d59.ts.net 'whoami; hostname; sw_vers; uname -m'
+ssh mini@mini.tail148d59.ts.net 'whoami; hostname; sw_vers; uname -m'
 ```
 
 Public key currently offered by this machine:
@@ -71,6 +73,8 @@ ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILTqHbs23NNr5//FKNIZN2Rl1zUuAaD1iPsCZPeW4/+j
 ```
 
 ### 2. Inspect and prepare the Mac mini
+
+Status: **done initial inspection**. The mini is macOS 26.3.1 arm64 with 16GB RAM and about 410GiB free on `/`. Docker is available through OrbStack at `/usr/local/bin/docker`. `cloudflared` is not currently installed/found. An `ngrok` process is listening for local port 8080, but the target architecture for this deployment remains Cloudflare Tunnel.
 
 Tasks after SSH works:
 
@@ -131,7 +135,7 @@ bin/kamal version
 
 ### 5. Add Kamal configuration
 
-Status: **done initial version**. Final SSH user and Cloudflare Tunnel details may still be adjusted after mini inspection.
+Status: **done initial version**. SSH user is now `mini`. Cloudflare Tunnel details may still be adjusted once tunnel credentials/config are available.
 
 Files to add/update:
 
