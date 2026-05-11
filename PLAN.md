@@ -47,7 +47,7 @@ Security goals:
 - Validated Kamal config.
 - Built the production Docker image locally for `linux/arm64`.
 - Smoke-tested the built container locally on `http://127.0.0.1:8081/up`.
-- Remaining hard blockers: SSH access to the mini and a registry token for GHCR deploys.
+- Remaining hard blockers: SSH access to the mini and a GHCR token with `write:packages` for image pushes.
 
 ## Step-by-step plan
 
@@ -113,7 +113,7 @@ git fetch --all
 
 ### 4. Install local deployment tooling
 
-Status: **mostly done**. Docker is running and `bin/kamal` works via Nix. A GHCR token is still needed before pushing/deploying.
+Status: **mostly done**. Docker is running and `bin/kamal` works via Nix. A GHCR token with `write:packages` is still needed before pushing/deploying.
 
 Tasks:
 
@@ -196,12 +196,12 @@ Notes:
 
 ### 6. Generate and store secrets
 
-Status: **partial**. `SECRET_KEY_BASE` and VAPID keys are generated locally in ignored `.kamal/secrets`; a registry token still needs to be supplied.
+Status: **partial**. `SECRET_KEY_BASE` and VAPID keys are generated locally in ignored `.kamal/secrets`; a GHCR token with package scopes still needs to be supplied.
 
 Required:
 
 - `SECRET_KEY_BASE`: must remain stable forever for cookies/signed data.
-- `KAMAL_REGISTRY_PASSWORD`: GHCR PAT or Docker registry token with package push/pull permissions.
+- `KAMAL_REGISTRY_PASSWORD`: GHCR PAT or refreshed `gh` token with `write:packages`/`read:packages` permissions.
 
 Generated:
 
