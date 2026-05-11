@@ -53,7 +53,7 @@ Security goals:
 
 ### 1. Establish SSH access to the Mac mini
 
-Status: **blocked** until SSH auth works.
+Status: **blocked** until SSH auth works. `bin/kamal server exec 'whoami; hostname'` reaches the mini but prompts for `tom`'s password; non-interactive key auth is not accepted yet.
 
 Tasks:
 
