@@ -4237,9 +4237,10 @@ body:not(.sidebar) .sidebar__toggle {
   border-radius: var(--gl-radius-sm);
 }
 
+/* Let the focused controls inside a message carry their own state. A full-row
+   focus ring reads as an active/selected message and is too loud here. */
 :where(.message__body-content):focus-within:has(:focus-visible) {
-  outline: 2px solid var(--gl-action-focus-ring);
-  outline-offset: 2px;
+  outline: 0;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -4480,4 +4481,165 @@ button:active:not(:disabled):not([aria-disabled="true"]) {
   --btn-background: transparent !important;
   background: transparent !important;
   border-color: transparent !important;
+}
+
+/* =========================================================================
+   Inline boost composer — compact, neutral, and modern. It intentionally avoids
+   the warm-red focus treatment; the field uses a quiet graphite border instead.
+   ========================================================================= */
+.boost-composer {
+  display: inline-flex;
+  margin-block-start: var(--gl-space-1);
+  max-inline-size: 100%;
+}
+
+.boost-composer__form {
+  align-items: center;
+  background: color-mix(in srgb, var(--gl-surface-card) 88%, var(--gl-surface-section));
+  border: 1px solid var(--gl-card-border-color);
+  border-radius: 999px;
+  box-shadow: 0 var(--gl-space-2) var(--gl-space-5) color-mix(in srgb, var(--gl-color-slate) 8%, transparent);
+  column-gap: var(--gl-space-1);
+  min-block-size: var(--gl-space-12);
+  padding: 3px;
+  transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.boost-composer__form:focus-within {
+  border-color: color-mix(in srgb, var(--gl-color-midtone) 36%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--gl-color-midtone) 12%, transparent);
+}
+
+.boost-composer__field {
+  align-items: center;
+  background: var(--gl-surface-page);
+  border: 1px solid color-mix(in srgb, var(--gl-color-midtone) 18%, transparent);
+  border-radius: 999px;
+  column-gap: var(--gl-space-2);
+  cursor: text;
+  min-block-size: calc(var(--gl-space-10) + 2px);
+  min-inline-size: clamp(13rem, 23vw, 18rem);
+  padding: 2px var(--gl-space-3) 2px 2px;
+  transition: border-color 160ms ease, background-color 160ms ease;
+}
+
+.boost-composer__form:focus-within .boost-composer__field {
+  border-color: color-mix(in srgb, var(--gl-color-midtone) 40%, transparent);
+}
+
+.boost-composer__avatar,
+.boost-composer__avatar.avatar,
+.boost-composer__avatar img {
+  --avatar-size: calc(var(--gl-space-8) - 2px);
+  block-size: calc(var(--gl-space-8) - 2px);
+  inline-size: calc(var(--gl-space-8) - 2px);
+}
+
+.boost-composer__input,
+.boost-composer .input--boost {
+  --input-background: transparent;
+  --input-border-size: 0;
+  --input-padding: 0;
+  --outline-size: 0;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: var(--gl-text-primary);
+  font-size: 0.875rem;
+  inline-size: min(14rem, 36vw);
+  line-height: 1.35;
+  max-inline-size: none;
+  min-block-size: var(--gl-space-8);
+  min-inline-size: 0;
+  outline: none !important;
+  padding: 0 !important;
+}
+
+.boost-composer__input::placeholder {
+  color: var(--gl-text-secondary);
+  opacity: 0.72;
+}
+
+.boost-composer__actions {
+  align-items: center;
+  display: inline-flex;
+  gap: 2px;
+}
+
+.boost-composer__submit,
+.boost-composer__cancel {
+  --btn-border-radius: 999px;
+  --btn-padding: 0;
+  align-items: center;
+  block-size: calc(var(--gl-space-10) + 2px);
+  border-radius: 999px !important;
+  box-shadow: none !important;
+  display: inline-flex;
+  inline-size: calc(var(--gl-space-10) + 2px);
+  justify-content: center;
+  min-block-size: calc(var(--gl-space-10) + 2px);
+  min-inline-size: calc(var(--gl-space-10) + 2px);
+  outline: 0 !important;
+  padding: 0 !important;
+  transform: none !important;
+}
+
+.boost-composer__submit {
+  --btn-background: var(--gl-text-primary);
+  --btn-border-color: transparent;
+  --btn-color: var(--gl-surface-page);
+}
+
+.boost-composer__cancel {
+  --btn-background: transparent;
+  --btn-border-color: transparent;
+  --btn-color: var(--gl-text-secondary);
+}
+
+.boost-composer__submit:where(:hover, :focus-visible) {
+  --btn-background: color-mix(in srgb, var(--gl-text-primary) 88%, var(--gl-surface-page));
+  filter: none !important;
+}
+
+.boost-composer__cancel:where(:hover, :focus-visible) {
+  --btn-background: color-mix(in srgb, var(--gl-surface-section) 72%, transparent);
+  --btn-color: var(--gl-text-primary);
+  filter: none !important;
+}
+
+.dark .boost-composer__form {
+  background: color-mix(in srgb, var(--gl-surface-card) 86%, var(--gl-color-porcelain) 4%);
+  border-color: color-mix(in srgb, var(--gl-color-porcelain) 12%, transparent);
+  box-shadow: 0 var(--gl-space-2) var(--gl-space-5) color-mix(in srgb, var(--gl-color-slate) 44%, transparent);
+}
+
+.dark .boost-composer__field {
+  background: color-mix(in srgb, var(--gl-color-midnight) 78%, var(--gl-color-porcelain) 4%);
+  border-color: color-mix(in srgb, var(--gl-color-porcelain) 14%, transparent);
+}
+
+.dark .boost-composer__form:focus-within,
+.dark .boost-composer__form:focus-within .boost-composer__field {
+  border-color: color-mix(in srgb, var(--gl-color-porcelain) 24%, transparent);
+}
+
+.dark .boost-composer__form:focus-within {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--gl-color-porcelain) 10%, transparent);
+}
+
+@media (max-width: 46rem) {
+  .boost-composer,
+  .boost-composer__form {
+    inline-size: 100%;
+  }
+
+  .boost-composer__field {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+  }
+
+  .boost-composer__input,
+  .boost-composer .input--boost {
+    inline-size: 100%;
+  }
 }
