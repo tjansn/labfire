@@ -1,4 +1,4 @@
-<% if request.headers["Turbo-Frame"] == "shared_rooms_control" %>
+<% if turbo_frame_request_for?("shared_rooms_control") %>
   <%= render "rooms/opens/sidebar_new", room: @room %>
 <% else %>
   <%= render layout: "rooms/layouts/new" do %>

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Labfire app icon</title>
+  <desc id="desc">A rounded dark square with a light chat bubble and a small laboratory flame.</desc>
+  <rect width="512" height="512" rx="108" fill="#f5f0e8"/>
+  <rect x="74" y="96" width="364" height="278" rx="70" fill="#121717"/>
+  <path d="M197 356 152 450l115-76" fill="#121717"/>
+  <path d="M147 181h218" stroke="#f6f0e7" stroke-width="34" stroke-linecap="round" opacity="0.94"/>
+  <path d="M147 260h130" stroke="#f6f0e7" stroke-width="34" stroke-linecap="round" opacity="0.74"/>
+  <path d="M341 326c-49 0-82-33-82-74 0-36 24-60 46-86 5 29 21 47 43 67 25 22 45 45 45 76 0 10-2 18-6 26-12 24-28 35-46 35Z" fill="#ff7f43"/>
+  <path d="M342 326c-27 0-45-18-45-41 0-20 13-34 25-49 3 17 12 27 25 38 14 12 25 25 25 42 0 23-15 36-30 36Z" fill="#b9f871"/>
+</svg>

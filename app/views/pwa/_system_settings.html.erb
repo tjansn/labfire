@@ -8,7 +8,7 @@
   <% case
     when platform.firefox? && platform.android? %>
       <ol>
-        <li>Tap the <em><%= uicon "menu-dots-vertical", alt: "More options", size: 16 %></em> menu button.</li>
+        <li>Tap the <em><%= icon "menu-dots-vertical", decorative: false, label: "More options", size: 16 %></em> menu button.</li>
         <li>Tap <em>Settings</em>.</li>
         <li>Tap <em>Notifications</em>.</li>
         <li>Tap <em><%= image_tag "external/switch.svg", alt: "the toggle button", size: 22 %></em> to <em>Allow <%= platform.browser.capitalize %> notifications</em>.</li>

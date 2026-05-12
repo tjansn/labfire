@@ -1,61 +1,74 @@
 # Labfire
 
-Labfire is a web-based chat application. It supports many of the features you'd
-expect, including:
+Labfire is a fork/derivative of Basecamp/37signals Once Campfire. It is not affiliated with or endorsed by 37signals. Labfire keeps the self-hosted team chat foundation and adds fork-specific branding and deployment defaults.
 
-- Multiple rooms, with access controls
+## Features
+
+- Multiple rooms with access controls
 - Direct messages
 - File attachments with previews
 - Search
-- Notifications (via Web Push)
+- Web Push notifications
 - @mentions
-- API, with support for bot integrations
-
-## Deploying with Docker
-
-Labfire's Docker image contains everything needed for a fully-functional,
-single-machine deployment. This includes the web app, background jobs, caching,
-file serving, and SSL.
-
-To persist storage of the database and file attachments, map a volume to `/rails/storage`.
-
-To configure additional features, you can set the following environment variables:
-
-- `SSL_DOMAIN` - enable automatic SSL via Let's Encrypt for the given domain name
-- `DISABLE_SSL` - alternatively, set `DISABLE_SSL` to serve over plain HTTP
-- `VAPID_PUBLIC_KEY`/`VAPID_PRIVATE_KEY` - set these to a valid keypair to
-  allow sending Web Push notifications. You can generate a new keypair by running
-  `/script/admin/create-vapid-key`
-- `SENTRY_DSN` - to enable error reporting to sentry in production, supply your
-  DSN here
-
-For example:
-
-    docker build -t labfire .
-
-    docker run \
-      --publish 80:80 --publish 443:443 \
-      --restart unless-stopped \
-      --volume labfire:/rails/storage \
-      --env SECRET_KEY_BASE=$YOUR_SECRET_KEY_BASE \
-      --env VAPID_PUBLIC_KEY=$YOUR_PUBLIC_KEY \
-      --env VAPID_PRIVATE_KEY=$YOUR_PRIVATE_KEY \
-      --env TLS_DOMAIN=chat.example.com \
-      labfire
+- Bot integrations through the API
 
 ## Running in development
 
-    bin/setup
-    bin/rails server
+```bash
+bin/setup
+bin/rails server
+```
 
-## Worth Noting
+The app uses Ruby 3.4. If your system Ruby is older, the provided `bin/test` wrapper can enter a Nix shell with the required Ruby, libvips, SQLite, and ffmpeg packages.
 
-When you start Labfire for the first time, you’ll be guided through
-creating an admin account.
-The email address of this admin account will be shown on the login page
-so that people who forget their password know who to contact for help.
-(You can change this email later in the settings)
+## Deploying with Docker
 
-Labfire is single-tenant: any rooms designated "public" will be accessible by
-all users in the system. To support entirely distinct groups of customers, you
-would deploy multiple instances of the application.
+Labfire's Docker image contains the web app, background jobs, Redis, file serving, and optional TLS termination. Persist the database and file attachments by mapping a volume to `/rails/storage`.
+
+Environment variables:
+
+- `SECRET_KEY_BASE` - required in production.
+- `TLS_DOMAIN` - enable automatic TLS via Thruster for the given domain.
+- `DISABLE_SSL` - set to any non-empty value to serve plain HTTP behind your own TLS proxy.
+- `VAPID_PUBLIC_KEY`/`VAPID_PRIVATE_KEY` - Web Push keypair. Generate with `/script/admin/create-vapid-key`.
+- `VAPID_SUBJECT` - optional Web Push subject, e.g. `mailto:admin@example.com`.
+- `SENTRY_DSN` - optional Sentry error reporting DSN.
+
+Example:
+
+```bash
+docker build -t labfire .
+
+docker run \
+  --publish 80:80 --publish 443:443 \
+  --restart unless-stopped \
+  --volume labfire:/rails/storage \
+  --env SECRET_KEY_BASE=$YOUR_SECRET_KEY_BASE \
+  --env VAPID_PUBLIC_KEY=$YOUR_PUBLIC_KEY \
+  --env VAPID_PRIVATE_KEY=$YOUR_PRIVATE_KEY \
+  --env VAPID_SUBJECT=mailto:admin@example.com \
+  --env TLS_DOMAIN=chat.example.com \
+  labfire
+```
+
+## Deploying with Kamal
+
+`config/deploy.yml` is a generic Kamal template. Replace `YOUR_ORG`, `YOUR_HOST`, and `YOUR_DOMAIN`, or copy local/private values to ignored files such as `config/deploy.local.yml`. Keep `.kamal/secrets*` untracked.
+
+## First run
+
+When you start Labfire for the first time, you’ll be guided through creating an admin account. The email address for that account is shown on the login page so people who forget their password know who to contact.
+
+Labfire is single-tenant: rooms designated public are accessible by all users in the system. Deploy separate instances for separate organizations.
+
+## Upgrading from upstream
+
+Track the Once Campfire upstream remote and merge or cherry-pick intentionally. Review schema changes, initializers, assets, and license/notice updates before deploying.
+
+## Security
+
+Please report vulnerabilities privately according to [SECURITY.md](SECURITY.md) once configured for your public repository. Do not include secrets, private hosts, or credentials in issues or discussions.
+
+## License and notices
+
+Labfire is distributed under the MIT license. See [MIT-LICENSE](MIT-LICENSE) and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for upstream attribution and bundled third-party asset notices.

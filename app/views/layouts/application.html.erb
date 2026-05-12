@@ -65,9 +65,9 @@
       <div class="flash" data-controller="element-removal" data-action="animationend->element-removal#remove">
         <div class="flash__inner shadow" style="<%= "--flash-background: var(--color-negative)" if flash[:alert] %>">
           <% if flash[:alert] %>
-            <%= uicon "alert", size: 24 %></span>
+            <%= uicon "alert", size: 24 %>
           <% else %>
-            <%= uicon "check", size: 24 %></span>
+            <%= uicon "check", size: 24 %>
           <% end %>
         </div>
         <span class="for-screen-reader" role="alert" aria-atomic="true"><%= notice %></span>
@@ -98,8 +98,8 @@
 
     <%= render "layouts/lightbox" %>
 
-    <a href="https://github.com/tjansn/labfire" id="app-logo" target="_blank" aria-label="Labfire source repository">
-      <%= image_tag "labfire-icon.png", alt: "Labfire logo", width: 256, height: 216 %>
+    <a href="<%= Rails.configuration.x.brand.repository_url %>" id="app-logo" target="_blank" aria-label="<%= Rails.configuration.x.brand.name %> source repository">
+      <%= image_tag "labfire-icon.png", alt: "#{Rails.configuration.x.brand.name} logo", width: 256, height: 216 %>
     </a>
   </body>
 </html>

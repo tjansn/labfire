@@ -34,9 +34,9 @@ class Accounts::LogosController < ApplicationController
 
     def send_placeholder_icon
       if small_logo?
-        send_png_file logo_path("robby-192.png")
+        send_png_file logo_path("labfire-logo-192.png")
       else
-        send_png_file logo_path("robby-512.png")
+        send_png_file logo_path("labfire-logo-512.png")
       end
     end
 

@@ -3,7 +3,7 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static classes = [ "reveal", "perform" ]
   static targets = [ "button", "content" ]
-  static values = { boosterId: Number }
+  static values = { boosterId: Number, descriptionId: String }
 
   connect() {
     if (this.#currentUserIsBooster) {
@@ -24,7 +24,7 @@ export default class extends Controller {
 
   #setAccessibleAttributes() {
     this.contentTarget.setAttribute('tabindex', '0')
-    this.contentTarget.setAttribute('aria-describedby', 'delete_boost_accessible_label')
+    this.contentTarget.setAttribute('aria-describedby', this.descriptionIdValue)
   }
 
   get #currentUserIsBooster() {

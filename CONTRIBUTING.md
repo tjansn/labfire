@@ -1,9 +1,9 @@
 # How to contribute to Labfire
 
 Labfire uses GitHub
-[discussions](https://github.com/tjansn/labfire/discussions) to track
+[discussions](https://github.com/YOUR_ORG/labfire/discussions) to track
 feature requests and questions, rather than [the issue
-tracker](https://github.com/tjansn/labfire/issues). If you're considering
+tracker](https://github.com/YOUR_ORG/labfire/issues). If you're considering
 opening an issue or pull request, please open a discussion instead.
 
 Whenever a discussion leads to an actionable and well-understood task, we'll

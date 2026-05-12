@@ -1,6 +1,8 @@
 require "test_helper"
 
 class UserTest < ActiveSupport::TestCase
+  include ActionDispatch::TestProcess
+
   test "user does not prevent very long passwords" do
     users(:david).update(password: "secret" * 50)
     assert users(:david).valid?
@@ -28,6 +30,13 @@ class UserTest < ActiveSupport::TestCase
     assert_changes -> { users(:david).sessions.count }, from: 1, to: 0 do
       users(:david).deactivate
     end
+  end
+
+  test "avatar rejects non-raster uploads" do
+    user = User.new name: "User", email_address: "user@example.com", avatar: fixture_file_upload("unsafe.svg", "image/svg+xml")
+
+    assert_not user.valid?
+    assert_includes user.errors[:avatar], "must be a PNG, JPEG, or WebP image"
   end
 
   private

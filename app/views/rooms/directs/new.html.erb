@@ -1,4 +1,4 @@
-<% if request.headers["Turbo-Frame"] == "direct_rooms_control" %>
+<% if turbo_frame_request_for?("direct_rooms_control") %>
   <turbo-frame id="direct_rooms_control" target="_top">
     <div class="directs directs--new flex flex-column gap">
       <%= render "rooms/directs/form", room: @room, compact: true %>

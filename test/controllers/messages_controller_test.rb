@@ -63,6 +63,16 @@ class MessagesControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test "index renders non-preview attachments" do
+    @room.messages.create_with_attachment! \
+      creator: users(:david), client_message_id: "text-attachment", attachment: fixture_file_upload("document.txt", "text/plain")
+
+    get room_messages_url(@room)
+
+    assert_response :success
+    assert_includes response.body, "document.txt"
+  end
+
   test "update updates a message belonging to the user" do
     message = @room.messages.where(creator: users(:david)).first
 

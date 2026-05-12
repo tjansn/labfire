@@ -41,8 +41,8 @@
 
         <% if @user.active? %>
           <div class="pad-inline-double margin-inline margin-block-start">
-            <%= button_to rooms_directs_path(user_ids: [ @user.id ]), class: "btn btn--reversed full-width txt-large" do %>
-              <%= uicon "messages", aria: { hidden: "true", label: "Message #{@user.name}" } %>
+            <%= button_to rooms_directs_path(user_ids: [ @user.id ]), class: "btn btn--reversed full-width txt-large", aria: { label: "Message #{@user.name}" } do %>
+              <%= uicon "messages" %>
             <% end %>
           </div>
 

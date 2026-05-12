@@ -23,4 +23,17 @@ class Messages::BoostsControllerTest < ActionDispatch::IntegrationTest
       end
     end
   end
+
+  test "boost delete accessible descriptions use unique ids" do
+    boost = @message.boosts.create! booster: users(:jason), content: "Again"
+
+    get room_message_url(@message.room, @message)
+
+    assert_select "#delete_boost_accessible_label", count: 0
+    [ boosts(:first), boost ].each do |message_boost|
+      label_id = dom_id(message_boost, :delete_accessible_label)
+      assert_select "##{label_id}", count: 1
+      assert_select "[aria-describedby='#{label_id}']", count: 1
+    end
+  end
 end

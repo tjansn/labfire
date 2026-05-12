@@ -1,14 +1,16 @@
 <% cache boost do %>
+  <% delete_label_id = dom_id(boost, :delete_accessible_label) %>
+
   <div id="<%= dom_id(boost) %>"
       class="boost boost-item flex-inline postion--relative max-width align-center fill-white gap"
-      data-controller="boost-delete" data-boost-delete-perform-class="boost--deleting" data-boost-delete-reveal-class="expanded" data-boost-delete-booster-id-value="<%= boost.booster.id %>">
+      data-controller="boost-delete" data-boost-delete-perform-class="boost--deleting" data-boost-delete-reveal-class="expanded" data-boost-delete-booster-id-value="<%= boost.booster.id %>" data-boost-delete-description-id-value="<%= delete_label_id %>">
     <figure class="avatar boost__avatar flex-item-no-shrink">
       <%= avatar_tag boost.booster, aria: { label: "#{boost.booster.name} boosted #{boost.content}" } %>
     </figure>
 
     <%= tag.button boost.content, type: "button",
           class: [ "btn btn--borderless boost__content txt-small", { "txt-medium": boost.content.all_emoji? } ],
-          aria: { label: "Boost: #{boost.content}", describedby: "delete_boost_accessible_label" },
+          aria: { label: "Boost: #{boost.content}", describedby: delete_label_id },
           data: { action: "boost-delete#reveal", boost_delete_target: "content" } %>
 
     <%= button_to message_boost_path(boost.message, boost), method: :delete, data: { action: "boost-delete#perform", boost_delete_target: "button" },
@@ -17,5 +19,5 @@
       <span class="for-screen-reader">Delete this boost</span>
     <% end %>
   </div>
-  <span id="delete_boost_accessible_label" class="for-screen-reader">Press enter to delete this boost</span>
+  <span id="<%= delete_label_id %>" class="for-screen-reader">Press enter to delete this boost</span>
 <% end %>
