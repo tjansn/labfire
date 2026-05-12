@@ -40,8 +40,10 @@
 # Ignore master.key (should be set in environment)
 /config/master.key
 
-# Ignore editor noise
+# Ignore editor and local agent noise
 /.vscode
+/.claude/
+/Screenshot*.png
 
 # Ignore ignore
 .dockerignore

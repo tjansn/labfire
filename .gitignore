@@ -34,6 +34,10 @@
 # Ignore master key for decrypting credentials and more.
 /config/master.key
 
+# Ignore local agent/editor artifacts.
+/.claude/
+/Screenshot*.png
+
 # Ignore production envs and deploy secrets
 /.env
 /.kamal/secrets
