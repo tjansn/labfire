@@ -1,22 +1,32 @@
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-  viewBox="0 0 512 512" class="avatar" aria-hidden="true">
+<% initials = @user.initials.first(2).upcase %>
+
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="avatar" aria-hidden="true">
   <defs>
-    <clipPath id="porthole">
-      <circle cx="50%" cy="50%" r="50%" />
+    <clipPath id="avatar-circle">
+      <circle cx="256" cy="256" r="256" />
     </clipPath>
+
+    <linearGradient id="avatar-sheen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="<%= avatar_text_color %>" stop-opacity="0.22" />
+      <stop offset="0.55" stop-color="<%= avatar_text_color %>" stop-opacity="0" />
+    </linearGradient>
   </defs>
 
-  <g>
-    <rect width="100%" height="100%" rx="50" fill="<%= avatar_background_color(@user) %>" />
-
-    <text x="50%" y="50%" fill="#FFFFFF"
-      text-anchor="middle" dy="0.35em"
-      <%=raw 'textLength="85%" lengthAdjust="spacingAndGlyphs"' if @user.initials.size >= 3 %>
-      font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif"
-      font-size="230"
-      font-weight="800"
-      letter-spacing="-5">
-      <%= @user.initials %>
-    </text>
+  <g clip-path="url(#avatar-circle)">
+    <circle cx="256" cy="256" r="256" fill="<%= avatar_background_color(@user) %>" />
+    <path d="M512 0v210C472 115 396 42 286 0h226Z" fill="<%= avatar_text_color %>" opacity="0.12" />
+    <path d="M0 512V302c48 92 140 166 282 210H0Z" fill="#050505" opacity="0.14" />
+    <rect width="512" height="512" fill="url(#avatar-sheen)" />
   </g>
+
+  <circle cx="256" cy="256" r="244" fill="none" stroke="<%= avatar_text_color %>" stroke-opacity="0.18" stroke-width="24" />
+
+  <text x="50%" y="50%" fill="<%= avatar_text_color %>"
+    text-anchor="middle" dy="0.35em"
+    font-family="Inter, SF Pro Display, Segoe UI, system-ui, -apple-system, BlinkMacSystemFont, sans-serif"
+    font-size="224"
+    font-weight="750"
+    letter-spacing="-8">
+    <%= initials %>
+  </text>
 </svg>

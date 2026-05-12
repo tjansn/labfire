@@ -2,7 +2,9 @@
 
 <% cache message do %>
   <%= message_tag message do %>
-    <h2 class="message__day-separator"><%= local_datetime_tag message.created_at, style: :date %></h2>
+    <div class="message__day-separator" role="separator" aria-label="<%= l(message.created_at.to_date, format: :long) rescue message.created_at.strftime("%B %-d, %Y") %>">
+      <%= local_datetime_tag message.created_at, style: :date %>
+    </div>
 
     <figure class="avatar message__avatar">
       <%= avatar_tag message.creator %>
@@ -12,7 +14,7 @@
       <div class="message__body">
         <div class="message__body-content">
           <div class="message__meta">
-            <h3 class="message__heading">
+            <div class="message__heading">
               <span class="message__author" title="<%= message.creator.title %>">
                 <strong data-reply-target="author"><%= message.creator.name %></strong>
               </span>
@@ -21,7 +23,7 @@
               <span class="message__room">
                 <%= link_to room_display_name(message.room, for_user: nil), room_at_message_path(message.room, message), target: "_top", data: { reply_target: "link" } %>
               </span>
-            </h3>
+            </div>
             <%= render "messages/actions", message: message, url: room_at_message_url(message.room, message) %>
           </div>
           <%= render "messages/presentation", message: message %>

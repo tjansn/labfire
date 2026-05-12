@@ -1,2 +1,41 @@
-#!/usr/bin/env ruby
-exec "./bin/rails", "server", *ARGV
+#!/usr/bin/env bash
+set -euo pipefail
+
+app_root="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$app_root"
+
+mkdir -p log tmp/pids
+
+# Local macOS/Nix needs libvips discoverable before ruby-vips is required.
+# FFI reads LD_LIBRARY_PATH itself on macOS; DYLD_* vars can be stripped by SIP
+# when binstubs execute through /usr/bin/env.
+if command -v pkg-config >/dev/null && pkg-config --exists vips; then
+  vips_libdir="$(pkg-config --variable=libdir vips)"
+  export LD_LIBRARY_PATH="${vips_libdir}${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+fi
+
+redis_host="${REDIS_HOST:-127.0.0.1}"
+redis_port="${REDIS_PORT:-6379}"
+
+redis_running() {
+  (echo >"/dev/tcp/${redis_host}/${redis_port}") >/dev/null 2>&1
+}
+
+if ! redis_running; then
+  if command -v redis-server >/dev/null; then
+    redis-server config/redis.conf > log/redis.log 2>&1 &
+    echo $! > tmp/pids/redis.pid
+  elif command -v nix-shell >/dev/null; then
+    nix-shell -p redis --run 'redis-server config/redis.conf' > log/redis.log 2>&1 &
+    echo $! > tmp/pids/redis.pid
+  else
+    echo "Redis is not running on ${redis_host}:${redis_port}. Action Cable broadcasts may fail." >&2
+  fi
+
+  for _ in {1..40}; do
+    redis_running && break
+    sleep 0.25
+  done
+fi
+
+exec ./bin/rails server "$@"

@@ -1,3 +1,7 @@
-<%= render layout: "rooms/layouts/new" do %>
-  <%= render "rooms/opens/form", room: @room, users: @users, type_change_path: new_rooms_closed_path %>
+<% if request.headers["Turbo-Frame"] == "shared_rooms_control" %>
+  <%= render "rooms/opens/sidebar_new", room: @room %>
+<% else %>
+  <%= render layout: "rooms/layouts/new" do %>
+    <%= render "rooms/opens/form", room: @room, users: @users, type_change_path: new_rooms_closed_path %>
+  <% end %>
 <% end %>

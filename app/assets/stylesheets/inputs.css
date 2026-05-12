@@ -126,7 +126,7 @@
 }
 
 .input--code {
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monaco, monospace;
+  font-family: var(--font-family);
   white-space: pre-wrap !important;
   word-wrap: break-word;
 }

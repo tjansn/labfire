@@ -79,8 +79,8 @@ body {
   transition: transform 300ms ease;
 
   .sidebar & {
-    -webkit-backdrop-filter: blur(66px);
-    backdrop-filter: blur(66px);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
     background-color: oklch(var(--lch-white) / 0.66);
     block-size: 100dvh;
     max-block-size: 100dvh;

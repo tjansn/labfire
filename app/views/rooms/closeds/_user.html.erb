@@ -15,9 +15,9 @@
       <%= image_tag "check.svg", size: 20, class: "colorize--black flex-item-no-shrink", aria: { hidden: "true" } %>
     <% else %>
       <label class="switch flex-item-no-shrink">
-        <%= check_box_tag "user_ids[]", user.id, selected, class: "switch__input", id: nil %>
-        <span class="switch__btn round"></span>
-        <span class="for-screen-reader">Give <%= user.name %> access to this room</span>
+        <%= check_box_tag "user_ids[]", user.id, selected, class: "switch__input", id: nil,
+              role: "switch", aria: { label: "Give #{user.name} access to this room" } %>
+        <span class="switch__btn round" aria-hidden="true"></span>
       </label>
     <% end %>
   <% end %>

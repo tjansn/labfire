@@ -16,6 +16,11 @@ class Accounts::LogosControllerTest < ActionDispatch::IntegrationTest
     assert_valid_png_response size: 192
   end
 
+  test "show favicon" do
+    get "/favicon.ico"
+    assert_valid_png_response size: 192
+  end
+
   test "show custom" do
     accounts(:signal).update! logo: fixture_file_upload("moon.jpg", "image/jpeg")
 

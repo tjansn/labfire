@@ -40,7 +40,7 @@ class Messages::AttachmentPresentation
 
       inline_media_dimension_constraints(width, height) do
         lightbox_link do
-          broadcast_image_tag message.attachment.representation(:thumb), width: width, height: height, class: "message__attachment", loading: "lazy"
+          broadcast_image_tag message.attachment.representation(:thumb), width: width, height: height, alt: filename, class: "message__attachment", loading: "lazy"
         end
       end
     end
@@ -81,8 +81,12 @@ class Messages::AttachmentPresentation
     end
 
     def lightbox_link(&)
-      link_to rails_blob_path(message.attachment), class: "flex", data: {
-        lightbox_target: "image", action: "lightbox#open", lightbox_url_value: download_url }, &
+      link_to rails_blob_path(message.attachment), class: "flex",
+        aria: { label: "Open #{filename}" },
+        data: {
+          lightbox_target: "image", action: "lightbox#open",
+          lightbox_url_value: download_url,
+          lightbox_filename_value: filename }, &
     end
 
     def download_link

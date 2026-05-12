@@ -269,7 +269,7 @@ curl -I https://gammalabs.cc/up
 
 ### 9. First-run admin bootstrap
 
-Status: **done with temporary credentials**. A `Gamma Labs Admin` user was created with email `admin@gammalabs.cc`. The generated password is stored at `/rails/storage/bootstrap/initial-admin.txt` inside the persistent app volume. Retrieve it over Kamal/SSH, log in, change the email/password, then delete that file.
+Status: **done with temporary credentials**. A `gammalabs Admin` user was created with email `admin@gammalabs.cc`. The generated password is stored at `/rails/storage/bootstrap/initial-admin.txt` inside the persistent app volume. Retrieve it over Kamal/SSH, log in, change the email/password, then delete that file.
 
 Retrieve credentials:
 

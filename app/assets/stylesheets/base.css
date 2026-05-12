@@ -144,7 +144,7 @@ code {
 
 pre {
   background-color: var(--color-bg);
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monaco, monospace;
+  font-family: var(--font-family);
   font-size: 0.8rem;
   white-space: pre-wrap;
   word-wrap: break-word;

@@ -5,6 +5,18 @@ class Rooms::DirectsControllerTest < ActionDispatch::IntegrationTest
     sign_in :david
   end
 
+  test "new" do
+    get new_rooms_direct_url
+    assert_response :success
+    assert_select ".gl-direct-new-card form[action='#{rooms_directs_path}']"
+  end
+
+  test "new in sidebar frame" do
+    get new_rooms_direct_url, headers: { "Turbo-Frame" => "direct_rooms_control" }
+    assert_response :success
+    assert_select "turbo-frame#direct_rooms_control form[action='#{rooms_directs_path}']"
+  end
+
   test "create" do
     post rooms_directs_url, params: { user_ids: [ users(:jz).id ] }
 

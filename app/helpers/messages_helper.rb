@@ -13,13 +13,16 @@ module MessagesHelper
   end
 
   def messages_tag(room, &)
-    tag.div id: dom_id(room, :messages), class: "messages", data: {
-      controller: "maintain-scroll refresh-room",
-      action: [ maintain_scroll_actions, refresh_room_actions ].join(" "),
-      messages_target: "messages",
-      refresh_room_loaded_at_value: room.updated_at.to_fs(:epoch),
-      refresh_room_url_value: room_refresh_url(room)
-    }, &
+    tag.div id: dom_id(room, :messages), class: "messages",
+      role: "log",
+      aria: { live: "polite", label: "Messages in #{room_display_name(room)}" },
+      data: {
+        controller: "maintain-scroll refresh-room",
+        action: [ maintain_scroll_actions, refresh_room_actions ].join(" "),
+        messages_target: "messages",
+        refresh_room_loaded_at_value: room.updated_at.to_fs(:epoch),
+        refresh_room_url_value: room_refresh_url(room)
+      }, &
   end
 
   def message_tag(message, &)

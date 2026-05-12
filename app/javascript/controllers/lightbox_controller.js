@@ -12,13 +12,20 @@ export default class extends Controller {
 
   reset() {
     this.zoomedImageTarget.src = ""
+    this.zoomedImageTarget.alt = ""
     this.downloadTarget.href = ""
-    this.shareTarget.dataset.webShareFilesValue = "";
+    this.shareTarget.dataset.webShareFilesValue = ""
   }
 
   #set(target) {
+    const filename = target.dataset.lightboxFilenameValue || ""
     this.zoomedImageTarget.src = target.href
-    this.downloadTarget.href = target.dataset.lightboxUrlValue;
-    this.shareTarget.dataset.webShareFilesValue = target.dataset.lightboxUrlValue;
+    this.zoomedImageTarget.alt = filename
+    this.dialogTarget.setAttribute(
+      "aria-label",
+      filename ? `Image viewer — ${filename}. Press Escape to close.` : "Image viewer. Press Escape to close."
+    )
+    this.downloadTarget.href = target.dataset.lightboxUrlValue
+    this.shareTarget.dataset.webShareFilesValue = target.dataset.lightboxUrlValue
   }
 }

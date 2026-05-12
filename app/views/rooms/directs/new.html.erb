@@ -1,31 +1,35 @@
-<turbo-frame id="direct_rooms_control" target="_top">
-  <div class="directs directs--new flex flex-column gap">
-    <%= form_with model: @room, class: "flex gap flex-item-grow", data: {
-          controller: "form", action: "keydown.esc->form#cancel" } do |form| %>
-      <%= link_to user_sidebar_path, class: "btn flex-item-no-shrink", data: { turbo_frame: "user_sidebar", form_target: "cancel" } do %>
-        <%= image_tag "arrow-left.svg", aria: { hidden: "true" } %>
-        <span class="for-screen-reader">Cancel changes</span>
-      <% end %>
+<% if request.headers["Turbo-Frame"] == "direct_rooms_control" %>
+  <turbo-frame id="direct_rooms_control" target="_top">
+    <div class="directs directs--new flex flex-column gap">
+      <%= render "rooms/directs/form", room: @room, compact: true %>
 
-      <section class="autocomplete__container unpad input input--actor">
-        <div class="autocomplete__input input flex flex-wrap position-relative flex-item-grow"
-            data-controller="autocomplete" data-autocomplete-url-value="<%= autocompletable_users_path %>">
-          <select name="user_ids[]" data-autocomplete-target="select" data-template-id="autocompletable-user" multiple="true" hidden required></select>
+      <span class="txt-small translucent pad-inline-half center">Type names to start a personal message…</span>
+    </div>
+  </turbo-frame>
+<% else %>
+  <% @page_title = "New personal message" %>
 
-          <%= render "users/autocompletables/template" %>
+  <% content_for :nav do %>
+    <div class="flex-item-justify-start">
+      <%= link_back_to_last_room_visited %>
+    </div>
+  <% end %>
 
-          <%= form.text_field "user_ids_input",
-                autocomplete: "off", autocorrect: "off", "data-1p-ignore": "true", class: "autocomplete__input input flex flex-wrap position-relative",
-                data: { autocomplete_target: "input", action: "input->autocomplete#search keydown->autocomplete#didPressKey" } %>
+  <section class="gl-direct-new-page" style="view-transition-name: new-direct-message">
+    <article class="gl-direct-new-card">
+      <header class="gl-direct-new-header">
+        <span class="gl-direct-new-icon" aria-hidden="true">
+          <%= image_tag "messages-add.svg", size: 24, class: "colorize--black" %>
+        </span>
+
+        <div>
+          <p class="gl-kicker">Personal messages</p>
+          <h1>New private chat</h1>
+          <p>Choose who you want to message. Campfire will reuse an existing private chat when one already exists.</p>
         </div>
-      </section>
+      </header>
 
-      <%= button_tag class: "btn btn--reversed flex-item-no-shrink", type: "submit" do %>
-        <%= image_tag "check.svg", aria: { hidden: "true" } %>
-        <span class="for-screen-reader">Start Ping</span>
-      <% end %>
-    <% end %>
-
-    <span class="txt-small translucent pad-inline-half center">Type names to ping someone…</span>
-  </div>
-</turbo-frame>
+      <%= render "rooms/directs/form", room: @room %>
+    </article>
+  </section>
+<% end %>

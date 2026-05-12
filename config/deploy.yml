@@ -41,7 +41,7 @@ builder:
   dockerfile: Dockerfile
   args:
     OCI_SOURCE: https://github.com/tjansn/once-campfire
-    OCI_DESCRIPTION: Campfire is a web-based chat application deployed for Gamma Labs.
+    OCI_DESCRIPTION: Campfire is a web-based chat application deployed for gammalabs.
     APP_VERSION: <%= `git rev-parse --short HEAD`.strip %>
     GIT_REVISION: <%= `git rev-parse HEAD`.strip %>
 

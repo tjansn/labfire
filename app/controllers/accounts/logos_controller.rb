@@ -9,8 +9,12 @@ class Accounts::LogosController < ApplicationController
       expires_in 5.minutes, public: true, stale_while_revalidate: 1.week
 
       if Current.account&.logo&.attached?
-        logo = Current.account.logo.variant(logo_variant).processed
-        send_png_file ActiveStorage::Blob.service.path_for(logo.key)
+        if Current.account.logo.variable?
+          logo = Current.account.logo.variant(logo_variant).processed
+          send_png_file ActiveStorage::Blob.service.path_for(logo.key)
+        else
+          send_file ActiveStorage::Blob.service.path_for(Current.account.logo.key), content_type: Current.account.logo.content_type, disposition: :inline
+        end
       else
         send_stock_icon
       end

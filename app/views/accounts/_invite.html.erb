@@ -1,15 +1,15 @@
-<div class="flex flex-column align-center gap">
+<div class="gl-invite-panel">
   <% url = join_url(Current.account.join_code) %>
 
-  <label class="flex flex-column gap full-width" style="--row-gap: 0.5em">
-    <strong id="invite_label" class="invite-label">Share to invite more people</strong>
-    <span class="flex align-center gap input input--actor fill-white">
+  <label class="gl-invite-field" style="--row-gap: 0.5em">
+    <strong id="invite_label" class="invite-label">Join link</strong>
+    <span class="gl-invite-input input input--actor">
       <%= image_tag "person-add.svg", aria: { hidden: "true" }, size: 20, class: "colorize--black" %>
       <input type="text" class="input" id="invite_url" value="<%= url %>" aria-labelledby="invite_label" readonly>
     </span>
   </label>
 
-  <div class="flex align-center gap">
+  <div class="gl-invite-actions">
     <%= link_to_zoom_qr_code(url) do %>
       <span class="for-screen-reader">Show join link QR code</span>
       <%= image_tag "qr-code.svg", aria: { hidden: "true" }, size: 20, class: "colorize--black" %>

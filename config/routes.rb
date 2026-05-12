@@ -29,6 +29,8 @@ Rails.application.routes.draw do
     route_for :account_logo, v: Current.account&.updated_at&.to_fs(:number), size: options[:size]
   end
 
+  get "favicon.ico", to: "accounts/logos#show", defaults: { size: "small" }
+
   get "join/:join_code", to: "users#new", as: :join
   post "join/:join_code", to: "users#create"
 
@@ -56,7 +58,7 @@ Rails.application.routes.draw do
   end
 
   direct :fresh_user_avatar do |user, options|
-    route_for :user_avatar, user.avatar_token, v: user.updated_at.to_fs(:number)
+    route_for :user_avatar, user.avatar_token, v: "#{user.updated_at.to_fs(:number)}-ds3"
   end
 
   resources :rooms do

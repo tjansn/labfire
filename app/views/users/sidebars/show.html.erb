@@ -6,58 +6,70 @@
       data-controller="badge-dot"
       data-badge-dot-unread-class="unread"
       data-action="rooms-list:unread@window->badge-dot#update rooms-list:read@window->badge-dot#update turbo:submit-start->turbo-frame#unpermanize">
-    <turbo-frame id="direct_rooms_control" target="_top">
-      <div class="directs gap overflow-x overflow-hide-scrollbar">
-        <%= link_to new_rooms_direct_path, class: "direct direct__new", data: { turbo_frame: "_self" } do %>
-          <span class="avatar avatar--icon">
-            <%= image_tag "messages-add.svg", size: 20, aria: { hidden: "true" }, class: "colorize--black" %>
-          </span>
-
-          <span class="direct__author flex max-width min-width border-radius pad-inline-half">
-            <span class="for-screen-reader">New</span>
-            <span class="txt-small overflow-clip">Ping</span>
-          </span>
-        <% end %>
-
-        <div id="direct_rooms" contents data-controller="sorted-list" data-action="rooms-list:unread@window->sorted-list#updateItem">
-          <%= render partial: "users/sidebars/rooms/direct", collection: @direct_memberships, as: :membership, cached: true %>
-        </div>
-
-        <div contents>
-          <%= render partial: "users/sidebars/rooms/direct_placeholder", collection: @direct_placeholder_users, as: :user %>
-        </div>
-      </div>
-    </turbo-frame>
-
-    <div class="rooms position-relative flex flex-column gap">
-      <div id="shared_rooms" contents data-controller="sorted-list">
-        <% @other_memberships.each do |membership| %>
-          <%= render "users/sidebars/rooms/shared", room: membership.room, unread: membership.unread? %>
-        <% end %>
-      </div>
-
-      <% if Current.user.administrator? || !Current.account.settings.restrict_room_creation_to_administrators? %>
-        <%= link_to new_rooms_open_path, class: "rooms__new-btn btn room align-center gap txt-reversed", aria: { label: "New Chat Room" } do %>
-          <%= image_tag "add.svg", size: 20, aria: { hidden: "true" }, style: "view-transition-name: new-room" %>
-        <% end %>
-      <% end %>
+    <div class="gl-sidebar-brand">
+      <span class="gl-sidebar-brand__identity">
+        <%= image_tag fresh_account_logo_path(size: "small"), width: 28, height: 28, alt: "", aria: { hidden: "true" }, class: "gl-sidebar-brand__logo" %>
+        <span class="gl-sidebar-brand__name"><%= Current.account.name %></span>
+      </span>
+      <button class="btn gl-sidebar-brand__menu" type="button"
+          data-controller="menu-toggle"
+          data-menu-toggle-target-selector-value="#sidebar"
+          data-menu-toggle-open-class-value="menu-open"
+          data-action="menu-toggle#toggle"
+          aria-haspopup="menu"
+          aria-expanded="false"
+          aria-controls="topbar_menu_panel"
+          aria-label="Open account menu">
+        <%= image_tag "menu.svg", size: 18, alt: "", aria: { hidden: "true" }, class: "colorize--black" %>
+        <span class="for-screen-reader">Open menu</span>
+      </button>
     </div>
 
-    <button class="btn sidebar__toggle" data-action="toggle-class#toggle">
-      <%= image_tag "menu.svg", size: 20, aria: { hidden: "true" } %>
-      <span class="for-screen-reader">Open menu</span>
-    </button>
-  </div>
+    <details class="gl-app-nav-section gl-app-nav-section--directs" data-controller="details" open>
+      <summary class="gl-app-nav__label gl-app-nav__summary">
+        <span>Personal messages</span>
 
-  <div class="flex align-end sidebar__tools gap justify-end">
-    <%= link_to user_profile_path, class: "btn avatar flex-item-no-shrink sidebar__tool" do %>
-      <%= image_tag fresh_user_avatar_path(Current.user), size: 48, aria: { hidden: "true" }, style: "view-transition-name: avatar-#{Current.user.id}" %>
-      <span class="for-screen-reader">My Settings</span>
-    <% end %>
+        <%= link_to new_rooms_direct_path, class: "btn gl-app-nav__add", data: { turbo_frame: "direct_rooms_control", action: "click->details#open" }, aria: { label: "New personal message" } do %>
+          <%= image_tag "add.svg", size: 16, aria: { hidden: "true" }, class: "colorize--black" %>
+          <span class="for-screen-reader">New personal message</span>
+        <% end %>
+      </summary>
 
-    <%= link_to edit_account_path, class: "btn align-center gap txt-reversed sidebar__tool" do %>
-      <%= image_tag "settings.svg", size: 20, aria: { hidden: "true" }, style: "view-transition-name: account-settings" %>
-      <span class="for-screen-reader">Account Settings</span>
-    <% end %>
+      <turbo-frame id="direct_rooms_control" target="_top">
+        <div class="directs gap">
+          <div id="direct_rooms" contents data-controller="sorted-list" data-action="rooms-list:unread@window->sorted-list#updateItem">
+            <%= render partial: "users/sidebars/rooms/direct", collection: @direct_memberships, as: :membership, cached: true %>
+          </div>
+
+          <div contents>
+            <%= render partial: "users/sidebars/rooms/direct_placeholder", collection: @direct_placeholder_users, as: :user %>
+          </div>
+        </div>
+      </turbo-frame>
+    </details>
+
+    <details class="gl-app-nav-section gl-app-nav-section--rooms" data-controller="details" open>
+      <summary class="gl-app-nav__label gl-app-nav__summary">
+        <span>Rooms</span>
+
+        <% if Current.user.administrator? || !Current.account.settings.restrict_room_creation_to_administrators? %>
+          <%= link_to new_rooms_open_path, class: "btn gl-app-nav__add", data: { turbo_frame: "shared_rooms_control", action: "click->details#open" }, aria: { label: "New room" } do %>
+            <%= image_tag "add.svg", size: 16, aria: { hidden: "true" }, class: "colorize--black", style: "view-transition-name: new-room" %>
+            <span class="for-screen-reader">New room</span>
+          <% end %>
+        <% end %>
+      </summary>
+
+      <turbo-frame id="shared_rooms_control" target="_top">
+        <div class="rooms position-relative flex flex-column gap">
+          <div id="shared_rooms" contents data-controller="sorted-list">
+            <% @other_memberships.each do |membership| %>
+              <%= render "users/sidebars/rooms/shared", room: membership.room, unread: membership.unread? %>
+            <% end %>
+          </div>
+        </div>
+      </turbo-frame>
+    </details>
+
   </div>
 <% end %>

@@ -1,14 +1,28 @@
 <!DOCTYPE html>
-<html>
+<html data-design-contract="gammalabs/design-system" data-page-archetype="page.app">
   <head>
     <%= page_title_tag %>
 
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, interactive-widget=resizes-content">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
     <meta name="view-transition" content="same-origin">
     <meta name="color-scheme" content="light dark">
-    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#F5F3F0" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#131616" media="(prefers-color-scheme: dark)">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      (() => {
+        try {
+          const theme = localStorage.getItem("theme")
+          const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches
+          document.documentElement.classList.toggle("dark", theme === "dark" || (!theme && prefersDark))
+          document.documentElement.classList.toggle("light", theme === "light")
+          document.documentElement.style.colorScheme = document.documentElement.classList.contains("dark") ? "dark" : "light"
+        } catch (_) {}
+      })()
+    </script>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <%= current_user_meta_tags %>
@@ -29,11 +43,22 @@
     <%= yield :head %>
   </head>
 
-  <body class="<%= body_classes %>" data-controller="local-time lightbox">
+  <body class="<%= body_classes %>" data-controller="theme local-time lightbox" data-current-room-id="<%= @room&.id %>">
     <a href="#main-content" class="skip-navigation btn">Skip to main content</a>
 
-    <nav id="nav">
-      <%= yield :nav %>
+    <nav id="nav" class="gl-app-topbar">
+      <div class="gl-room-nav">
+        <%= yield :nav %>
+      </div>
+
+      <button class="btn sidebar__toggle" type="button"
+          data-controller="toggle-class"
+          data-toggle-class-toggle-class="open"
+          data-toggle-class-target-selector-value="#sidebar"
+          data-action="toggle-class#toggle"
+          aria-label="Open sidebar">
+        <%= image_tag "menu.svg", size: 20, aria: { hidden: "true" } %>
+      </button>
     </nav>
 
     <% if notice = flash[:notice] || flash[:alert] %>
@@ -49,7 +74,7 @@
       </div>
     <% end %>
 
-    <main id="main-content">
+    <main id="main-content" class="gl-app-main">
       <%= yield %>
 
       <footer id="footer">
@@ -57,7 +82,68 @@
       </footer>
     </main>
 
-    <aside id="sidebar" data-controller="toggle-class" data-toggle-class-toggle-class="open">
+    <aside id="sidebar" class="gl-app-sidebar">
+      <% if Current.user %>
+        <div class="gl-topbar-menu" data-controller="toggle-class"
+            data-toggle-class-toggle-class="menu-open"
+            data-toggle-class-target-selector-value="#sidebar">
+          <button type="button" class="gl-topbar-menu__scrim" tabindex="-1" aria-hidden="true" data-action="toggle-class#toggle"></button>
+
+          <div id="topbar_menu_panel" class="gl-topbar-menu__panel" role="menu" aria-label="Account menu">
+            <%= link_to user_profile_path, class: "gl-topbar-menu__item gl-topbar-menu__item--profile", role: "menuitem" do %>
+              <%= image_tag fresh_user_avatar_path(Current.user), size: 32, aria: { hidden: "true" }, class: "gl-topbar-menu__avatar", style: "view-transition-name: avatar-#{Current.user.id}" %>
+              <span class="gl-topbar-menu__profile-text">
+                <span class="gl-topbar-menu__profile-name"><%= Current.user.name %></span>
+                <span class="gl-topbar-menu__profile-label">Your profile</span>
+              </span>
+            <% end %>
+
+            <%= link_to edit_account_url(anchor: "invite"), class: "gl-topbar-menu__item", role: "menuitem" do %>
+              <span class="gl-topbar-menu__item-icon" aria-hidden="true">
+                <%= image_tag "person-add.svg", size: 18, class: "colorize--black" %>
+              </span>
+              <span class="gl-topbar-menu__item-label">Invite to server</span>
+            <% end %>
+
+            <% if Current.user.administrator? %>
+              <%= link_to edit_account_path, class: "gl-topbar-menu__item", role: "menuitem", style: "view-transition-name: account-settings" do %>
+                <span class="gl-topbar-menu__item-icon" aria-hidden="true">
+                  <%= image_tag "settings.svg", size: 18, class: "colorize--black" %>
+                </span>
+                <span class="gl-topbar-menu__item-label">Server settings</span>
+              <% end %>
+            <% end %>
+
+            <button type="button" class="gl-topbar-menu__item gl-topbar-menu__item--theme" role="menuitemcheckbox"
+                data-theme-target="toggle" data-action="theme#toggle" aria-checked="false">
+              <span class="gl-topbar-menu__item-icon" aria-hidden="true">
+                <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+                <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
+              </span>
+              <span class="gl-topbar-menu__item-label">
+                <span data-theme-light>Switch to dark mode</span>
+                <span data-theme-dark>Switch to light mode</span>
+              </span>
+            </button>
+
+            <%= form_with url: session_path, method: :delete, data: { controller: "sessions" }, class: "gl-topbar-menu__form" do %>
+              <%= hidden_field_tag :push_subscription_endpoint, nil, data: { sessions_target: "pushSubscriptionEndpoint" } %>
+              <button type="submit" class="gl-topbar-menu__item gl-topbar-menu__item--logout" role="menuitem" data-action="sessions#logout:prevent">
+                <span class="gl-topbar-menu__item-icon" aria-hidden="true">
+                  <%= image_tag "logout.svg", size: 18, class: "colorize--black" %>
+                </span>
+                <span class="gl-topbar-menu__item-label">Log out</span>
+              </button>
+            <% end %>
+
+            <div class="gl-topbar-menu__footer">
+              <span class="gl-badge--mono"><span class="gl-badge__dot"></span> live</span>
+              <span class="gl-clock"><span data-controller="live-clock">--:--</span></span>
+            </div>
+          </div>
+        </div>
+      <% end %>
+
       <%= yield :sidebar %>
     </aside>
 

@@ -21,7 +21,7 @@ class BoostingMessagesTest < ApplicationSystemTestCase
       join_room rooms(:designers)
 
       within "#" + dom_id(boosts(:first)) do
-        find("span", text: "Hello").click
+        find("button.boost__content", text: "Hello").click
         assert_selector "button", text: "Delete this boost", wait: 5
         click_on "Delete this boost"
       end

@@ -15,9 +15,9 @@
       <% if Current.user.can_administer?(room) %>
         <%= link_to type_change_path, class: "btn--faux flex-inline", tabindex: "-1", data: { turbo_action: "replace" } do %>
           <label for="room_type" class="switch">
-            <input type="checkbox" id="room_type" class="switch__input" checked="checked">
-            <span class="switch__btn round"></span>
-            <span class="for-screen-reader">Give only some access to this room</span>
+            <input type="checkbox" id="room_type" class="switch__input" checked="checked"
+                   role="switch" aria-label="Give only some access to this room">
+            <span class="switch__btn round" aria-hidden="true"></span>
           </label>
         <% end %>
       <% end %>

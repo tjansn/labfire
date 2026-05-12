@@ -1,0 +1,56 @@
+<% compact = local_assigns.fetch(:compact, false) %>
+<% form_class = local_assigns.fetch(:form_class, compact ? "flex gap flex-item-grow" : "gl-direct-new-form") %>
+
+<%= form_with model: room, class: form_class, data: {
+      controller: "form", action: "keydown.esc->form#cancel" } do |form| %>
+  <% if compact %>
+    <%= link_to user_sidebar_path, class: "btn flex-item-no-shrink", data: { turbo_frame: "user_sidebar", form_target: "cancel" } do %>
+      <%= image_tag "arrow-left.svg", aria: { hidden: "true" } %>
+      <span class="for-screen-reader">Cancel changes</span>
+    <% end %>
+  <% end %>
+
+  <div class="<%= compact ? "flex-item-grow min-width" : "gl-direct-new-field" %>">
+    <% unless compact %>
+      <%= form.label :user_ids_input, "People", class: "gl-direct-new-label" %>
+    <% end %>
+
+    <section class="autocomplete__container <%= "gl-direct-new-autocomplete" unless compact %> unpad input input--actor">
+      <div class="autocomplete__input input flex flex-wrap position-relative flex-item-grow"
+          data-controller="autocomplete" data-autocomplete-url-value="<%= autocompletable_users_path %>">
+        <select name="user_ids[]" data-autocomplete-target="select" data-template-id="autocompletable-user" multiple="true" hidden required></select>
+
+        <%= render "users/autocompletables/template" %>
+
+        <%= form.text_field "user_ids_input",
+              autocomplete: "off", autocorrect: "off", "data-1p-ignore": "true", class: "autocomplete__input input flex flex-wrap position-relative",
+              placeholder: "Type names…",
+              data: { autocomplete_target: "input", action: "input->autocomplete#search keydown->autocomplete#didPressKey" } %>
+      </div>
+    </section>
+
+    <% unless compact %>
+      <p class="gl-direct-new-hint">Start typing to find people. You can choose one person or create a small group message.</p>
+    <% end %>
+  </div>
+
+  <% if compact %>
+    <%= button_tag class: "btn btn--reversed flex-item-no-shrink", type: "submit" do %>
+      <%= image_tag "check.svg", aria: { hidden: "true" } %>
+      <span class="for-screen-reader">Start personal message</span>
+    <% end %>
+  <% else %>
+    <footer class="gl-direct-new-actions">
+      <% cancel_room = last_room_visited %>
+      <%= link_to(cancel_room ? room_path(cancel_room) : root_path, class: "btn", data: { form_target: "cancel" }) do %>
+        <%= image_tag "arrow-left.svg", aria: { hidden: "true" }, size: 20 %>
+        <span>Cancel</span>
+      <% end %>
+
+      <%= button_tag class: "btn btn--reversed", type: "submit" do %>
+        <%= image_tag "check.svg", aria: { hidden: "true" }, size: 20 %>
+        <span>Start chat</span>
+      <% end %>
+    </footer>
+  <% end %>
+<% end %>

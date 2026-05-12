@@ -4,7 +4,7 @@ import { ignoringBriefDisconnects } from "helpers/dom_helpers"
 
 export default class extends Controller {
   static targets = [ "room" ]
-  static classes = [ "unread" ]
+  static classes = [ "unread", "current", "active" ]
 
   #disconnected = true
 
@@ -24,7 +24,10 @@ export default class extends Controller {
   }
 
   loaded() {
-    this.read({ detail: { roomId: Current.room.id } })
+    if (Current.room?.id) {
+      this.#markCurrent(Current.room.id)
+      this.read({ detail: { roomId: Current.room.id } })
+    }
   }
 
   read({ detail: { roomId } }) {
@@ -33,6 +36,17 @@ export default class extends Controller {
     if (room) {
       room.classList.remove(this.unreadClass)
       this.dispatch("read", { detail: { targetId: roomId } })
+    }
+  }
+
+  select(event) {
+    if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+
+    const room = event.target.closest(`[data-${this.identifier}-target~="room"]`)
+
+    if (room && this.element.contains(room)) {
+      this.#markCurrent(room.dataset.roomId)
+      this.read({ detail: { roomId: room.dataset.roomId } })
     }
   }
 
@@ -47,11 +61,22 @@ export default class extends Controller {
     this.#disconnected = true
   }
 
+  #markCurrent(roomId) {
+    this.roomTargets.forEach((roomTarget) => {
+      const isCurrent = roomTarget.dataset.roomId == roomId
+
+      roomTarget.classList.toggle(this.currentClass, isCurrent)
+      if (this.hasActiveClass) roomTarget.classList.toggle(this.activeClass, isCurrent)
+      if (isCurrent) roomTarget.setAttribute("aria-current", "page")
+      else roomTarget.removeAttribute("aria-current")
+    })
+  }
+
   #unread({ roomId }) {
     const unreadRoom = this.#findRoomTarget(roomId)
 
     if (unreadRoom) {
-      if (Current.room.id != roomId) {
+      if (Current.room?.id != roomId) {
         unreadRoom.classList.add(this.unreadClass)
       }
 

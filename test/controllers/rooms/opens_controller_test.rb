@@ -15,6 +15,12 @@ class Rooms::OpensControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "new in sidebar frame" do
+    get new_rooms_open_url, headers: { "Turbo-Frame" => "shared_rooms_control" }
+    assert_response :success
+    assert_select "turbo-frame#shared_rooms_control form[action='#{rooms_opens_path}']"
+  end
+
   test "create" do
     assert_turbo_stream_broadcasts :rooms, count: 1 do
       post rooms_opens_url, params: { room: { name: "My New Room" } }

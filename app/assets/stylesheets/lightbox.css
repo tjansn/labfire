@@ -16,8 +16,8 @@
   }
 
   &::backdrop {
-    -webkit-backdrop-filter: blur(66px);
-    backdrop-filter: blur(66px);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
   }
 }
 

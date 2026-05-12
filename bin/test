@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+app_root="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$app_root"
+
+# Local macOS/Nix needs libvips discoverable before ruby-vips is required.
+# FFI reads LD_LIBRARY_PATH itself on macOS; DYLD_* vars can be stripped by SIP
+# when binstubs execute through /usr/bin/env.
+if ! command -v ruby >/dev/null || ! ruby -e 'exit Gem::Version.new(RUBY_VERSION) >= Gem::Version.new("3.4.0") ? 0 : 1' 2>/dev/null; then
+  if command -v nix-shell >/dev/null; then
+    printf -v quoted_command "%q " "$0" "$@"
+    exec nix-shell -p ruby_3_4 pkg-config libyaml openssl xz sqlite vips ffmpeg --run "$quoted_command"
+  fi
+fi
+
+if command -v pkg-config >/dev/null && pkg-config --exists vips; then
+  vips_libdir="$(pkg-config --variable=libdir vips)"
+  export LD_LIBRARY_PATH="${vips_libdir}${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+elif command -v nix-shell >/dev/null && [ -z "${IN_NIX_SHELL:-}" ]; then
+  printf -v quoted_command "%q " "$0" "$@"
+  exec nix-shell -p ruby_3_4 pkg-config libyaml openssl xz sqlite vips ffmpeg --run "$quoted_command"
+fi
+
+if [ "$#" -gt 0 ]; then
+  exec bin/rails test "$@"
+fi
+
+bin/rails test
+bin/rails test:system
+env RAILS_ENV=test bin/rails db:seed:replant

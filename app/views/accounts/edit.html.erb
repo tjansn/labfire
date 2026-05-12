@@ -6,70 +6,98 @@
   </div>
 
   <% if Current.user.administrator? %>
-    <div class="flex align-center gap flex-item-justify-end">
-      <%= link_to account_bots_path, class: "btn", style: "view-transition-name: chat-bots" do %>
+    <div class="gl-settings-nav-actions flex align-center gap flex-item-justify-end">
+      <%= link_to account_bots_path, class: "btn gl-settings-nav-action", style: "view-transition-name: chat-bots" do %>
         <%= image_tag "bot.svg", aria: { hidden: "true" }, size: 20 %>
-        <span class="for-screen-reader">Set up chat bots</span>
+        <span>Bots</span>
       <% end %>
 
-      <%= link_to edit_account_custom_styles_path, class: "btn", style: "view-transition-name: custom-styles" do %>
+      <%= link_to edit_account_custom_styles_path, class: "btn gl-settings-nav-action", style: "view-transition-name: custom-styles" do %>
         <%= image_tag "art.svg", size: 20, aria: { hidden: "true" } %>
-        <span class="for-screen-reader">Custom styles</span>
+        <span>Custom styles</span>
       <% end %>
     </div>
   <% end %>
 <% end %>
 
-<section class="panel txt-align-center flex flex-column gap" style="view-transition-name: account-settings">
-  <% if Current.user.can_administer? %>
-    <div class="align-center center avatar__form gap" data-controller="upload-preview">
-      <%= form_with model: @account, method: :patch, class: "txt--medium", data: { controller: "form" } do |form| %>
-        <label class="btn input--file">
-          <%= image_tag "camera.svg", aria: { hidden: "true" }, size: 20 %>
-          <%= form.file_field :logo, class: "input", accept: "image/*",
-                data: { action: "upload-preview#previewImage change->form#submit" } %>
-          <span class="for-screen-reader">Upload logo</span>
-        </label>
-      <% end %>
-
-      <%= form_with model: @account, method: :patch, data: { controller: "form" } do |form| %>
-        <label class="btn avatar input--file account-logo txt-xx-large">
-          <%= image_tag fresh_account_logo_path, role: "presentation", size: 48, data: { upload_preview_target: "image" } %>
-          <%= form.file_field :logo, class: "input", accept: "image/*",
-                data: { action: "upload-preview#previewImage change->form#submit" } %>
-          <span class="for-screen-reader">Upload logo</span>
-        </label>
-      <% end %>
-
-      <% if @account.logo.attached? %>
-        <%= button_to fresh_account_logo_path, method: :delete, class: "btn btn--negative txt-small avatar__delete-btn" do %>
-          <%= image_tag "minus.svg", aria: { hidden: "true" }, size: 20 %>
-          <span class="for-screen-reader">Delete logo</span>
+<section class="gl-settings-page" style="view-transition-name: account-settings">
+  <header class="gl-settings-hero">
+    <div class="gl-settings-hero__media" data-controller="upload-preview">
+      <% if Current.user.can_administer? %>
+        <%= form_with model: @account, url: account_path, method: :patch, class: "gl-settings-logo-form", data: { controller: "form" } do |form| %>
+          <label class="btn avatar input--file account-logo gl-settings-logo">
+            <%= image_tag fresh_account_logo_path, role: "presentation", size: 72, data: { upload_preview_target: "image" } %>
+            <span class="gl-settings-logo__overlay" aria-hidden="true">
+              <%= image_tag "camera.svg", size: 18, aria: { hidden: "true" }, class: "colorize--black" %>
+            </span>
+            <%= form.file_field :logo, class: "input", accept: "image/*",
+                  data: { action: "upload-preview#previewImage change->form#submit" } %>
+            <span class="for-screen-reader">Upload logo</span>
+          </label>
         <% end %>
+
+        <% if @account.logo.attached? %>
+          <%= button_to fresh_account_logo_path, method: :delete, class: "btn btn--negative gl-settings-logo__delete", aria: { label: "Delete logo" } do %>
+            <%= image_tag "minus.svg", aria: { hidden: "true" }, size: 16 %>
+            <span class="for-screen-reader">Delete logo</span>
+          <% end %>
+        <% end %>
+      <% else %>
+        <%= account_logo_tag style: "txt-xx-large center gl-settings-logo" %>
       <% end %>
     </div>
 
-    <%= form_with model: @account, data: { controller: "form" }, class: "flex flex-column gap" do |form| %>
-      <div class="flex align-center gap">
+    <div class="gl-settings-hero__copy">
+      <p class="gl-kicker">Server settings</p>
+      <h1><%= @account.name %></h1>
+      <p>Manage your Campfire server identity, invitations, access rules, and people.</p>
+    </div>
+  </header>
+
+  <% if Current.user.can_administer? %>
+    <article class="gl-settings-card gl-settings-card--identity">
+      <header class="gl-settings-card__header">
+        <div>
+          <p class="gl-kicker">Identity</p>
+          <h2>Server details</h2>
+        </div>
+        <p>Name and present this server consistently across Campfire.</p>
+      </header>
+
+      <%= form_with model: @account, url: account_path, data: { controller: "form" }, class: "gl-settings-name-form" do |form| %>
         <%= translation_button(:account_name) %>
 
-        <label class="flex align-center gap flex-item-grow">
-          <%= form.text_field :name, class: "input txt-large", autocomplete: "off", placeholder: "Name this account", autofocus: true,
+        <label class="gl-settings-field flex-item-grow">
+          <span>Server name</span>
+          <%= form.text_field :name, class: "input", autocomplete: "off", placeholder: "Name this account", autofocus: true,
                 data: { action: "keydown.enter->form#submit" } %>
         </label>
 
-        <%= form.button class: "btn btn--reversed center", type: "submit" do %>
+        <%= form.button class: "btn btn--reversed gl-settings-submit", type: "submit" do %>
           <%= image_tag "check.svg", aria: { hidden: "true" }, size: 20 %>
-          <span class="for-screen-reader">Save changes</span>
+          <span>Save</span>
         <% end %>
-      </div>
-    <% end %>
+      <% end %>
+    </article>
 
-    <div class="margin-block-start pad-block pad-inline-double fill-shade border-radius">
-      <%= form_with model: @account, method: :put, data: { controller: "form" }, class: "flex align-center gap center" do |form| %>
-        <div class="flex-item-grow flex align-center gap txt-align-start">
-          <%= image_tag "crown.svg", class: "colorize--black", aria: { hidden: "true" }, size: 18 %> Must be admin to create new rooms
+    <article class="gl-settings-card gl-settings-card--access">
+      <header class="gl-settings-card__header">
+        <div>
+          <p class="gl-kicker">Access</p>
+          <h2>Room creation</h2>
         </div>
+        <p>Control who can create new shared rooms.</p>
+      </header>
+
+      <%= form_with model: @account, url: account_path, method: :put, data: { controller: "form" }, class: "gl-settings-toggle-row" do |form| %>
+        <div class="gl-settings-toggle-row__copy">
+          <%= image_tag "crown.svg", class: "colorize--black", aria: { hidden: "true" }, size: 18 %>
+          <div>
+            <strong>Require administrator approval</strong>
+            <span>Only admins can create new shared rooms.</span>
+          </div>
+        </div>
+
         <%= form.fields_for :settings, @account.settings do |settings_form| %>
           <%= settings_form.hidden_field :restrict_room_creation_to_administrators,
               value: !Current.account.settings.restrict_room_creation_to_administrators? %>
@@ -78,27 +106,38 @@
         <label class="switch">
           <input type="checkbox"
                 class="switch__input"
+                role="switch"
+                aria-label="Require administrator approval to create new rooms"
                 <%= "checked" if Current.account.settings.restrict_room_creation_to_administrators? %>
                 data-action="change->form#submit">
-          <span class="switch__btn round"></span>
-          <span class="for-screen-reader">
-            Must be admin to create new rooms
-          </span>
+          <span class="switch__btn round" aria-hidden="true"></span>
         </label>
-
       <% end %>
-    </div>
-  <% else %>
-    <%= account_logo_tag style: "txt-xx-large center" %>
-    <h1 class="flex-item-grow txt-x-large"><%= @account.name %></h1>
+    </article>
   <% end %>
 
-  <div class="margin-block pad-inline pad-block-start fill-shade border-radius">
+  <article id="invite" class="gl-settings-card gl-settings-card--invite">
+    <header class="gl-settings-card__header">
+      <div>
+        <p class="gl-kicker">Invite</p>
+        <h2>Bring people in</h2>
+      </div>
+      <p>Share this private join link with teammates you trust.</p>
+    </header>
+
     <%= render "accounts/invite" %>
+  </article>
 
-    <hr class="margin-block separator full-width" style="--border-style: solid">
+  <article class="gl-settings-card gl-settings-card--people">
+    <header class="gl-settings-card__header">
+      <div>
+        <p class="gl-kicker">People</p>
+        <h2>Members</h2>
+      </div>
+      <p><%= pluralize(@administrators.size + @members.size, "person") %> can access this server.</p>
+    </header>
 
-    <menu class="flex flex-column gap margin-none pad">
+    <menu class="gl-settings-people-list flex flex-column gap margin-none unpad">
       <turbo-frame id="account_users">
         <%= render partial: "accounts/users/user", collection: @administrators, as: :user %>
 
@@ -110,7 +149,7 @@
         <%= render "accounts/users/next_page_container", page: @page.next_param unless @page.last? %>
       </turbo-frame>
     </menu>
-  </div>
+  </article>
 </section>
 
 <% content_for :footer do %>
