@@ -9,7 +9,7 @@ class Users::AvatarsController < ApplicationController
     if stale?(etag: @user)
       expires_in 30.minutes, public: true, stale_while_revalidate: 1.week
 
-      if @user.avatar.attached?
+      if @user.avatar.attached? && @user.avatar.variable?
         avatar_variant = @user.avatar.variant(SQUARE_WEBP_VARIANT).processed
         send_webp_blob_file avatar_variant.key
       elsif @user.bot?

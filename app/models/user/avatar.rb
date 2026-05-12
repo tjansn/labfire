@@ -1,8 +1,10 @@
 module User::Avatar
   extend ActiveSupport::Concern
+  include RasterImageAttachmentValidation
 
   included do
     has_one_attached :avatar
+    validates_raster_image_attachment :avatar
   end
 
   class_methods do

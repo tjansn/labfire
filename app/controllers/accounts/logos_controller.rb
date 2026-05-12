@@ -10,13 +10,9 @@ class Accounts::LogosController < ApplicationController
     if stale?(etag: account || "account-logo-placeholder")
       expires_in 5.minutes, public: true, stale_while_revalidate: 1.week
 
-      if account&.logo&.attached?
-        if account.logo.variable?
-          logo = account.logo.variant(logo_variant).processed
-          send_png_file ActiveStorage::Blob.service.path_for(logo.key)
-        else
-          send_file ActiveStorage::Blob.service.path_for(account.logo.key), content_type: account.logo.content_type, disposition: :inline
-        end
+      if account&.logo&.attached? && account.logo.variable?
+        logo = account.logo.variant(logo_variant).processed
+        send_png_file ActiveStorage::Blob.service.path_for(logo.key)
       else
         send_placeholder_icon
       end

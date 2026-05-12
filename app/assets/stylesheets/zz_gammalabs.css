@@ -4545,6 +4545,7 @@ button:active:not(:disabled):not([aria-disabled="true"]) {
   border: 0 !important;
   box-shadow: none !important;
   color: var(--gl-text-primary);
+  display: block;
   font-size: 0.875rem;
   inline-size: min(14rem, 36vw);
   line-height: 1.35;

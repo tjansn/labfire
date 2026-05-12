@@ -40,6 +40,8 @@
 
 # Ignore production envs and deploy secrets
 /.env
+/config/deploy.local.yml
+/.kamal/deploy.yml
 /.kamal/secrets
 /.kamal/secrets-*
 /.kamal/secrets.*

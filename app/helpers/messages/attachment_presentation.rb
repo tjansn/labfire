@@ -15,7 +15,7 @@ class Messages::AttachmentPresentation
 
   private
     attr_reader :message, :context
-    delegate :tag, :link_to, :broadcast_image_tag, :rails_blob_path, :url_for, to: :context
+    delegate :tag, :link_to, :broadcast_image_tag, :rails_blob_path, :url_for, :uicon, to: :context
 
     def render_preview
       if message.attachment.video?

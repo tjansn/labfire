@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# This project deploys over SSH. On Tom's Macs, the deploy key lives in the
-# 1Password SSH agent, while the launchd-provided SSH_AUTH_SOCK may be empty.
-one_password_agent="$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
-if [ -S "$one_password_agent" ] && ! ssh-add -L >/dev/null 2>&1; then
-  export SSH_AUTH_SOCK="$one_password_agent"
+# Optional: point KAMAL_SSH_AUTH_SOCK at the SSH agent socket you want Kamal to use.
+# When unset or invalid, the existing SSH_AUTH_SOCK is left unchanged.
+if [ -n "${KAMAL_SSH_AUTH_SOCK:-}" ] && [ -S "$KAMAL_SSH_AUTH_SOCK" ]; then
+  export SSH_AUTH_SOCK="$KAMAL_SSH_AUTH_SOCK"
 fi
 
 if command -v nix >/dev/null 2>&1; then

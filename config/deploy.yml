@@ -1,59 +1,49 @@
-# Deploy Labfire to the Mac mini via Kamal.
-# Public ingress is expected to be Cloudflare Tunnel -> http://127.0.0.1:18080.
+# Generic Kamal deployment template for Labfire.
+# Copy this file to config/deploy.local.yml or adjust placeholders for your host.
 
-# Keep the existing Kamal service name to preserve the current deployment lineage.
-service: campfire
-image: tjansn/labfire
+service: labfire
+image: ghcr.io/YOUR_ORG/labfire
 
 servers:
   web:
     hosts:
-      - mini.tail148d59.ts.net
+      - YOUR_HOST
 
 ssh:
-  user: <%= ENV.fetch("KAMAL_SSH_USER", "mini") %>
+  user: <%= ENV.fetch("KAMAL_SSH_USER", "deploy") %>
 
 proxy:
-  host: gammalabs.cc
+  host: YOUR_DOMAIN
   app_port: 80
-  ssl: false
+  ssl: true
   forward_headers: true
   response_timeout: 300
   healthcheck:
     path: /up
     interval: 3
     timeout: 3
-  run:
-    # Cloudflare Tunnel should connect to this local-only listener.
-    http_port: 18080
-    https_port: 18443
-    bind_ips:
-      - 127.0.0.1
 
 registry:
   server: ghcr.io
-  username: <%= ENV.fetch("KAMAL_REGISTRY_USERNAME", "tjansn") %>
+  username: <%= ENV.fetch("KAMAL_REGISTRY_USERNAME") %>
   password:
     - KAMAL_REGISTRY_PASSWORD
 
 builder:
-  arch: arm64
+  arch: amd64
   context: .
   dockerfile: Dockerfile
   args:
-    OCI_SOURCE: https://github.com/tjansn/labfire
-    OCI_DESCRIPTION: Labfire is a gammalabs workspace for focused team chat.
+    OCI_SOURCE: https://github.com/YOUR_ORG/labfire
+    OCI_DESCRIPTION: Labfire is a focused team chat application.
     APP_VERSION: <%= `git rev-parse --short HEAD`.strip %>
     GIT_REVISION: <%= `git rev-parse HEAD`.strip %>
 
 volumes:
-  # Keep the existing Docker volume name so deployed data survives the rename.
-  - campfire_storage:/rails/storage
+  - labfire_storage:/rails/storage
 
 env:
   clear:
-    # Keep Rails in SSL-assuming mode behind Cloudflare TLS.
-    DISABLE_SSL: ""
     SKIP_TELEMETRY: "1"
     RAILS_LOG_LEVEL: info
     RAILS_MAX_THREADS: "5"
@@ -62,6 +52,7 @@ env:
     - SECRET_KEY_BASE
     - VAPID_PUBLIC_KEY
     - VAPID_PRIVATE_KEY
+    - VAPID_SUBJECT
 
 aliases:
   shell: app exec --interactive --reuse "bash"
