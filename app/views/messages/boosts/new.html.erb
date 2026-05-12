@@ -1,28 +1,30 @@
 <%= turbo_frame_tag dom_id(@message, :new_boost) do %>
-  <div class="boost flex-inline postion--relative max-width fill-white" style="--column-gap: var(--inline-space-half)">
-    <%= form_with model: [ @message, Boost.new ], class: "boost__form flex align-center gap expanded",
+  <div class="boost-composer">
+    <%= form_with model: [ @message, Boost.new ], class: "boost__form boost-composer__form flex align-center expanded",
           data: { controller: "form scroll-into-view", turbo_frame: dom_id(@message, :boosting), action: "keydown.esc->form#cancel" } do |form| %>
-      <label class="boost__form-label flex gap" style="--column-gap: 0.7ch;">
-        <figure class="avatar boost__avatar flex-item-no-shrink">
+      <label class="boost__form-label boost-composer__field flex align-center">
+        <figure class="avatar boost__avatar boost-composer__avatar flex-item-no-shrink">
           <%= avatar_tag Current.user %>
           <span class="for-screen-reader"><%= Current.user.name %></span>
         </figure>
 
         <span class="for-screen-reader">Add a boost</span>
         <%= form.text_field :content, id: nil, autofocus: true, autocomplete: "off", autocorrect: "off", maxlength: 16,
-              required: true, pattern: /\S+.*/, data: { boost_form_target: "input" }, class: "input input--boost txt-small",
-              aria: { label: "Boost text" } %>
+              required: true, pattern: /\S+.*/, data: { boost_form_target: "input" }, class: "input input--boost boost-composer__input txt-small",
+              placeholder: "Add a boost…", aria: { label: "Boost text" } %>
       </label>
 
-      <%= form.button class: "btn btn--reversed", type: "submit" do %>
-        <%= uicon "check" %>
-        <span class="for-screen-reader">Submit</span>
-      <% end %>
+      <div class="boost-composer__actions">
+        <%= form.button class: "btn boost-composer__submit", type: "submit" do %>
+          <%= uicon "check", size: 18 %>
+          <span class="for-screen-reader">Submit</span>
+        <% end %>
 
-      <%= link_to message_boosts_path(@message), data: { turbo_frame: dom_id(@message, :boosts), form_target: "cancel" }, class: "btn btn--negative" do %>
-        <%= uicon "minus" %>
-        <span class="for-screen-reader">Cancel</span>
-      <% end %>
+        <%= link_to message_boosts_path(@message), data: { turbo_frame: dom_id(@message, :boosting), form_target: "cancel" }, class: "btn boost-composer__cancel" do %>
+          <%= uicon "cancel", size: 18 %>
+          <span class="for-screen-reader">Cancel</span>
+        <% end %>
+      </div>
     <% end %>
   </div>
 <% end %>
