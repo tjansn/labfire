@@ -25,7 +25,7 @@ module RoomsHelper
   def button_to_delete_room(room, url: nil)
     button_to url || room_url(room), method: :delete, class: "btn btn--negative max-width", aria: { label: "Delete #{room.name}" },
         data: { turbo_confirm: "Are you sure you want to delete this room and all messages in it? This can’t be undone." } do
-      image_tag("trash.svg", aria: { hidden: "true" }, size: 20) +
+      uicon("trash", size: 20) +
       tag.span(room_display_name(room), class: "overflow-ellipsis")
     end
   end
@@ -35,14 +35,14 @@ module RoomsHelper
         class: "message-area__return-to-latest btn",
         data: { action: "messages#returnToLatest", messages_target: "latest" },
         hidden: true do
-      image_tag("arrow-down.svg", aria: { hidden: "true" }, size: 20) +
+      uicon("arrow-down", size: 20) +
       tag.span("Jump to newest message", class: "for-screen-reader")
     end
   end
 
   def submit_room_button_tag
     button_tag class: "btn btn--reversed txt-large center", type: "submit" do
-      image_tag("check.svg", aria: { hidden: "true" }, size: 20) +
+      uicon("check", size: 20) +
       tag.span("Save", class: "for-screen-reader")
     end
   end

@@ -3,7 +3,7 @@
     <summary class="btn">
       <%= image_tag "external/install.svg", aria: { hidden: "true" }, size: 20 %>
       <strong>Install Campfire as a web app.</strong>
-      <%= image_tag "disclosure.svg", aria: { hidden: "true" }, size: 10, class: "disclosure" %>
+      <%= uicon "disclosure", size: 10, class: "disclosure" %>
     </summary>
 
     <% case
@@ -14,12 +14,12 @@
         </ol>
       <% when platform.chrome? && platform.android? %>
         <ol>
-          <li>Tap the <em><%= image_tag "menu-dots-vertical.svg", alt: "More options", size: 16 %></em> menu button.</li>
+          <li>Tap the <em><%= uicon "menu-dots-vertical", alt: "More options", size: 16 %></em> menu button.</li>
           <li>Tap <em>Install app</em> in the menu.</li>
         </ol>
       <% when platform.firefox? && platform.android? %>
         <ol>
-          <li>Tap the <em><%= image_tag "menu-dots-vertical.svg", alt: "More options", size: 16 %></em> menu button.</li>
+          <li>Tap the <em><%= uicon "menu-dots-vertical", alt: "More options", size: 16 %></em> menu button.</li>
           <li>Tap <em>Install</em> in the menu.</li>
         </ol>
       <% when platform.safari? && platform.desktop? %>

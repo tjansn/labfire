@@ -18,7 +18,7 @@
               <span class="message__author" title="<%= message.creator.title %>">
                 <strong data-reply-target="author"><%= message.creator.name %></strong>
               </span>
-              <%= link_to message_timestamp(message, class: "message__timestamp"), room_at_message_path(message.room, message), target: "_top",
+              <%= link_to message_timestamp(message, style: :datetime, class: "message__timestamp tabular-nums"), room_at_message_path(message.room, message), target: "_top",
                     class: "message__permalink" %>
               <span class="message__room">
                 <%= link_to room_display_name(message.room, for_user: nil), room_at_message_path(message.room, message), target: "_top", data: { reply_target: "link" } %>

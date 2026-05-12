@@ -1,0 +1,52 @@
+<% view_transition = local_assigns.fetch(:view_transition, false) %>
+
+<%= link_to user_profile_path, class: "gl-topbar-menu__item gl-topbar-menu__item--profile", role: "menuitem" do %>
+  <%= image_tag fresh_user_avatar_path(Current.user), size: 32, aria: { hidden: "true" }, class: "gl-topbar-menu__avatar", style: ("view-transition-name: avatar-#{Current.user.id}" if view_transition) %>
+  <span class="gl-topbar-menu__profile-text">
+    <span class="gl-topbar-menu__profile-name"><%= Current.user.name %></span>
+    <span class="gl-topbar-menu__profile-label">Your profile</span>
+  </span>
+<% end %>
+
+<%= link_to edit_account_url(anchor: "invite"), class: "gl-topbar-menu__item", role: "menuitem" do %>
+  <span class="gl-topbar-menu__item-icon" aria-hidden="true">
+    <%= uicon "person-add", size: 18 %>
+  </span>
+  <span class="gl-topbar-menu__item-label">Invite to server</span>
+<% end %>
+
+<% if Current.user.administrator? %>
+  <%= link_to edit_account_path, class: "gl-topbar-menu__item", role: "menuitem", style: ("view-transition-name: account-settings" if view_transition) do %>
+    <span class="gl-topbar-menu__item-icon" aria-hidden="true">
+      <%= uicon "settings", size: 18 %>
+    </span>
+    <span class="gl-topbar-menu__item-label">Server settings</span>
+  <% end %>
+<% end %>
+
+<button type="button" class="gl-topbar-menu__item gl-topbar-menu__item--theme" role="menuitemcheckbox"
+    data-theme-target="toggle" data-action="theme#toggle" aria-checked="false">
+  <span class="gl-topbar-menu__item-icon" aria-hidden="true">
+    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
+  </span>
+  <span class="gl-topbar-menu__item-label">
+    <span data-theme-light>Switch to dark mode</span>
+    <span data-theme-dark>Switch to light mode</span>
+  </span>
+</button>
+
+<%= form_with url: session_path, method: :delete, data: { controller: "sessions" }, class: "gl-topbar-menu__form" do %>
+  <%= hidden_field_tag :push_subscription_endpoint, nil, id: nil, data: { sessions_target: "pushSubscriptionEndpoint" } %>
+  <button type="submit" class="gl-topbar-menu__item gl-topbar-menu__item--logout" role="menuitem" data-action="sessions#logout:prevent">
+    <span class="gl-topbar-menu__item-icon" aria-hidden="true">
+      <%= uicon "logout", size: 18 %>
+    </span>
+    <span class="gl-topbar-menu__item-label">Log out</span>
+  </button>
+<% end %>
+
+<div class="gl-topbar-menu__footer">
+  <span class="gl-badge--mono"><span class="gl-badge__dot"></span> live</span>
+  <span class="gl-clock"><span data-controller="live-clock">--:--</span></span>
+</div>

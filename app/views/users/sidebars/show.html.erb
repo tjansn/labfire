@@ -20,9 +20,13 @@
           aria-expanded="false"
           aria-controls="topbar_menu_panel"
           aria-label="Open account menu">
-        <%= image_tag "menu.svg", size: 18, alt: "", aria: { hidden: "true" }, class: "colorize--black" %>
+        <%= uicon "menu", size: 18 %>
         <span class="for-screen-reader">Open menu</span>
       </button>
+    </div>
+
+    <div class="gl-mobile-account-menu" role="menu" aria-label="Account menu">
+      <%= render "layouts/account_menu_items" %>
     </div>
 
     <details class="gl-app-nav-section gl-app-nav-section--directs" data-controller="details" open>
@@ -30,7 +34,7 @@
         <span>Personal messages</span>
 
         <%= link_to new_rooms_direct_path, class: "btn gl-app-nav__add", data: { turbo_frame: "direct_rooms_control", action: "click->details#open" }, aria: { label: "New personal message" } do %>
-          <%= image_tag "add.svg", size: 16, aria: { hidden: "true" }, class: "colorize--black" %>
+          <%= uicon "add", size: 16 %>
           <span class="for-screen-reader">New personal message</span>
         <% end %>
       </summary>
@@ -54,7 +58,7 @@
 
         <% if Current.user.administrator? || !Current.account.settings.restrict_room_creation_to_administrators? %>
           <%= link_to new_rooms_open_path, class: "btn gl-app-nav__add", data: { turbo_frame: "shared_rooms_control", action: "click->details#open" }, aria: { label: "New room" } do %>
-            <%= image_tag "add.svg", size: 16, aria: { hidden: "true" }, class: "colorize--black", style: "view-transition-name: new-room" %>
+            <%= uicon "add", size: 16, style: "view-transition-name: new-room" %>
             <span class="for-screen-reader">New room</span>
           <% end %>
         <% end %>

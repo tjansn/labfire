@@ -8,12 +8,12 @@
   <% if Current.user.administrator? %>
     <div class="gl-settings-nav-actions flex align-center gap flex-item-justify-end">
       <%= link_to account_bots_path, class: "btn gl-settings-nav-action", style: "view-transition-name: chat-bots" do %>
-        <%= image_tag "bot.svg", aria: { hidden: "true" }, size: 20 %>
+        <%= uicon "bot", size: 20 %>
         <span>Bots</span>
       <% end %>
 
       <%= link_to edit_account_custom_styles_path, class: "btn gl-settings-nav-action", style: "view-transition-name: custom-styles" do %>
-        <%= image_tag "art.svg", size: 20, aria: { hidden: "true" } %>
+        <%= uicon "art", size: 20 %>
         <span>Custom styles</span>
       <% end %>
     </div>
@@ -28,7 +28,7 @@
           <label class="btn avatar input--file account-logo gl-settings-logo">
             <%= image_tag fresh_account_logo_path, role: "presentation", size: 72, data: { upload_preview_target: "image" } %>
             <span class="gl-settings-logo__overlay" aria-hidden="true">
-              <%= image_tag "camera.svg", size: 18, aria: { hidden: "true" }, class: "colorize--black" %>
+              <%= uicon "camera", size: 18 %>
             </span>
             <%= form.file_field :logo, class: "input", accept: "image/*",
                   data: { action: "upload-preview#previewImage change->form#submit" } %>
@@ -38,7 +38,7 @@
 
         <% if @account.logo.attached? %>
           <%= button_to fresh_account_logo_path, method: :delete, class: "btn btn--negative gl-settings-logo__delete", aria: { label: "Delete logo" } do %>
-            <%= image_tag "minus.svg", aria: { hidden: "true" }, size: 16 %>
+            <%= uicon "minus", size: 16 %>
             <span class="for-screen-reader">Delete logo</span>
           <% end %>
         <% end %>
@@ -74,7 +74,7 @@
         </label>
 
         <%= form.button class: "btn btn--reversed gl-settings-submit", type: "submit" do %>
-          <%= image_tag "check.svg", aria: { hidden: "true" }, size: 20 %>
+          <%= uicon "check", size: 20 %>
           <span>Save</span>
         <% end %>
       <% end %>
@@ -91,7 +91,7 @@
 
       <%= form_with model: @account, url: account_path, method: :put, data: { controller: "form" }, class: "gl-settings-toggle-row" do |form| %>
         <div class="gl-settings-toggle-row__copy">
-          <%= image_tag "crown.svg", class: "colorize--black", aria: { hidden: "true" }, size: 18 %>
+          <%= uicon "crown", size: 18 %>
           <div>
             <strong>Require administrator approval</strong>
             <span>Only admins can create new shared rooms.</span>

@@ -279,12 +279,23 @@ body h3,
   filter: none;
 }
 
-:where(button, input, textarea, summary, .input, .btn):where(:not(:active)):focus-visible,
-:where(.input--actor):focus-within,
+:where(button, summary, .btn, input:not(.input):not([type="hidden"]), textarea:not(.input), select:not(.input)):where(:not(:active)):focus-visible,
 .switch:focus-within .switch__btn {
   outline: 2px solid var(--gl-action-focus-ring);
   outline-offset: 2px;
   box-shadow: none;
+}
+
+/* Field shells self-manage their focus signal via border colour; keep this
+   extra hard stop for the composer’s rich-text descendants. */
+.composer .input--actor,
+.composer .input--actor:focus-within,
+.composer .input--actor:focus-visible,
+.composer .input--actor *:focus,
+.composer .input--actor *:focus-visible,
+.composer .input--actor *:active {
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 .colorize--black,
@@ -823,7 +834,7 @@ body h3,
   transform: translateY(1px);
 }
 
-.btn:where(:has(.for-screen-reader):has(img, figure)) {
+.btn:where(:has(.for-screen-reader):has(img, figure, .fi)) {
   --btn-border-radius: var(--gl-radius-sm);
   --btn-padding: 0;
 }
@@ -854,11 +865,12 @@ body h3,
 /* Inputs, panels, dialogs */
 .input,
 .input--actor {
-  --input-background: var(--gl-surface-card);
-  --input-border-color: color-mix(in srgb, var(--gl-color-midtone) 22%, transparent);
-  --input-border-radius: var(--gl-radius-md);
+  --input-background: var(--aurora-input-bg, var(--gl-surface-card));
+  --input-border-color: var(--aurora-input-border, color-mix(in srgb, var(--gl-color-midtone) 22%, transparent));
+  --input-border-radius: var(--gl-radius-lg);
   --input-color: var(--gl-text-primary);
-  --input-padding: var(--gl-space-3) var(--gl-space-4);
+  --input-focus-border-color: var(--aurora-input-border-focus, color-mix(in srgb, var(--gl-color-midtone) 55%, transparent));
+  --input-padding: var(--gl-space-2) var(--gl-space-3);
 
   background-color: var(--input-background);
   border: 1px solid var(--input-border-color);
@@ -866,12 +878,14 @@ body h3,
   box-shadow: none;
   color: var(--input-color);
   font-family: var(--gl-font-sans);
-  transition: border-color 160ms ease;
+  min-block-size: var(--gl-space-12);
+  padding: var(--input-padding);
+  transition: background-color 160ms ease, border-color 160ms ease;
 }
 
 .input:where(:not(:active)):focus,
 .input--actor:focus-within {
-  --input-border-color: color-mix(in srgb, var(--gl-color-midtone) 55%, transparent);
+  --input-border-color: var(--input-focus-border-color);
   --hover-size: 0;
   border-color: var(--input-border-color);
   box-shadow: none;
@@ -880,23 +894,36 @@ body h3,
 
 .input:focus-visible,
 .input--actor:focus-within:has(:focus-visible) {
-  outline: 2px solid var(--gl-action-focus-ring);
-  outline-offset: 2px;
+  outline: none;
+  box-shadow: none;
 }
 
-.dark .input,
-.dark .input--actor {
-  --input-background: color-mix(in srgb, var(--gl-color-porcelain) 4%, transparent);
-  --input-border-color: color-mix(in srgb, var(--gl-color-porcelain) 18%, transparent);
+.input::placeholder,
+trix-editor.input[placeholder]:empty::before,
+.input trix-editor[placeholder]:empty::before {
+  color: var(--gl-text-secondary);
+  opacity: 0.75;
 }
 
-.dark .input:where(:not(:active)):focus,
-.dark .input--actor:focus-within {
-  --input-border-color: color-mix(in srgb, var(--gl-color-porcelain) 42%, transparent);
-}
+.input--actor :where(.input, trix-editor) {
+  --input-background: transparent;
+  --input-border-color: transparent;
+  --input-padding: var(--gl-space-1) 0;
 
-.input--actor .input {
   background: transparent;
+  border: 0;
+  box-shadow: none;
+  min-block-size: var(--gl-space-8);
+  padding: var(--input-padding);
+}
+
+.input--actor :where(.input, trix-editor):where(:focus, :focus-visible) {
+  outline: none;
+  box-shadow: none;
+}
+
+.input--file input[type="file"] {
+  min-block-size: 0;
 }
 
 fieldset {
@@ -1531,8 +1558,6 @@ body:not(.sidebar) #main-content {
 }
 
 .btn,
-.input,
-.input--actor,
 .message__body-content,
 .avatar,
 .avatar img,
@@ -1588,7 +1613,7 @@ body.sidebar {
 
 .gl-sidebar-brand__name {
   color: var(--gl-text-primary);
-  font-size: 0.95rem;
+  font-size: 1.365625rem;
   font-weight: 650;
   letter-spacing: -0.015em;
 }
@@ -2126,7 +2151,7 @@ body:not(.sidebar) .sidebar__toggle {
 }
 
 .gl-sidebar-inline-form .input {
-  min-block-size: var(--gl-space-10);
+  min-block-size: var(--gl-space-12);
 }
 
 .sidebar .sidebar__tools {
@@ -2199,8 +2224,8 @@ body:not(.sidebar) .sidebar__toggle {
 }
 
 .gl-direct-new-autocomplete {
-  --input-background: var(--gl-surface-card);
-  --input-border-color: var(--gl-card-border-color);
+  --input-background: var(--aurora-input-bg);
+  --input-border-color: var(--aurora-input-border);
   max-inline-size: none;
   min-block-size: var(--gl-space-12);
 }
@@ -2389,8 +2414,8 @@ body:not(.sidebar) .sidebar__toggle {
 
 .gl-settings-field .input,
 .gl-invite-input {
-  --input-background: var(--gl-surface-card);
-  --input-border-color: var(--gl-card-border-color);
+  --input-background: var(--aurora-input-bg);
+  --input-border-color: var(--aurora-input-border);
 }
 
 .gl-settings-submit {
@@ -2445,7 +2470,7 @@ body:not(.sidebar) .sidebar__toggle {
   align-items: center;
   display: flex;
   gap: var(--gl-space-2);
-  min-block-size: var(--gl-space-10);
+  min-block-size: var(--gl-space-12);
 }
 
 .gl-invite-actions,
@@ -2587,9 +2612,9 @@ body:not(.sidebar) .sidebar__toggle {
   }
 }
 
-img[src*=".svg"]:not(.gl-logo):not(.avatar):not(.message__attachment),
-img.colorize--black,
-img.color-icon {
+img[src*=".svg"]:not(.gl-logo):not(.avatar):not(.message__attachment):not(.btn--reversed *):not(.btn--negative *),
+img.colorize--black:not(.btn--reversed *):not(.btn--negative *),
+img.color-icon:not(.btn--reversed *):not(.btn--negative *) {
   filter: var(--gl-icon-filter) !important;
 }
 
@@ -2685,8 +2710,8 @@ img.avatar,
 }
 
 /* Minimal icon controls based on the topbar meta treatment. */
-.btn:where(:has(> .for-screen-reader):has(> img)):not(.btn--reversed):not(.btn--negative):not(.avatar),
-.btn:where([aria-label]:has(> img)):not(.btn--reversed):not(.btn--negative):not(.avatar),
+.btn:where(:has(> .for-screen-reader):has(> :is(img, .fi))):not(.btn--reversed):not(.btn--negative):not(.avatar),
+.btn:where([aria-label]:has(> :is(img, .fi))):not(.btn--reversed):not(.btn--negative):not(.avatar),
 .message__action-btn,
 .gl-settings-icon-btn,
 .gl-sidebar-brand__settings,
@@ -2711,8 +2736,8 @@ img.avatar,
   transform: none;
 }
 
-.btn:where(:has(> .for-screen-reader):has(> img)):not(.btn--reversed):not(.btn--negative):not(.avatar):where(:not(:active):hover),
-.btn:where([aria-label]:has(> img)):not(.btn--reversed):not(.btn--negative):not(.avatar):where(:not(:active):hover),
+.btn:where(:has(> .for-screen-reader):has(> :is(img, .fi))):not(.btn--reversed):not(.btn--negative):not(.avatar):where(:not(:active):hover),
+.btn:where([aria-label]:has(> :is(img, .fi))):not(.btn--reversed):not(.btn--negative):not(.avatar):where(:not(:active):hover),
 .message__action-btn:where(:not(:active):hover),
 .gl-settings-icon-btn:where(:not(:active):hover),
 .gl-sidebar-brand__settings:where(:not(:active):hover),
@@ -2735,7 +2760,7 @@ img.avatar,
   --btn-size: var(--gl-space-7);
 }
 
-#nav .btn:where(:has(> .for-screen-reader):has(> img)):not(.room--current):not(.btn--reversed):not(.btn--negative),
+#nav .btn:where(:has(> .for-screen-reader):has(> :is(img, .fi))):not(.room--current):not(.btn--reversed):not(.btn--negative),
 .button_to_change_notifying .btn {
   --btn-size: var(--gl-space-8);
 }
@@ -2756,7 +2781,7 @@ img.avatar,
 .gl-sidebar-brand__settings,
 .sidebar__toggle,
 .message-area__return-to-latest,
-#nav .btn:where(:has(> .for-screen-reader):has(> img)):not(.room--current):not(.btn--reversed):not(.btn--negative),
+#nav .btn:where(:has(> .for-screen-reader):has(> :is(img, .fi))):not(.room--current):not(.btn--reversed):not(.btn--negative),
 .button_to_change_notifying .btn,
 .dialog__close,
 .gl-app-nav__add,
@@ -2772,7 +2797,7 @@ img.avatar,
 .gl-sidebar-brand__settings:where(:not(:active):hover),
 .sidebar__toggle:where(:not(:active):hover),
 .message-area__return-to-latest:where(:not(:active):hover),
-#nav .btn:where(:has(> .for-screen-reader):has(> img)):not(.room--current):not(.btn--reversed):not(.btn--negative):where(:not(:active):hover),
+#nav .btn:where(:has(> .for-screen-reader):has(> :is(img, .fi))):not(.room--current):not(.btn--reversed):not(.btn--negative):where(:not(:active):hover),
 .button_to_change_notifying .btn:where(:not(:active):hover),
 .dialog__close:where(:not(:active):hover),
 .gl-app-nav__add:where(:not(:active):hover),
@@ -2809,12 +2834,14 @@ img.avatar,
 }
 
 .gl-sidebar-brand__logo {
+  --sidebar-brand-logo-size: calc(var(--gl-space-7) * 1.625);
+
   background: var(--gl-surface-section);
-  block-size: var(--gl-space-7);
+  block-size: var(--sidebar-brand-logo-size);
   border: 1px solid color-mix(in srgb, var(--gl-card-border-color) 80%, transparent);
   border-radius: var(--gl-radius-sm);
-  flex: 0 0 var(--gl-space-7);
-  inline-size: var(--gl-space-7);
+  flex: 0 0 var(--sidebar-brand-logo-size);
+  inline-size: var(--sidebar-brand-logo-size);
   object-fit: cover;
 }
 
@@ -2855,6 +2882,37 @@ img.avatar,
 .gl-sidebar-brand__menu img {
   block-size: var(--gl-space-5);
   inline-size: var(--gl-space-5);
+}
+
+.gl-mobile-account-menu {
+  display: none;
+}
+
+@media (max-width: 100ch) {
+  .gl-sidebar-brand__menu {
+    display: none;
+  }
+
+  .gl-mobile-account-menu {
+    background: var(--gl-color-porcelain);
+    border: 1px solid var(--gl-card-border-color);
+    border-radius: var(--gl-radius-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--gl-space-1);
+    margin: 0 var(--gl-space-2) var(--gl-space-4);
+    padding: var(--gl-space-2);
+  }
+
+  .dark .gl-mobile-account-menu {
+    background: color-mix(in srgb, var(--gl-color-midnight) 96%, var(--gl-color-porcelain) 4%);
+    border-color: color-mix(in srgb, var(--gl-color-porcelain) 12%, transparent);
+  }
+
+  #sidebar.menu-open .gl-topbar-menu__scrim,
+  #sidebar.menu-open .gl-topbar-menu__panel {
+    display: none !important;
+  }
 }
 
 /* The topbar burger remains the mobile drawer opener only. */
@@ -3557,13 +3615,14 @@ body:not(.sidebar) .sidebar__toggle {
   --input-background: var(--aurora-input-bg);
   --input-border-color: var(--aurora-input-border);
   --input-border-radius: var(--gl-radius-lg) !important;
-  align-items: stretch;
+  align-items: center;
   background: var(--aurora-input-bg) !important;
   border: 1px solid var(--aurora-input-border) !important;
   border-radius: var(--gl-radius-lg) !important;
   box-shadow: none !important;
+  column-gap: var(--gl-space-2);
   min-block-size: var(--gl-space-12);
-  padding: var(--gl-space-2) var(--gl-space-3);
+  padding: var(--gl-space-1) var(--gl-space-2);
   transition: border-color 160ms ease;
 }
 
@@ -3578,17 +3637,31 @@ body:not(.sidebar) .sidebar__toggle {
   background: transparent;
   border: 0;
   box-shadow: none;
+  min-block-size: var(--gl-space-8);
+  padding: var(--gl-space-1) 0;
 }
 
+/* No inner outline on the trix editor or its inputs — the composer card
+   already shifts its border on focus-within, which is the focus indicator. */
+.composer__input.input--actor .input,
+.composer__input.input--actor .input:focus,
 .composer__input.input--actor .input:focus-visible,
+.composer__input.input--actor trix-editor,
+.composer__input.input--actor trix-editor:focus,
 .composer__input.input--actor trix-editor:focus-visible {
-  outline: 2px solid var(--gl-action-focus-ring);
-  outline-offset: 2px;
+  outline: none !important;
+  box-shadow: none !important;
 }
 
-.composer__input-hint {
+.composer__input-text {
+  align-self: stretch;
+  justify-content: center;
+}
+
+.composer__input trix-editor::placeholder,
+.composer__input trix-editor[placeholder]:empty::before {
   color: var(--gl-text-secondary);
-  opacity: 0.55;
+  opacity: 0.75;
 }
 
 .composer__attachment-btn,
@@ -3596,23 +3669,43 @@ body:not(.sidebar) .sidebar__toggle {
 .composer__context-btn {
   --btn-background: transparent;
   --btn-border-color: transparent;
+  align-self: center;
   color: var(--gl-text-secondary);
+}
+
+.composer__attachment-btn {
+  margin-inline-start: var(--gl-space-1);
 }
 
 .composer__attachment-btn:where(:not(:active):hover),
 .composer__rich-text-btn:where(:not(:active):hover),
 .composer__context-btn:where(:not(:active):hover) {
+  background: color-mix(in srgb, var(--gl-surface-section) 55%, transparent);
   color: var(--gl-text-primary);
 }
 
-/* Send button — small accent square. The only filled use of warm-red in the region. */
+.dark .composer__attachment-btn:where(:not(:active):hover),
+.dark .composer__rich-text-btn:where(:not(:active):hover),
+.dark .composer__context-btn:where(:not(:active):hover) {
+  background: color-mix(in srgb, var(--gl-color-porcelain) 8%, transparent);
+}
+
+/* Tabular numbers utility — for timestamps, clocks, counts. */
+.tabular-nums {
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+}
+
+/* Send button — square accent inset flush in the composer bar.
+   Sized to fit inside the 48px bar (with 4px padding), with a radius that
+   echoes the bar's outer radius minus the padding. */
 .composer .btn.btn--reversed[type="submit"],
 .composer .btn--reversed[name="send"] {
   --btn-background: var(--gl-action-primary-bg);
   --btn-border-color: var(--gl-action-primary-bg);
   --btn-color: var(--gl-action-primary-text);
   align-items: center;
-  align-self: end;
+  align-self: center;
   background: var(--gl-action-primary-bg) !important;
   border: 0 !important;
   border-radius: var(--gl-radius-md) !important;
@@ -3620,8 +3713,8 @@ body:not(.sidebar) .sidebar__toggle {
   display: inline-flex;
   justify-content: center;
   inline-size: var(--gl-space-10);
-  block-size: var(--gl-space-8);
-  min-block-size: var(--gl-space-8);
+  block-size: var(--gl-space-10);
+  min-block-size: var(--gl-space-10);
   min-inline-size: var(--gl-space-10);
   padding: 0;
   transition: filter 140ms ease;
@@ -3629,7 +3722,14 @@ body:not(.sidebar) .sidebar__toggle {
 
 .composer .btn.btn--reversed[type="submit"] img,
 .composer .btn--reversed[name="send"] img {
-  filter: invert(100%);
+  filter: var(--gl-icon-on-accent-filter) !important;
+}
+
+/* Pull the send button in from the right edge so it isn't flush against the
+   input field. Overrides the -0.7em hugging margin from .input--actor's
+   :last-child rule (inputs.css). */
+.composer .composer__input.input--actor .composer__send-btn {
+  margin-inline-end: var(--gl-space-1) !important;
 }
 
 .composer .btn.btn--reversed[type="submit"]:where(:not(:active):hover),
@@ -3785,6 +3885,19 @@ body:not(.sidebar) .sidebar__toggle {
   object-fit: cover;
 }
 
+/* Reaction emoji — bumped from the boosts.css 0.55rem default and snugged
+   up to the reactor avatar (tightens the .gap utility's column-gap). */
+.boost.boost-item {
+  --column-gap: 2px;
+}
+
+.boost.boost-item .boost__content,
+.boost .btn.boost__content {
+  font-size: 1.05rem;
+  line-height: 1;
+  padding-inline: var(--gl-space-1);
+}
+
 .message__meta .message__actions {
   position: static;
   transform: none;
@@ -3910,6 +4023,7 @@ body:not(.sidebar) .sidebar__toggle {
 .switch {
   align-items: center;
   block-size: auto;
+  cursor: pointer;
   display: inline-flex;
   gap: var(--gl-space-2);
   min-block-size: var(--touch-target, 2.75rem);
@@ -3918,11 +4032,49 @@ body:not(.sidebar) .sidebar__toggle {
   position: relative;
 }
 
-.switch__btn {
-  block-size: 1.75em;
-  inline-size: 3em;
+.switch__input {
+  block-size: 1px;
+  inline-size: 1px;
+  opacity: 0;
+  position: absolute;
+}
+
+.switch__btn,
+.switch__btn.round {
+  background: var(--gl-border-tone);
+  block-size: 1.625rem !important;
+  border-radius: 999px !important;
+  cursor: pointer;
+  display: block;
+  flex: 0 0 3rem;
+  inline-size: 3rem !important;
   inset: auto;
   position: relative;
+  transition: background-color 160ms ease;
+}
+
+.switch__btn::before,
+.switch__btn.round::before {
+  background: var(--gl-surface-card);
+  block-size: 1.25rem;
+  border-radius: 50%;
+  content: "";
+  inline-size: 1.25rem;
+  inset-block-start: 0.1875rem;
+  inset-inline-start: 0.1875rem;
+  position: absolute;
+  transform: translateX(0);
+  transition: transform 160ms var(--gl-ease-out), background-color 160ms ease;
+}
+
+.switch__input:checked + .switch__btn,
+.switch__input:checked + .switch__btn.round {
+  background: var(--gl-action-primary-bg);
+}
+
+.switch__input:checked + .switch__btn::before,
+.switch__input:checked + .switch__btn.round::before {
+  transform: translateX(1.375rem);
 }
 
 /* =========================================================================
@@ -3937,10 +4089,6 @@ body:not(.sidebar) .sidebar__toggle {
   .gl-sidebar-brand__menu,
   .gl-app-nav__add,
   .sidebar__toggle,
-  .composer .btn,
-  .composer__attachment-btn,
-  .composer__rich-text-btn,
-  .composer__context-btn,
   .message__options-btn,
   .message__action-btn,
   .boost__action,
@@ -3953,33 +4101,42 @@ body:not(.sidebar) .sidebar__toggle {
   min-inline-size: var(--touch-target);
 }
 
-/* Send button is icon-only and needs explicit centering when bumped to 44px. */
-.composer .btn.btn--reversed[type="submit"],
-.composer .btn--reversed[name="send"] {
-  block-size: var(--touch-target) !important;
-  min-block-size: var(--touch-target) !important;
-  min-inline-size: var(--touch-target) !important;
+/* Composer icon controls — sized to fit inside the bar; tappability comes from
+   the surrounding 48px bar itself. */
+.composer .composer__attachment-btn,
+.composer .composer__rich-text-btn,
+.composer__context-btn {
+  align-self: center;
+  block-size: var(--gl-space-10);
+  border-radius: var(--gl-radius-md);
+  inline-size: var(--gl-space-10);
+  min-block-size: var(--gl-space-10);
+  min-inline-size: var(--gl-space-10);
+  padding: 0;
 }
+
+/* Send button uses its own sizing (gl-space-10 = 40px square) so it sits flush
+   inside the composer bar. Tappability comes from the surrounding bar height. */
 
 @media (max-width: 46rem) {
   .composer .btn.btn--reversed[type="submit"],
   .composer .btn--reversed[name="send"] {
-    inline-size: var(--touch-target) !important;
+    inline-size: var(--gl-space-10) !important;
   }
 }
 
 /* =========================================================================
-   Global focus-visible — survives element-specific `outline: none` overrides.
-   Mouse clicks stay quiet; keyboard navigation gets a clearly visible ring.
+   Global focus-visible — non-field controls get a visible keyboard ring.
+   Input fields use their own focus border so the composer treatment is global.
    ========================================================================= */
 :where(a, button, summary, [role="button"], [role="menuitem"], [role="menuitemcheckbox"],
-       input:not([type="hidden"]), select, textarea, [tabindex]):focus-visible {
+       input:not([type="hidden"]):not(.input), select:not(.input), textarea:not(.input), [tabindex]:not(.input)):focus-visible {
   outline: 2px solid var(--gl-action-focus-ring);
   outline-offset: 2px;
   border-radius: var(--gl-radius-sm);
 }
 
-:where(.message__body-content, .composer__input.input--actor):focus-within:has(:focus-visible) {
+:where(.message__body-content):focus-within:has(:focus-visible) {
   outline: 2px solid var(--gl-action-focus-ring);
   outline-offset: 2px;
 }
@@ -3999,6 +4156,139 @@ body:not(.sidebar) .sidebar__toggle {
    App shell isolation + safe-area insets + scroll-margin for sticky chrome.
    ========================================================================= */
 body { isolation: isolate; }
+
+.message-area__return-to-latest {
+  --btn-background: color-mix(in srgb, var(--gl-surface-card) 94%, transparent);
+  --btn-border-color: var(--gl-card-border-color);
+  animation: none !important;
+  background: var(--btn-background) !important;
+  border-color: var(--btn-border-color) !important;
+  box-shadow: none !important;
+  inset-block-end: calc(var(--footer-height) + var(--gl-space-12)) !important;
+  inset-inline-end: max(var(--aurora-row-gutter, var(--gl-space-4)), env(safe-area-inset-right)) !important;
+  inset-inline-start: auto !important;
+  outline: 0 !important;
+  position: fixed !important;
+  z-index: 65;
+}
+
+.message-area__return-to-latest:where(:not(:active):hover) {
+  --btn-background: var(--gl-surface-section);
+  --btn-border-color: var(--gl-card-border-color);
+  background: var(--btn-background) !important;
+  border-color: var(--btn-border-color) !important;
+}
+
+body.sidebar #nav,
+body.sidebar #nav.gl-app-topbar {
+  inset-inline: var(--sidebar-width) 0 !important;
+  margin-inline: 0 !important;
+}
+
+body.sidebar #nav:has(.room--current) {
+  margin-inline-start: 0 !important;
+}
+
+#nav .room--current {
+  align-items: center;
+  aspect-ratio: auto;
+  block-size: auto;
+  display: inline-flex;
+  gap: var(--gl-space-2);
+  inline-size: auto;
+  margin-inline-start: 0 !important;
+  min-inline-size: 0;
+}
+
+#nav .room--current .room__contents {
+  min-inline-size: 0;
+}
+
+.room-nav-avatar {
+  --avatar-border-radius: 50%;
+  --avatar-size: var(--gl-space-8);
+  block-size: var(--gl-space-8);
+  border-radius: 50%;
+  flex: 0 0 var(--gl-space-8);
+  inline-size: var(--gl-space-8);
+  overflow: hidden;
+}
+
+/* Direct chat topbar — list each person as avatar + name. */
+.room--current--direct {
+  align-items: center;
+  column-gap: var(--gl-space-2);
+}
+
+.room--current--direct .room--current__title {
+  align-items: center;
+  color: var(--gl-text-primary);
+  display: flex;
+  font-family: var(--gl-font-display);
+  font-size: clamp(1rem, 1.6vw, 1.25rem);
+  font-weight: 600;
+  gap: var(--gl-space-1);
+  letter-spacing: -0.012em;
+  line-height: 1.15;
+  margin: 0;
+  max-inline-size: min(48vw, 54ch);
+  min-inline-size: 0;
+}
+
+.room--current__person {
+  align-items: center;
+  display: inline-flex;
+  flex: 0 1 auto;
+  gap: var(--gl-space-2);
+  min-inline-size: 0;
+}
+
+.room--current__person-name {
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.room--current__separator {
+  color: var(--gl-text-secondary);
+  flex: 0 0 auto;
+  margin-inline-end: var(--gl-space-1);
+}
+
+@media (max-width: 46rem) {
+  .room--current--direct .room--current__title {
+    max-inline-size: 42vw;
+  }
+}
+
+.room-nav-avatar img {
+  block-size: 100%;
+  border-radius: 50%;
+  inline-size: 100%;
+  object-fit: cover;
+}
+
+.room-nav-avatar--group {
+  display: grid;
+  gap: 2px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+}
+
+.room-nav-avatar--group .avatar,
+.room-nav-avatar--group .avatar img {
+  --avatar-border-radius: 50%;
+  --avatar-size: calc((var(--gl-space-8) - 2px) / 2);
+  block-size: var(--avatar-size);
+  border-radius: 50%;
+  inline-size: var(--avatar-size);
+  margin: 0 !important;
+}
+
+.room-nav-avatar--group .avatar {
+  overflow: hidden;
+}
 
 #nav,
 #nav.gl-app-topbar {
@@ -4036,4 +4326,57 @@ button:active:not(:disabled):not([aria-disabled="true"]) {
 @media (prefers-reduced-motion: reduce) {
   .btn:active,
   button:active { transform: none; }
+}
+
+/* =========================================================================
+   Composer — quiet focus. The card border shifts on :focus-within; no inner
+   rings, no warm-red outlines on the icon controls or the editor.
+   ========================================================================= */
+.composer .composer__attachment-btn,
+.composer .composer__attachment-btn:focus,
+.composer .composer__attachment-btn:focus-visible,
+.composer .composer__attachment-btn:active,
+.composer .composer__rich-text-btn,
+.composer .composer__rich-text-btn:focus,
+.composer .composer__rich-text-btn:focus-visible,
+.composer .composer__rich-text-btn:active,
+.composer .composer__send-btn,
+.composer .composer__send-btn:focus,
+.composer .composer__send-btn:focus-visible,
+.composer .composer__send-btn:active,
+.composer .composer__send-btn[type="submit"]:focus,
+.composer .composer__send-btn[type="submit"]:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Keyboard focus on composer icon buttons: subtle border tint, no warm-red ring. */
+.composer .composer__attachment-btn:focus-visible,
+.composer .composer__rich-text-btn:focus-visible {
+  background: color-mix(in srgb, var(--gl-surface-section) 65%, transparent) !important;
+}
+
+.dark .composer .composer__attachment-btn:focus-visible,
+.dark .composer .composer__rich-text-btn:focus-visible {
+  background: color-mix(in srgb, var(--gl-color-porcelain) 10%, transparent) !important;
+}
+
+/* Keyboard focus on the send button: brighten, no outline. */
+.composer .composer__send-btn:focus-visible {
+  filter: brightness(1.08) !important;
+}
+
+/* Attachment label is icon-only — strip the border/background it picks up
+   from the generic icon-button helper (line ~2699) so the file-picker
+   shows just the glyph in every state. */
+.composer .composer__attachment-btn,
+.composer .composer__attachment-btn:hover,
+.composer .composer__attachment-btn:focus,
+.composer .composer__attachment-btn:focus-within,
+.composer .composer__attachment-btn:focus-visible,
+.composer .composer__attachment-btn:active {
+  --btn-border-color: transparent !important;
+  --btn-background: transparent !important;
+  background: transparent !important;
+  border-color: transparent !important;
 }

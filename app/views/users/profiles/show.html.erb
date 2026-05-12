@@ -10,7 +10,7 @@
       <%= hidden_field_tag :push_subscription_endpoint, nil, data: { sessions_target: "pushSubscriptionEndpoint" } %>
 
       <button class="btn" data-action="sessions#logout:prevent">
-        <%= image_tag "logout.svg", aria: { hidden: "true" } %>
+        <%= uicon "logout" %>
         <span class="for-screen-reader">Log out</span>
       </button>
     <% end %>
@@ -23,7 +23,7 @@
   <div class="align-center center avatar__form gap" data-controller="upload-preview">
     <%= profile_form_with @user, class:"txt-medium" do |form| %>
       <label class="btn input--file">
-        <%= image_tag "camera.svg", aria: { hidden: "true" }, size: 20 %>
+        <%= uicon "camera", size: 20 %>
         <%= form.file_field :avatar, id: "file", class: "input", accept: "image/*",
             data: { upload_preview_target: "input", action: "upload-preview#previewImage change->form#submit" } %>
         <span class="for-screen-reader">Upload avatar</span>
@@ -41,7 +41,7 @@
 
     <% if @user.avatar.attached? %>
       <%= button_to user_avatar_path(@user), method: :delete, class: "btn btn--negative txt-small avatar__delete-btn" do %>
-        <%= image_tag "minus.svg", aria: { hidden: "true" }, size: 20 %>
+        <%= uicon "minus", size: 20 %>
         <span class="for-screen-reader">Delete avatar</span>
       <% end %>
     <% end %>
@@ -55,7 +55,7 @@
         <label class="flex align-center gap flex-item-grow input input--actor">
           <%= form.text_field :name, class: "input txt-large ", autocomplete: "name", placeholder: "Enter your name",
                 autofocus: true, required: true,  data: { "1p-ignore": true } %>
-          <%= image_tag "person.svg", aria: { hidden: "true" }, size: 24, class: "colorize--black" %>
+          <%= uicon "person", size: 24 %>
         </label>
       </div>
 
@@ -65,7 +65,7 @@
         <label class="flex align-center gap flex-item-grow input input--actor">
           <%= form.email_field :email_address, class: "input txt-large", value: @user.email_address, autocomplete: "username",
                 placeholder: "Enter your email address", required: false %>
-          <%= image_tag "email.svg", aria: { hidden: "true" }, size: 24, class: "colorize--black" %>
+          <%= uicon "email", size: 24 %>
         </label>
       </div>
 
@@ -75,7 +75,7 @@
         <label class="flex align-center gap flex-item-grow input input--actor">
           <%= form.password_field :password, class: "input txt-large", autocomplete: "new-password", placeholder: "Change password",
                 required: false, maxlength: 72 %>
-          <%= image_tag "password.svg", aria: { hidden: "true" }, size: 24, class: "colorize--black" %>
+          <%= uicon "password", size: 24 %>
         </label>
       </div>
 
@@ -85,7 +85,7 @@
         <label class="flex align--center gap flex-item--grow input input--actor">
           <%= form.text_area :bio, class: "input txt-large", placeholder: "A few words about yourself…", maxlength: 200,
                 rows: 3, required: false %>
-          <%= image_tag "bio.svg", aria: { hidden: "true" }, size: 24, class: "colorize--black" %>
+          <%= uicon "bio", size: 24 %>
         </label>
       </div>
 
@@ -110,7 +110,7 @@
   <% if Rails.env.development? %>
     <fieldset>
       <legend>
-        <%= image_tag "key.svg", aria: { hidden: "true" }, size: 36, class: "colorize--black" %>
+        <%= uicon "key", size: 36 %>
       </legend>
       <%= link_to "Push Notifications Dev Mode", user_push_subscriptions_url, class: "btn txt-small center" %>
     </fieldset>

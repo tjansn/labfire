@@ -4,7 +4,7 @@
   <label class="gl-invite-field" style="--row-gap: 0.5em">
     <strong id="invite_label" class="invite-label">Join link</strong>
     <span class="gl-invite-input input input--actor">
-      <%= image_tag "person-add.svg", aria: { hidden: "true" }, size: 20, class: "colorize--black" %>
+      <%= uicon "person-add", size: 20 %>
       <input type="text" class="input" id="invite_url" value="<%= url %>" aria-labelledby="invite_label" readonly>
     </span>
   </label>
@@ -12,22 +12,22 @@
   <div class="gl-invite-actions">
     <%= link_to_zoom_qr_code(url) do %>
       <span class="for-screen-reader">Show join link QR code</span>
-      <%= image_tag "qr-code.svg", aria: { hidden: "true" }, size: 20, class: "colorize--black" %>
+      <%= uicon "qr-code", size: 20 %>
     <% end %>
 
     <%= button_to_copy_to_clipboard(url) do %>
       <span class="for-screen-reader">Copy join link</span>
-      <%= image_tag "copy-paste.svg", aria: { hidden: "true" }, size: 20, class: "colorize--black" %>
+      <%= uicon "copy-paste", size: 20 %>
     <% end %>
 
     <%= web_share_session_button(url, "Link to join Campfire", "Hit this link to join me in Campfire and start chatting.") do %>
       <span class="for-screen-reader">Share join link</span>
-      <%= image_tag "share.svg", aria: { hidden: "true" }, size: 20, class: "colorize--black" %>
+      <%= uicon "share", size: 20 %>
     <% end %>
 
     <% if Current.user.can_administer? %>
       <%= button_to account_join_code_path, class: "btn btn--regenerate" do %>
-        <%= image_tag "refresh.svg", aria: { hidden: "true" }, size: 20, class: "colorize--black" %>
+        <%= uicon "refresh", size: 20 %>
         <span class="for-screen-reader">Regenerate join link</span>
       <% end %>
     <% end %>

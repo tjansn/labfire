@@ -5,7 +5,7 @@
       controller: "form", action: "keydown.esc->form#cancel" } do |form| %>
   <% if compact %>
     <%= link_to user_sidebar_path, class: "btn flex-item-no-shrink", data: { turbo_frame: "user_sidebar", form_target: "cancel" } do %>
-      <%= image_tag "arrow-left.svg", aria: { hidden: "true" } %>
+      <%= uicon "arrow-left" %>
       <span class="for-screen-reader">Cancel changes</span>
     <% end %>
   <% end %>
@@ -36,19 +36,19 @@
 
   <% if compact %>
     <%= button_tag class: "btn btn--reversed flex-item-no-shrink", type: "submit" do %>
-      <%= image_tag "check.svg", aria: { hidden: "true" } %>
+      <%= uicon "check" %>
       <span class="for-screen-reader">Start personal message</span>
     <% end %>
   <% else %>
     <footer class="gl-direct-new-actions">
       <% cancel_room = last_room_visited %>
       <%= link_to(cancel_room ? room_path(cancel_room) : root_path, class: "btn", data: { form_target: "cancel" }) do %>
-        <%= image_tag "arrow-left.svg", aria: { hidden: "true" }, size: 20 %>
+        <%= uicon "arrow-left", size: 20 %>
         <span>Cancel</span>
       <% end %>
 
       <%= button_tag class: "btn btn--reversed", type: "submit" do %>
-        <%= image_tag "check.svg", aria: { hidden: "true" }, size: 20 %>
+        <%= uicon "check", size: 20 %>
         <span>Start chat</span>
       <% end %>
     </footer>

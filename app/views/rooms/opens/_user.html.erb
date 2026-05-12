@@ -10,6 +10,6 @@
   <hr class="separator" aria-hidden="true">
 
   <% if Current.user.can_administer?(room) %>
-    <%= image_tag "check.svg", size: 20, class: "colorize--black flex-item-no-shrink", aria: { hidden: "true" } %>
+    <%= uicon "check", size: 20, class: "flex-item-no-shrink" %>
   <% end %>
 </li>

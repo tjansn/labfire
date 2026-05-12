@@ -1,0 +1,83 @@
+/* Uicons Regular Rounded by Flaticon (https://www.flaticon.com/uicons)
+   Subset font: only the glyphs referenced by uicon() helper calls in the app. */
+
+@font-face {
+  font-family: "uicons-regular-rounded";
+  src: url("uicons-regular-rounded.woff2") format("woff2");
+  font-display: swap;
+}
+
+.fi {
+  font-family: "uicons-regular-rounded";
+  font-style: normal;
+  font-weight: 400;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  display: inline-block;
+  vertical-align: middle;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.fi::before { font-family: inherit; }
+
+.fi-rr-angle-small-right::before { content: "\f155"; }
+.fi-rr-arrow-down::before { content: "\f18f"; }
+.fi-rr-arrow-left::before { content: "\f197"; }
+.fi-rr-arrow-right::before { content: "\f19b"; }
+.fi-rr-arrow-up::before { content: "\f1b9"; }
+.fi-rr-arrows-repeat::before { content: "\f1c4"; }
+.fi-rr-at::before { content: "\f1d4"; }
+.fi-rr-bell::before { content: "\f239"; }
+.fi-rr-bell-ring::before { content: "\f235"; }
+.fi-rr-bell-slash::before { content: "\f238"; }
+.fi-rr-broom::before { content: "\f2f3"; }
+.fi-rr-building::before { content: "\f303"; }
+.fi-rr-camera::before { content: "\f348"; }
+.fi-rr-check::before { content: "\f3c8"; }
+.fi-rr-comment::before { content: "\f4b8"; }
+.fi-rr-comment-dots::before { content: "\f4a8"; }
+.fi-rr-comment-pen::before { content: "\f4af"; }
+.fi-rr-copy::before { content: "\f4dd"; }
+.fi-rr-cross-circle::before { content: "\f4f4"; }
+.fi-rr-cross-small::before { content: "\f4f6"; }
+.fi-rr-crown::before { content: "\f4f9"; }
+.fi-rr-document::before { content: "\f57a"; }
+.fi-rr-download::before { content: "\f591"; }
+.fi-rr-envelope::before { content: "\f5de"; }
+.fi-rr-eye-crossed::before { content: "\f5f5"; }
+.fi-rr-flame::before { content: "\f696"; }
+.fi-rr-globe::before { content: "\f705"; }
+.fi-rr-id-badge::before { content: "\f7f7"; }
+.fi-rr-info::before { content: "\f80b"; }
+.fi-rr-interrogation::before { content: "\f81e"; }
+.fi-rr-key::before { content: "\f847"; }
+.fi-rr-laptop::before { content: "\f86f"; }
+.fi-rr-life-ring::before { content: "\f89f"; }
+.fi-rr-link::before { content: "\f8ba"; }
+.fi-rr-lock::before { content: "\f8d5"; }
+.fi-rr-menu-burger::before { content: "\f925"; }
+.fi-rr-menu-dots::before { content: "\f927"; }
+.fi-rr-menu-dots-vertical::before { content: "\f926"; }
+.fi-rr-minus-small::before { content: "\f94d"; }
+.fi-rr-mobile-button::before { content: "\f951"; }
+.fi-rr-palette::before { content: "\f9ed"; }
+.fi-rr-paperclip-vertical::before { content: "\f9f8"; }
+.fi-rr-pencil::before { content: "\fa29"; }
+.fi-rr-plus::before { content: "\faac"; }
+.fi-rr-qrcode::before { content: "\faf1"; }
+.fi-rr-refresh::before { content: "\fb34"; }
+.fi-rr-robot::before { content: "\fb61"; }
+.fi-rr-search::before { content: "\fbba"; }
+.fi-rr-settings-sliders::before { content: "\fbd1"; }
+.fi-rr-share::before { content: "\fbd5"; }
+.fi-rr-sign-out-alt::before { content: "\fc0c"; }
+.fi-rr-text::before { content: "\fd85"; }
+.fi-rr-trash::before { content: "\fe17"; }
+.fi-rr-triangle-warning::before { content: "\fe33"; }
+.fi-rr-undo-alt::before { content: "\fe6a"; }
+.fi-rr-user::before { content: "\fea0"; }
+.fi-rr-user-add::before { content: "\fe7a"; }
+.fi-rr-user-pen::before { content: "\fe90"; }
+.fi-rr-users-alt::before { content: "\fea1"; }

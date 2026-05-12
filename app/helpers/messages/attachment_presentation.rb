@@ -75,7 +75,7 @@ class Messages::AttachmentPresentation
 
     def render_link
       tag.div class: "flex-inline align-center gap-half" do
-        broadcast_image_tag("common-file-text.svg", size: 22, class: "colorize--black", aria: { hidden: "true" }) +
+        uicon("common-file-text", size: 22) +
           tag.span(filename) + download_link + share_button
       end
     end
@@ -91,13 +91,13 @@ class Messages::AttachmentPresentation
 
     def download_link
       link_to download_url, class: "btn message__action-btn hide-in-ios-pwa", style: "--width: auto;" do
-        broadcast_image_tag("download.svg", aria: { hidden: "true" }, size: 20) + tag.span("Download #{ filename }", class: "for-screen-reader")
+        uicon("download", size: 20) + tag.span("Download #{ filename }", class: "for-screen-reader")
       end
     end
 
     def share_button
       tag.button class: "btn message__action-btn", style: "--width: auto;", data: { controller: "web-share", action: "web-share#share", web_share_files_value: download_url } do
-        broadcast_image_tag("share.svg", aria: { hidden: "true" }, size: 20) + tag.span("Share #{ filename }", class: "for-screen-reader")
+        uicon("share", size: 20) + tag.span("Share #{ filename }", class: "for-screen-reader")
       end
     end
 

@@ -1,7 +1,7 @@
 <h1 class="for-screen-reader">Chat Bot Setup</h1>
 <label class="align-center center avatar__form gap" data-controller="upload-preview">
   <div class="btn input--file">
-    <%= image_tag "camera.svg", aria: { hidden: "true" }, size: 20 %>
+    <%= uicon "camera", size: 20 %>
     <%= form.file_field :avatar, class: "input", accept: "image/*",
           data: { upload_preview_target: "input", action: "upload-preview#previewImage" } %>
     <span class="for-screen-reader">Upload bot avatar</span>
@@ -17,7 +17,7 @@
   <label class="flex align-center gap flex-item-grow txt-large input input--actor">
     <%= form.text_field :name, class: "input", autocomplete: "name", placeholder: "Name the bot", autofocus: true, required: true,
           data: { "1p-ignore": true } %>
-    <%= image_tag "bot.svg", aria: { hidden: "true" }, size: 24, class: "colorize--black" %>
+    <%= uicon "bot", size: 24 %>
   </label>
 </div>
 
@@ -25,7 +25,7 @@
   <%= translation_button(:webhook_url) %>
   <label class="flex align-center gap flex-item-grow txt-large input input--actor">
     <%= form.url_field :webhook_url, class: "input", placeholder: "Webhook URL" %>
-    <%= image_tag "web.svg", aria: { hidden: "true" }, size: 24, class: "colorize--black" %>
+    <%= uicon "web", size: 24 %>
   </label>
 </div>
 

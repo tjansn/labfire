@@ -1,18 +1,35 @@
 <% content_for :nav do %>
   <%= account_logo_tag if Current.account.logo.attached? %>
 
-  <%= tag.span class: "btn btn--reversed btn--faux room--current" do %>
-    <h1 class="room__contents txt-medium overflow-ellipsis">
-      <% if room.direct? %>
-        <span class="for-screen-reader">Personal message with</span>
-      <% end %>
+  <%= tag.span class: "btn btn--reversed btn--faux room--current #{"room--current--direct" if room.direct?}" do %>
+    <% if room.direct? %>
+      <% direct_members = room.users.without(Current.user).presence || [ Current.user ] %>
 
-      <%= room_display_name(room) %>
-    </h1>
+      <h1 class="room__contents room--current__title room--current__people overflow-ellipsis">
+        <span class="for-screen-reader">Personal message with <%= room_display_name(room) %></span>
+
+        <% direct_members.each_with_index do |member, index| %>
+          <span class="room--current__person" aria-hidden="true">
+            <span class="room-nav-avatar avatar">
+              <%= image_tag fresh_user_avatar_path(member), alt: "", size: 40, aria: { hidden: "true" } %>
+            </span>
+            <span class="room--current__person-name"><%= member.name %></span>
+          </span>
+
+          <% unless index == direct_members.size - 1 %>
+            <span class="room--current__separator" aria-hidden="true">,</span>
+          <% end %>
+        <% end %>
+      </h1>
+    <% else %>
+      <h1 class="room__contents room--current__title txt-medium overflow-ellipsis">
+        <%= room_display_name(room) %>
+      </h1>
+    <% end %>
   <% end %>
 
   <%= link_to_edit_room(room) do %>
-    <%= image_tag "menu-dots-horizontal.svg", size: 20, aria: { hidden: "true" } %>
+    <%= uicon "menu-dots-horizontal" %>
     <span class="for-screen-reader">Settings for this <%= room.direct? ? "personal message" : "room" %></span>
   <% end %>
 

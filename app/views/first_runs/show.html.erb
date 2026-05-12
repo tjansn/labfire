@@ -13,7 +13,7 @@
 
         <label class="align-center center avatar__form gap" data-controller="upload-preview">
           <div class="btn input--file">
-            <%= image_tag "camera.svg", aria: { hidden: "true" } %>
+            <%= uicon "camera" %>
             <%= form.file_field :avatar, class: "input", accept: "image/*",
                   data: { upload_preview_target: "input", action: "upload-preview#previewImage" } %>
             <span class="for-screen-reader">Add your avatar</span>
@@ -31,7 +31,7 @@
         <label class="flex align-center gap flex-item-grow txt-large input input--actor">
           <%= form.text_field :name, class: "input", autocomplete: "name", placeholder: "Name", autofocus: true, required: true,
                 data: { "1p-ignore": true } %>
-          <%= image_tag "person.svg", aria: { hidden: "true" }, size: 24, class: "colorize--black" %>
+          <%= uicon "person", size: 24 %>
         </label>
       </div>
 
@@ -39,7 +39,7 @@
         <%= translation_button(:email_address) %>
         <label class="flex align-center gap flex-item-grow txt-large input input--actor">
           <%= form.email_field :email_address, class: "input", autocomplete: "username", placeholder: "Email address", required: true %>
-          <%= image_tag "email.svg", aria: { hidden: "true" }, size: 24, class: "colorize--black" %>
+          <%= uicon "email", size: 24 %>
         </label>
       </div>
 
@@ -47,12 +47,12 @@
         <%= translation_button(:password) %>
         <label class="flex align-center gap flex-item-grow txt-large input input--actor">
           <%= form.password_field :password, class: "input", autocomplete: "new-password", placeholder: "Password", required: true, maxlength: 72 %>
-          <%= image_tag "password.svg", aria: { hidden: "true" }, size: 24, class: "colorize--black" %>
+          <%= uicon "password", size: 24 %>
         </label>
       </div>
 
       <%= form.button class: "btn btn--reversed center txt-large", type: "submit" do %>
-        <%= image_tag "arrow-right.svg", aria: { hidden: "true" } %>
+        <%= uicon "arrow-right" %>
         <span class="for-screen-reader">Save</span>
       <% end %>
     </div>
