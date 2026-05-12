@@ -1,15 +1,15 @@
 <h1 class="for-screen-reader">Chat Bot Setup</h1>
-<label class="align-center center avatar__form gap" data-controller="upload-preview">
-  <div class="btn input--file">
-    <%= uicon "camera", size: 20 %>
-    <%= form.file_field :avatar, class: "input", accept: "image/*",
-          data: { upload_preview_target: "input", action: "upload-preview#previewImage" } %>
-    <span class="for-screen-reader">Upload bot avatar</span>
-  </div>
-
-  <div class="avatar input--file txt-xx-large" style="--avatar-size: var(--btn-size);">
-    <%= image_tag bot.avatar.attached? ? bot.avatar : "default-bot-avatar.svg", alt: "Bot avatar", size: 48, data: { upload_preview_target: "image" } %>
-  </div>
+<% avatar_attached = bot.avatar.attached? %>
+<label class="btn avatar input--file gl-settings-logo gl-avatar-upload <%= "gl-avatar-upload--empty" unless avatar_attached %>" data-controller="upload-preview">
+  <%= image_tag avatar_attached ? bot.avatar : "default-bot-avatar.svg", alt: "Bot avatar", size: 48, data: { upload_preview_target: "image" } %>
+  <% unless avatar_attached %>
+    <span class="gl-upload-camera-placeholder" data-upload-preview-target="placeholder" aria-hidden="true">
+      <%= uicon "camera", size: 28 %>
+    </span>
+  <% end %>
+  <%= form.file_field :avatar, class: "input", accept: "image/*",
+        data: { upload_preview_target: "input", action: "upload-preview#previewImage" } %>
+  <span class="for-screen-reader">Upload bot avatar</span>
 </label>
 
 <div class="flex align-center gap">

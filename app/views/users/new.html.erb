@@ -23,18 +23,17 @@
           <strong class="txt-large"><%= Current.account.name %></strong>
         </legend>
 
-        <label class="align-center center avatar__form gap" data-controller="upload-preview">
-          <div class="btn input--file">
-            <%= uicon "camera" %>
-            <%= form.file_field :avatar, class: "input", accept: "image/*",
-                  data: { upload_preview_target: "input", action: "upload-preview#previewImage" } %>
-            <span class="for-screen-reader">Upload avatar</span>
-          </div>
-
-          <div class="btn avatar input--file txt-xx-large">
-            <%= image_tag @user.avatar.attached? ? @user.avatar : "default-avatar.svg", aria: { hidden: "true" }, data: { upload_preview_target: "image" } %>
-            <span class="for-screen-reader">Avatar</span>
-          </div>
+        <% avatar_attached = @user.avatar.attached? %>
+        <label class="btn avatar input--file gl-settings-logo gl-avatar-upload <%= "gl-avatar-upload--empty" unless avatar_attached %>" data-controller="upload-preview">
+          <%= image_tag avatar_attached ? @user.avatar : "default-avatar.svg", aria: { hidden: "true" }, data: { upload_preview_target: "image" } %>
+          <% unless avatar_attached %>
+            <span class="gl-upload-camera-placeholder" data-upload-preview-target="placeholder" aria-hidden="true">
+              <%= uicon "camera", size: 28 %>
+            </span>
+          <% end %>
+          <%= form.file_field :avatar, class: "input", accept: "image/*",
+                data: { upload_preview_target: "input", action: "upload-preview#previewImage" } %>
+          <span class="for-screen-reader">Upload avatar</span>
         </label>
       </fieldset>
 

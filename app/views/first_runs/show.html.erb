@@ -11,18 +11,14 @@
       <fieldset class="flex flex-column center-block">
         <legend class="txt-large txt-align-center"><strong><%= @page_title %></strong></legend>
 
-        <label class="align-center center avatar__form gap" data-controller="upload-preview">
-          <div class="btn input--file">
-            <%= uicon "camera" %>
-            <%= form.file_field :avatar, class: "input", accept: "image/*",
-                  data: { upload_preview_target: "input", action: "upload-preview#previewImage" } %>
-            <span class="for-screen-reader">Add your avatar</span>
-          </div>
-
-          <div class="btn avatar input--file txt-xx-large">
-            <%= image_tag "default-avatar.svg", aria: { hidden: "true" }, data: { upload_preview_target: "image" }, alt: "Add your avatar" %>
-            <span class="for-screen-reader">Avatar</span>
-          </div>
+        <label class="btn avatar input--file gl-settings-logo gl-avatar-upload gl-avatar-upload--empty" data-controller="upload-preview">
+          <%= image_tag "default-avatar.svg", aria: { hidden: "true" }, data: { upload_preview_target: "image" }, alt: "Add your avatar" %>
+          <span class="gl-upload-camera-placeholder" data-upload-preview-target="placeholder" aria-hidden="true">
+            <%= uicon "camera", size: 28 %>
+          </span>
+          <%= form.file_field :avatar, class: "input", accept: "image/*",
+                data: { upload_preview_target: "input", action: "upload-preview#previewImage" } %>
+          <span class="for-screen-reader">Add your avatar</span>
         </label>
       </fieldset>
 

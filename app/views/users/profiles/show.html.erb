@@ -20,27 +20,25 @@
 <section class="panel flex flex-column gap" style="view-transition-name: avatar-<%= @user.id %>">
   <%= render partial: "pwa/install_instructions" %>
 
-  <div class="align-center center avatar__form gap" data-controller="upload-preview">
-    <%= profile_form_with @user, class:"txt-medium" do |form| %>
-      <label class="btn input--file">
-        <%= uicon "camera", size: 20 %>
+  <div class="gl-avatar-upload-frame">
+    <% avatar_attached = @user.avatar.attached? %>
+
+    <%= profile_form_with @user do |form| %>
+      <label class="btn avatar input--file gl-settings-logo gl-avatar-upload <%= "gl-avatar-upload--empty" unless avatar_attached %>" data-controller="upload-preview">
+        <%= image_tag fresh_user_avatar_path(@user), aria: { hidden: "true" }, size: 300, data: { upload_preview_target: "image" } %>
+        <% unless avatar_attached %>
+          <span class="gl-upload-camera-placeholder" data-upload-preview-target="placeholder" aria-hidden="true">
+            <%= uicon "camera", size: 28 %>
+          </span>
+        <% end %>
         <%= form.file_field :avatar, id: "file", class: "input", accept: "image/*",
             data: { upload_preview_target: "input", action: "upload-preview#previewImage change->form#submit" } %>
         <span class="for-screen-reader">Upload avatar</span>
       </label>
     <% end %>
 
-    <%= profile_form_with @user do |form| %>
-      <label class="btn avatar input--file txt-xx-large">
-        <%= image_tag fresh_user_avatar_path(@user), aria: { hidden: "true" }, size: 300, data: { upload_preview_target: "image" } %>
-        <%= form.file_field :avatar, id: "file", class: "input", accept: "image/*",
-            data: { upload_preview_target: "input", action: "upload-preview#previewImage change->form#submit" } %>
-        <span class="for-screen-reader">Avatar</span>
-      </label>
-    <% end %>
-
-    <% if @user.avatar.attached? %>
-      <%= button_to user_avatar_path(@user), method: :delete, class: "btn btn--negative txt-small avatar__delete-btn" do %>
+    <% if avatar_attached %>
+      <%= button_to user_avatar_path(@user), method: :delete, class: "btn btn--negative gl-settings-logo__delete", aria: { label: "Delete avatar" } do %>
         <%= uicon "minus", size: 20 %>
         <span class="for-screen-reader">Delete avatar</span>
       <% end %>

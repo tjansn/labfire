@@ -2295,53 +2295,154 @@ body:not(.sidebar) .sidebar__toggle {
 }
 
 .gl-settings-hero__media {
+  align-self: stretch;
   display: grid;
+  min-inline-size: var(--gl-space-20);
   place-items: center;
   position: relative;
 }
 
 .gl-settings-logo-form {
-  display: contents;
+  display: block;
 }
 
 .gl-settings-logo {
-  --avatar-border-radius: var(--gl-radius-lg);
-  --btn-size: var(--gl-space-16);
-  background: var(--gl-surface-section);
-  border: 1px solid var(--gl-card-border-color);
-  block-size: var(--gl-space-16);
-  inline-size: var(--gl-space-16);
+  --avatar-border-radius: var(--gl-radius-xl);
+  --btn-size: clamp(5rem, 8vw, 6rem);
+
+  aspect-ratio: 1;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--gl-surface-card) 72%, transparent), transparent),
+    var(--gl-surface-section);
+  border: 1px solid color-mix(in srgb, var(--gl-card-border-color) 90%, transparent);
+  border-radius: var(--gl-radius-xl) !important;
+  block-size: var(--btn-size);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--gl-color-porcelain) 45%, transparent),
+    0 var(--gl-space-3) var(--gl-space-8) color-mix(in srgb, var(--gl-color-slate) 10%, transparent);
+  display: grid !important;
+  inline-size: var(--btn-size);
+  isolation: isolate;
   overflow: hidden;
+  padding: 0 !important;
+  place-items: center;
+  position: relative;
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms var(--gl-ease-out);
+}
+
+.gl-settings-logo.input--file {
+  cursor: pointer;
 }
 
 .gl-settings-logo > img {
   block-size: 100%;
+  grid-area: 1 / 1;
   inline-size: 100%;
   object-fit: cover;
+  transition: transform 180ms var(--gl-ease-out), filter 180ms ease;
 }
 
-.gl-settings-logo__overlay {
-  align-items: center;
-  background: color-mix(in srgb, var(--gl-surface-card) 88%, transparent);
-  border: 1px solid var(--gl-card-border-color);
-  border-radius: 999px;
-  box-shadow: 0 var(--gl-space-2) var(--gl-space-6) color-mix(in srgb, var(--gl-color-slate) 12%, transparent);
-  display: flex;
-  inset-block-end: var(--gl-space-1);
-  inset-inline-end: var(--gl-space-1);
-  justify-content: center;
-  min-block-size: var(--gl-space-8);
-  min-inline-size: var(--gl-space-8);
+.gl-settings-logo.input--file::after {
+  background: linear-gradient(180deg, transparent 45%, color-mix(in srgb, var(--gl-color-slate) 30%, transparent));
+  content: "";
+  inset: 0;
+  opacity: 0.72;
+  pointer-events: none;
   position: absolute;
   z-index: 1;
 }
 
+.gl-settings-logo.input--file:where(:not(:active):hover) {
+  border-color: color-mix(in srgb, var(--gl-border-accent) 46%, var(--gl-card-border-color));
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--gl-color-porcelain) 45%, transparent),
+    0 var(--gl-space-4) var(--gl-space-10) color-mix(in srgb, var(--gl-color-slate) 14%, transparent);
+  transform: translateY(-1px);
+}
+
+.gl-settings-logo.input--file:where(:not(:active):hover) > img {
+  filter: saturate(1.04) contrast(1.02);
+  transform: scale(1.04);
+}
+
+.gl-settings-logo.input--file:focus-within {
+  border-color: var(--gl-action-focus-ring);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--gl-action-focus-ring) 20%, transparent);
+}
+
+.gl-settings-logo.input--file input[type="file"] {
+  cursor: pointer;
+  inset: 0;
+  opacity: 0;
+  position: absolute;
+  z-index: 3;
+}
+
+.gl-avatar-upload,
+.gl-avatar-upload-frame {
+  margin-inline: auto;
+}
+
+.gl-avatar-upload-frame {
+  display: inline-grid;
+  place-items: center;
+  position: relative;
+}
+
+.gl-settings-hero__media .button_to,
+.gl-avatar-upload-frame .button_to {
+  display: contents;
+}
+
+.gl-avatar-upload--empty > img {
+  filter: saturate(0.7) opacity(0.28) !important;
+  object-fit: contain;
+  padding: var(--gl-space-4);
+}
+
+.gl-upload-camera-placeholder {
+  align-items: center;
+  background: color-mix(in srgb, var(--gl-surface-card) 86%, transparent);
+  border: 1px solid color-mix(in srgb, var(--gl-card-border-color) 85%, transparent);
+  border-radius: 999px;
+  box-shadow: 0 var(--gl-space-2) var(--gl-space-6) color-mix(in srgb, var(--gl-color-slate) 14%, transparent);
+  color: var(--gl-text-primary);
+  display: inline-flex;
+  grid-area: 1 / 1;
+  justify-content: center;
+  min-block-size: var(--gl-space-10);
+  min-inline-size: var(--gl-space-10);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.gl-upload-camera-placeholder[hidden] {
+  display: none;
+}
+
 .gl-settings-logo__delete {
-  --btn-size: var(--gl-space-7);
+  --btn-background: var(--gl-action-primary-bg);
+  --btn-border-color: var(--gl-action-primary-bg);
+  --btn-border-radius: 50%;
+  --btn-color: var(--gl-action-primary-text);
+  --btn-size: var(--gl-space-8);
+  --btn-padding: 0;
+
+  align-items: center;
+  aspect-ratio: 1;
+  block-size: var(--btn-size) !important;
+  border-radius: 50% !important;
+  box-shadow: 0 var(--gl-space-2) var(--gl-space-6) color-mix(in srgb, var(--gl-color-slate) 16%, transparent);
+  display: inline-flex;
+  inline-size: var(--btn-size) !important;
   inset-block-start: calc(var(--gl-space-2) * -1);
   inset-inline-end: calc(var(--gl-space-2) * -1);
+  justify-content: center;
+  min-block-size: var(--btn-size) !important;
+  min-inline-size: var(--btn-size) !important;
+  padding: 0 !important;
   position: absolute;
-  z-index: 2;
+  z-index: 4;
 }
 
 .gl-settings-hero__copy {

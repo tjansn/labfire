@@ -27,11 +27,8 @@
         <%= form_with model: @account, url: account_path, method: :patch, class: "gl-settings-logo-form", data: { controller: "form" } do |form| %>
           <label class="btn avatar input--file account-logo gl-settings-logo">
             <%= image_tag fresh_account_logo_path, role: "presentation", size: 72, data: { upload_preview_target: "image" } %>
-            <span class="gl-settings-logo__overlay" aria-hidden="true">
-              <%= uicon "camera", size: 18 %>
-            </span>
             <%= form.file_field :logo, class: "input", accept: "image/*",
-                  data: { action: "upload-preview#previewImage change->form#submit" } %>
+                  data: { upload_preview_target: "input", action: "upload-preview#previewImage change->form#submit" } %>
             <span class="for-screen-reader">Upload logo</span>
           </label>
         <% end %>
