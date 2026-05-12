@@ -25,7 +25,7 @@ class UsersController < ApplicationController
     end
 
     def verify_join_code
-      head :not_found if Current.account.join_code != params[:join_code]
+      head :not_found if Current.account&.join_code != params[:join_code]
     end
 
     def user_params

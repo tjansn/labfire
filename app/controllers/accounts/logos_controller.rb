@@ -5,24 +5,26 @@ class Accounts::LogosController < ApplicationController
   before_action :ensure_can_administer, only: :destroy
 
   def show
-    if stale?(etag: Current.account)
+    account = Current.account
+
+    if stale?(etag: account || "account-logo-placeholder")
       expires_in 5.minutes, public: true, stale_while_revalidate: 1.week
 
-      if Current.account&.logo&.attached?
-        if Current.account.logo.variable?
-          logo = Current.account.logo.variant(logo_variant).processed
+      if account&.logo&.attached?
+        if account.logo.variable?
+          logo = account.logo.variant(logo_variant).processed
           send_png_file ActiveStorage::Blob.service.path_for(logo.key)
         else
-          send_file ActiveStorage::Blob.service.path_for(Current.account.logo.key), content_type: Current.account.logo.content_type, disposition: :inline
+          send_file ActiveStorage::Blob.service.path_for(account.logo.key), content_type: account.logo.content_type, disposition: :inline
         end
       else
-        send_stock_icon
+        send_placeholder_icon
       end
     end
   end
 
   def destroy
-    Current.account.logo.destroy
+    Current.account&.logo&.destroy
     redirect_to edit_account_url
   end
 
@@ -34,11 +36,11 @@ class Accounts::LogosController < ApplicationController
       send_file path, content_type: "image/png", disposition: :inline
     end
 
-    def send_stock_icon
+    def send_placeholder_icon
       if small_logo?
-        send_png_file logo_path("app-icon-192.png")
+        send_png_file logo_path("robby-192.png")
       else
-        send_png_file logo_path("app-icon.png")
+        send_png_file logo_path("robby-512.png")
       end
     end
 

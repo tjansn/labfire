@@ -1,11 +1,11 @@
-/* gammalabs redesign layer for Campfire
+/* gammalabs redesign layer for Labfire
    Canonical source reviewed:
    - /Users/tom/dev/Sites/_FIRMA/gammalabs/design-system/dist/agent-brief.md
    - /Users/tom/dev/Sites/_FIRMA/gammalabs/design-system/rules/discipline.yaml
    - /Users/tom/dev/Sites/_FIRMA/gammalabs/gl-v2.css
    - /Users/tom/dev/Sites/_FIRMA/gammalabs/app.html
 
-   Campfire keeps its Rails views and behavior; this layer maps the app to the
+   Labfire keeps its Rails views and behavior; this layer maps the app to the
    gammalabs app archetype: sidebar + topbar, mono metadata, hairline panels,
    porcelain/oat/slate surfaces, contrast-safe warm-red ink, and manual/system
    light + dark mode. */
@@ -48,7 +48,7 @@
   --gl-action-focus-ring: var(--gl-color-accent-600);
   --gl-state-danger: var(--gl-color-accent-600);
 
-  /* Campfire intentionally uses only the gammalabs sans-serif stack. */
+  /* Labfire intentionally uses only the gammalabs sans-serif stack. */
   --gl-font-sans: "Inter", "SF Pro Display", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   --gl-font-display: var(--gl-font-sans);
   --gl-font-mono: var(--gl-font-sans);
@@ -83,7 +83,7 @@
   --gl-card-bg: var(--gl-surface-card);
   --gl-card-shadow: none;
 
-  /* Campfire bridge variables */
+  /* Labfire bridge variables */
   --font-family: var(--gl-font-sans);
   --color-bg: var(--gl-surface-page);
   --color-message-bg: var(--gl-surface-card);
@@ -1569,7 +1569,7 @@ body:not(.sidebar) #main-content {
   transform: none;
 }
 
-/* Enforce the sans-only gammalabs decision across inherited Campfire styles. */
+/* Enforce the sans-only gammalabs decision across inherited Labfire styles. */
 :where(body, button, input, textarea, select, summary, .btn, .input, code, pre, kbd, samp, trix-editor, trix-toolbar, .trix-content, .input--code) {
   font-family: var(--gl-font-sans) !important;
 }

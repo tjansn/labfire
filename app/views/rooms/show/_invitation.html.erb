@@ -1,15 +1,21 @@
 <% if @room == Room.original && !@room.messages.paged? %>
+  <% account = Current.account %>
+
   <div id="system_welcome" class="message message--formatted txt-align-center center">
     <div class="message__body center">
       <div class="message__body-content position-relative">
         <%= account_logo_tag style: "center margin-block-end txt-large" %>
         <div class="flex align-center gap">
           <p>
-            <strong>Welcome to <%= Current.account.name %></strong><br>
-            To invite people to chat, share the join link below.
+            <strong>Welcome to <%= account&.name || "Labfire" %></strong><br>
+            <% if account&.join_code.present? %>
+              To invite people to chat, share the join link below.
+            <% else %>
+              Start chatting with your team.
+            <% end %>
           </p>
         </div>
-        <%= render "accounts/invite" %>
+        <%= render "accounts/invite" if account&.join_code.present? %>
       </div>
     </div>
   </div>

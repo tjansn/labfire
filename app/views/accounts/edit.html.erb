@@ -47,7 +47,7 @@
     <div class="gl-settings-hero__copy">
       <p class="gl-kicker">Server settings</p>
       <h1><%= @account.name %></h1>
-      <p>Manage your Campfire server identity, invitations, access rules, and people.</p>
+      <p>Manage your Labfire server identity, invitations, access rules, and people.</p>
     </div>
   </header>
 
@@ -58,7 +58,7 @@
           <p class="gl-kicker">Identity</p>
           <h2>Server details</h2>
         </div>
-        <p>Name and present this server consistently across Campfire.</p>
+        <p>Name and present this server consistently across Labfire.</p>
       </header>
 
       <%= form_with model: @account, url: account_path, data: { controller: "form" }, class: "gl-settings-name-form" do |form| %>
@@ -97,7 +97,7 @@
 
         <%= form.fields_for :settings, @account.settings do |settings_form| %>
           <%= settings_form.hidden_field :restrict_room_creation_to_administrators,
-              value: !Current.account.settings.restrict_room_creation_to_administrators? %>
+              value: !Current.account&.settings&.restrict_room_creation_to_administrators? %>
         <% end %>
 
         <label class="switch">
@@ -105,7 +105,7 @@
                 class="switch__input"
                 role="switch"
                 aria-label="Require administrator approval to create new rooms"
-                <%= "checked" if Current.account.settings.restrict_room_creation_to_administrators? %>
+                <%= "checked" if Current.account&.settings&.restrict_room_creation_to_administrators? %>
                 data-action="change->form#submit">
           <span class="switch__btn round" aria-hidden="true"></span>
         </label>
@@ -150,5 +150,5 @@
 </section>
 
 <% content_for :footer do %>
-  <div class="txt-align-center center margin-block-double txt-subtle">Campfire&trade; version <%= version_badge %></div>
+  <div class="txt-align-center center margin-block-double txt-subtle">Labfire version <%= version_badge %></div>
 <% end %>

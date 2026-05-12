@@ -58,7 +58,7 @@ Rails.application.routes.draw do
   end
 
   direct :fresh_user_avatar do |user, options|
-    route_for :user_avatar, user.avatar_token, v: "#{user.updated_at.to_fs(:number)}-ds3"
+    route_for :user_avatar, user.avatar_token, v: "#{user.updated_at.to_fs(:number)}-initials1"
   end
 
   resources :rooms do

@@ -1,8 +1,9 @@
-# Deploy Once Campfire to the Mac mini via Kamal.
-# Public ingress is expected to be Cloudflare Tunnel -> http://127.0.0.1:8080.
+# Deploy Labfire to the Mac mini via Kamal.
+# Public ingress is expected to be Cloudflare Tunnel -> http://127.0.0.1:18080.
 
+# Keep the existing Kamal service name to preserve the current deployment lineage.
 service: campfire
-image: tjansn/once-campfire
+image: tjansn/labfire
 
 servers:
   web:
@@ -40,12 +41,13 @@ builder:
   context: .
   dockerfile: Dockerfile
   args:
-    OCI_SOURCE: https://github.com/tjansn/once-campfire
-    OCI_DESCRIPTION: Campfire is a web-based chat application deployed for gammalabs.
+    OCI_SOURCE: https://github.com/tjansn/labfire
+    OCI_DESCRIPTION: Labfire is a gammalabs workspace for focused team chat.
     APP_VERSION: <%= `git rev-parse --short HEAD`.strip %>
     GIT_REVISION: <%= `git rev-parse HEAD`.strip %>
 
 volumes:
+  # Keep the existing Docker volume name so deployed data survives the rename.
   - campfire_storage:/rails/storage
 
 env:

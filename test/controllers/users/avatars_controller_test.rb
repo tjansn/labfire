@@ -7,7 +7,16 @@ class Users::AvatarsControllerTest < ActionDispatch::IntegrationTest
 
   test "show initials" do
     get user_avatar_url(users(:kevin).avatar_token)
+
+    assert_response :success
     assert_select "text", text: "K"
+  end
+
+  test "show default bot image" do
+    get user_avatar_url(users(:bender).avatar_token)
+
+    assert_response :success
+    assert_equal "image/svg+xml", @response.content_type
   end
 
   test "show image" do

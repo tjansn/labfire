@@ -9,7 +9,7 @@
     <div class="gl-sidebar-brand">
       <span class="gl-sidebar-brand__identity">
         <%= image_tag fresh_account_logo_path(size: "small"), width: 28, height: 28, alt: "", aria: { hidden: "true" }, class: "gl-sidebar-brand__logo" %>
-        <span class="gl-sidebar-brand__name"><%= Current.account.name %></span>
+        <span class="gl-sidebar-brand__name"><%= Current.account&.name || "Labfire" %></span>
       </span>
       <button class="btn gl-sidebar-brand__menu" type="button"
           data-controller="menu-toggle"
@@ -56,7 +56,7 @@
       <summary class="gl-app-nav__label gl-app-nav__summary">
         <span>Rooms</span>
 
-        <% if Current.user.administrator? || !Current.account.settings.restrict_room_creation_to_administrators? %>
+        <% if Current.user.administrator? || !Current.account&.settings&.restrict_room_creation_to_administrators? %>
           <%= link_to new_rooms_open_path, class: "btn gl-app-nav__add", data: { turbo_frame: "shared_rooms_control", action: "click->details#open" }, aria: { label: "New room" } do %>
             <%= uicon "add", size: 16, style: "view-transition-name: new-room" %>
             <span class="for-screen-reader">New room</span>

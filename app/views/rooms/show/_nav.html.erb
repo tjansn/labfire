@@ -1,5 +1,5 @@
 <% content_for :nav do %>
-  <%= account_logo_tag if Current.account.logo.attached? %>
+  <%= account_logo_tag if Current.account&.logo&.attached? %>
 
   <%= tag.span class: "btn btn--reversed btn--faux room--current #{"room--current--direct" if room.direct?}" do %>
     <% if room.direct? %>

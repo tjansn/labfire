@@ -1,9 +1,9 @@
-# How to contribute to Campfire
+# How to contribute to Labfire
 
-Campfire uses GitHub
-[discussions](https://github.com/basecamp/once-campfire/discussions) to track
+Labfire uses GitHub
+[discussions](https://github.com/tjansn/labfire/discussions) to track
 feature requests and questions, rather than [the issue
-tracker](https://github.com/basecamp/once-campfire/issues). If you're considering
+tracker](https://github.com/tjansn/labfire/issues). If you're considering
 opening an issue or pull request, please open a discussion instead.
 
 Whenever a discussion leads to an actionable and well-understood task, we'll
