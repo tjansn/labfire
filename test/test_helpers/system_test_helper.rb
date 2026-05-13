@@ -41,11 +41,13 @@ module SystemTestHelper
   end
 
   def reveal_message_actions
-    find(".message__options-btn").click
-    rescue Capybara::ElementNotFound
-      find(".message__options-btn", visible: false).hover.click
-    ensure
-      assert_selector ".message__boost-btn", visible: true
+    find(".message__actions", visible: :all).hover
+
+    if page.has_selector?(".message__overflow:not([hidden]) .message__options-btn", visible: :all, wait: 0.2)
+      find(".message__overflow:not([hidden]) .message__options-btn", visible: :all).hover.click
+    end
+  ensure
+    assert_selector ".message__boost-btn", visible: true
   end
 
   def dismiss_pwa_install_prompt

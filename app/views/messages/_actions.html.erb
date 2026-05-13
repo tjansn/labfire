@@ -1,8 +1,8 @@
 <%# Be sure to check/update messages/_template.html.erb when changing this file %>
 
-<%# Discord-style hover toolbar. Quick emoji reactions + Add boost + overflow menu.
-    Hidden by default; revealed on .message hover/focus (or when the overflow popup is open). %>
-<div class="message__actions message__hover-actions" data-controller="soft-keyboard" role="toolbar" aria-label="Message reactions and actions">
+<%# Discord-style hover toolbar. Quick emoji reactions + Add boost + message actions.
+    Menu-only fallback remains available when the inline actions would overflow the viewport. %>
+<div class="message__actions message__hover-actions" data-controller="soft-keyboard message-actions" data-message-actions-viewport-margin-value="8" role="toolbar" aria-label="Message reactions and actions">
   <% EmojiHelper::REACTIONS.first(4).each do |character, title| %>
     <%= form_with model: [ message, Boost.new ], data: { turbo_frame: dom_id(message, :boosting) }, class: "message__hover-action" do |form| %>
       <%= hidden_field_tag "boost[content]", character %>
@@ -22,8 +22,37 @@
     <span class="for-screen-reader">New boost</span>
   <% end %>
 
+  <% if message.content_type.attachment? %>
+    <%= link_to rails_blob_path(message.attachment, disposition: "attachment", only_path: true), class: "btn message__action-btn message__inline-action hide-in-ios-pwa", hidden: true, title: "Download", aria: { label: "Download" }, data: { message_actions_target: "inlineAction" } do %>
+      <%= uicon "download" %>
+      <span class="for-screen-reader">Download</span>
+    <% end %>
+
+    <%= tag.button class: "btn message__action-btn message__inline-action", hidden: true,
+        data: { message_actions_target: "inlineAction", controller: "web-share", action: "web-share#share", web_share_files_value: rails_blob_path(message.attachment, only_path: true), web_share_title_value: message.attachment.filename.to_s }, title: "Share", aria: { label: "Share" } do %>
+      <%= uicon "share" %>
+      <span class="for-screen-reader">Share</span>
+    <% end %>
+  <% else %>
+    <%= tag.button class: "btn message__action-btn message__inline-action", hidden: true, data: { message_actions_target: "inlineAction", action: "reply#reply" }, title: "Reply", aria: { label: "Reply" } do %>
+      <%= uicon "reply" %>
+      <span class="for-screen-reader">Reply</span>
+    <% end %>
+  <% end %>
+
+  <%= tag.button class: "btn message__action-btn message__inline-action", hidden: true, title: "Copy link", aria: { label: "Copy link" }, data: { message_actions_target: "inlineAction", controller: "copy-to-clipboard", action: "copy-to-clipboard#copy", copy_to_clipboard_success_class: "btn--success", copy_to_clipboard_content_value: url } do %>
+    <%= uicon "link" %>
+    <span class="for-screen-reader">Copy link</span>
+  <% end %>
+
+  <%= link_to edit_room_message_path(message.room, message), class: "btn message__action-btn message__inline-action message__edit-btn", hidden: true,
+        data: { message_actions_target: "inlineAction", turbo_frame: dom_id(message, :edit) }, title: "Edit", aria: { label: "Edit" } do %>
+    <%= uicon "pencil" %>
+    <span class="for-screen-reader">Edit</span>
+  <% end %>
+
   <%= tag.details class: "position-relative message__hover-action message__overflow",
-      data: { controller: "popup", action: "keydown.esc->popup#close toggle->popup#toggle click@document->popup#closeOnClickOutside", popup_orientation_top_class: "popup-orientation-top" } do %>
+      data: { message_actions_target: "overflow", controller: "popup", action: "keydown.esc->popup#close toggle->popup#toggle click@document->popup#closeOnClickOutside", popup_orientation_top_class: "popup-orientation-top" } do %>
     <summary class="btn message__action-btn message__options-btn" aria-label="More message actions">
       <%= uicon "menu-dots-horizontal" %>
       <span class="for-screen-reader">More message actions</span>
@@ -51,7 +80,7 @@
         <% end %>
 
         <%= link_to edit_room_message_path(message.room, message), class: "btn message__action-btn center full-width message__edit-btn",
-              data: { turbo_frame: dom_id(message, :edit) }, title: "Edit", aria: { label: "Edit"} do %>
+              data: { turbo_frame: dom_id(message, :edit) }, title: "Edit", aria: { label: "Edit" } do %>
           <%= uicon "pencil" %>
         <% end %>
       </div>

@@ -3623,11 +3623,17 @@ body:not(.sidebar) .sidebar__toggle {
   border: 0;
   border-radius: var(--gl-radius-sm);
   block-size: var(--gl-space-7);
+  flex: 0 0 var(--gl-space-7);
   inline-size: var(--gl-space-7);
   min-block-size: var(--gl-space-7);
   min-inline-size: var(--gl-space-7);
   padding: 0;
   transition: background-color 120ms ease;
+}
+
+.message__inline-action[hidden],
+.message__overflow[hidden] {
+  display: none !important;
 }
 
 .message__hover-actions :where(.btn, button, a):where(:not(:active):hover) {
