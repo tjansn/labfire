@@ -4501,13 +4501,13 @@ button:active:not(:disabled):not([aria-disabled="true"]) {
 
 .boost-composer__form {
   align-items: center;
-  background: color-mix(in srgb, var(--gl-surface-card) 88%, var(--gl-surface-section));
+  background: var(--gl-surface-card);
   border: 1px solid var(--gl-card-border-color);
-  border-radius: 999px;
-  box-shadow: 0 var(--gl-space-2) var(--gl-space-5) color-mix(in srgb, var(--gl-color-slate) 8%, transparent);
-  column-gap: var(--gl-space-1);
-  min-block-size: var(--gl-space-12);
-  padding: 3px;
+  border-radius: var(--gl-radius-md);
+  box-shadow: 0 var(--gl-space-1) var(--gl-space-3) color-mix(in srgb, var(--gl-color-slate) 10%, transparent);
+  column-gap: 2px;
+  min-block-size: var(--gl-space-10);
+  padding: 2px;
   transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
 }
 
@@ -4518,27 +4518,27 @@ button:active:not(:disabled):not([aria-disabled="true"]) {
 
 .boost-composer__field {
   align-items: center;
-  background: var(--gl-surface-page);
-  border: 1px solid color-mix(in srgb, var(--gl-color-midtone) 18%, transparent);
-  border-radius: 999px;
+  background: transparent;
+  border: 0;
+  border-radius: var(--gl-radius-sm);
   column-gap: var(--gl-space-2);
   cursor: text;
-  min-block-size: calc(var(--gl-space-10) + 2px);
+  min-block-size: var(--gl-space-7);
   min-inline-size: clamp(13rem, 23vw, 18rem);
-  padding: 2px var(--gl-space-3) 2px 2px;
+  padding: 0 var(--gl-space-2) 0 var(--gl-space-1);
   transition: border-color 160ms ease, background-color 160ms ease;
 }
 
 .boost-composer__form:focus-within .boost-composer__field {
-  border-color: color-mix(in srgb, var(--gl-color-midtone) 40%, transparent);
+  border-color: transparent;
 }
 
 .boost-composer__avatar,
 .boost-composer__avatar.avatar,
 .boost-composer__avatar img {
-  --avatar-size: calc(var(--gl-space-8) - 2px);
-  block-size: calc(var(--gl-space-8) - 2px);
-  inline-size: calc(var(--gl-space-8) - 2px);
+  --avatar-size: var(--gl-space-6);
+  block-size: var(--gl-space-6);
+  inline-size: var(--gl-space-6);
 }
 
 .boost-composer__input,
@@ -4575,17 +4575,17 @@ button:active:not(:disabled):not([aria-disabled="true"]) {
 
 .boost-composer__submit,
 .boost-composer__cancel {
-  --btn-border-radius: 999px;
+  --btn-border-radius: var(--gl-radius-sm);
   --btn-padding: 0;
   align-items: center;
-  block-size: calc(var(--gl-space-10) + 2px);
-  border-radius: 999px !important;
+  block-size: var(--gl-space-7);
+  border-radius: var(--gl-radius-sm) !important;
   box-shadow: none !important;
   display: inline-flex;
-  inline-size: calc(var(--gl-space-10) + 2px);
+  inline-size: var(--gl-space-7);
   justify-content: center;
-  min-block-size: calc(var(--gl-space-10) + 2px);
-  min-inline-size: calc(var(--gl-space-10) + 2px);
+  min-block-size: var(--gl-space-7);
+  min-inline-size: var(--gl-space-7);
   outline: 0 !important;
   padding: 0 !important;
   transform: none !important;
@@ -4615,22 +4615,18 @@ button:active:not(:disabled):not([aria-disabled="true"]) {
 }
 
 .dark .boost-composer__form {
-  background: color-mix(in srgb, var(--gl-surface-card) 86%, var(--gl-color-porcelain) 4%);
+  background: color-mix(in srgb, var(--gl-color-midnight) 92%, var(--gl-color-porcelain) 4%);
   border-color: color-mix(in srgb, var(--gl-color-porcelain) 12%, transparent);
-  box-shadow: 0 var(--gl-space-2) var(--gl-space-5) color-mix(in srgb, var(--gl-color-slate) 44%, transparent);
+  box-shadow: 0 var(--gl-space-1) var(--gl-space-3) rgba(0, 0, 0, 0.5);
 }
 
 .dark .boost-composer__field {
-  background: color-mix(in srgb, var(--gl-color-midnight) 78%, var(--gl-color-porcelain) 4%);
-  border-color: color-mix(in srgb, var(--gl-color-porcelain) 14%, transparent);
-}
-
-.dark .boost-composer__form:focus-within,
-.dark .boost-composer__form:focus-within .boost-composer__field {
-  border-color: color-mix(in srgb, var(--gl-color-porcelain) 24%, transparent);
+  background: transparent;
+  border-color: transparent;
 }
 
 .dark .boost-composer__form:focus-within {
+  border-color: color-mix(in srgb, var(--gl-color-porcelain) 24%, transparent);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--gl-color-porcelain) 10%, transparent);
 }
 
