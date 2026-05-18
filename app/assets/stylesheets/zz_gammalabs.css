@@ -3319,7 +3319,7 @@ body:not(.sidebar) .sidebar__toggle {
 
 /* Threaded continuation — pull tight against previous row, hide avatar + meta. */
 .message + .message--threaded {
-  margin-block-start: calc(var(--message-space) * -1);
+  margin-block-start: calc(0px - var(--message-space));
   padding-block-start: 2px;
 }
 
@@ -4106,6 +4106,25 @@ body:not(.sidebar) .sidebar__toggle {
   border-radius: 0 !important;
   color: var(--gl-text-primary) !important;
   padding: calc(var(--content-padding-block) * 0.55) 0 !important;
+}
+
+.message--grouped {
+  margin-block-start: calc(0px - var(--message-space) + var(--gl-space-1)) !important;
+  padding-block-start: 0 !important;
+}
+
+.message--continued {
+  padding-block-end: 0 !important;
+}
+
+.message--grouped .message__avatar,
+.message--grouped .message__meta {
+  display: none !important;
+}
+
+.message--grouped .message__body-content,
+.message--continued .message__body-content {
+  padding-block: 0 !important;
 }
 
 .message__body-content a,

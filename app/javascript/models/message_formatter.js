@@ -1,5 +1,6 @@
 import { onNextEventLoopTick } from "helpers/timing_helpers"
 
+const GROUPING_TIME_WINDOW_MILLISECONDS = 5 * 1000 // 5 seconds
 const THREADING_TIME_WINDOW_MILLISECONDS = 5 * 60 * 1000 // 5 minutes
 
 export const ThreadStyle = {
@@ -56,11 +57,18 @@ export default class MessageFormatter {
   }
 
   #threadMessage(message) {
-    if (message.previousElementSibling) {
-      const isSameUser = message.previousElementSibling.dataset.userId == message.dataset.userId
-      const previousMessageIsRecent = this.#previousMessageIsRecent(message)
+    const previousMessage = message.previousElementSibling
 
-      message.classList.toggle(this.#classes.threaded, isSameUser && previousMessageIsRecent)
+    if (previousMessage) {
+      const isSameUser = previousMessage.dataset.userId == message.dataset.userId
+      const threadedWithPrevious = isSameUser && this.#previousMessageIsWithin(message, THREADING_TIME_WINDOW_MILLISECONDS)
+      const groupedWithPrevious = isSameUser && this.#previousMessageIsWithin(message, GROUPING_TIME_WINDOW_MILLISECONDS)
+
+      message.classList.toggle(this.#classes.threaded, threadedWithPrevious)
+      message.classList.toggle(this.#classes.grouped, groupedWithPrevious)
+      previousMessage.classList.toggle(this.#classes.continued, groupedWithPrevious)
+    } else {
+      message.classList.remove(this.#classes.threaded, this.#classes.grouped)
     }
   }
 
@@ -83,10 +91,10 @@ export default class MessageFormatter {
     return Array.from(element.childNodes).every(node => node.nodeType === Node.TEXT_NODE)
   }
 
-  #previousMessageIsRecent(message) {
+  #previousMessageIsWithin(message, milliseconds) {
     const previousTimestamp = message.previousElementSibling.dataset.messageTimestamp
     const threadTimestamp = message.dataset.messageTimestamp
-    return Math.abs(previousTimestamp - threadTimestamp) <= THREADING_TIME_WINDOW_MILLISECONDS
+    return Math.abs(previousTimestamp - threadTimestamp) <= milliseconds
   }
 
   get #selectorForCurrentUser() {

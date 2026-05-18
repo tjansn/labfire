@@ -7,7 +7,7 @@ import ScrollManager from "models/scroll_manager"
 
 export default class extends Controller {
   static targets = [ "latest", "message", "body", "messages", "template" ]
-  static classes = [ "firstOfDay", "formatted", "me", "mentioned", "threaded" ]
+  static classes = [ "firstOfDay", "formatted", "me", "mentioned", "grouped", "continued", "threaded" ]
   static values = { pageUrl: String }
 
   #clientMessage
@@ -23,6 +23,8 @@ export default class extends Controller {
       formatted: this.formattedClass,
       me: this.meClass,
       mentioned: this.mentionedClass,
+      grouped: this.groupedClass,
+      continued: this.continuedClass,
       threaded: this.threadedClass,
     })
   }

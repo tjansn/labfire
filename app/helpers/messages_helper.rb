@@ -7,6 +7,8 @@ module MessagesHelper
       messages_formatted_class: "message--formatted",
       messages_me_class: "message--me",
       messages_mentioned_class: "message--mentioned",
+      messages_grouped_class: "message--grouped",
+      messages_continued_class: "message--continued",
       messages_threaded_class: "message--threaded",
       messages_page_url_value: room_messages_url(room)
     }, &
