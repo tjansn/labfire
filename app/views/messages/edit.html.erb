@@ -1,5 +1,15 @@
 <turbo-frame id="<%= dom_id(@message, :edit) %>">
-  <div class="message__body position-relative" data-controller="scroll-into-view">
+  <style>
+    body:has(.message__body-content--editing) .message-area__return-to-latest,
+    .message-area__return-to-latest {
+      display: none !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+      visibility: hidden !important;
+    }
+  </style>
+
+  <div class="message__body position-relative" data-controller="scroll-into-view" data-scroll-into-view-hide-latest-value="true">
     <div class="message__body-content message__body-content--editing gap">
       <% if @message.content_type.attachment? %>
         <%= message_attachment_presentation(@message) %>
@@ -12,35 +22,51 @@
           <% end %>
         </div>
       <% else %>
-        <div class="composer--edit composer--rich-text">
+        <div class="composer--edit message__edit-composer" data-controller="composer" data-composer-toolbar-class="composer--rich-text">
           <%= form_with model: @message, url: room_message_path(@room, @message), id: dom_id(@message, :form), data: {
                 controller: "form", action: "trix-file-accept->form#preventAttachment keydown.esc->form#cancel keydown.ctrl+enter->form#submit:prevent keydown.meta+enter->form#submit:prevent" } do |form| %>
-            <div class="full-width input input--actor min-width fill-white">
-              <%= form.rich_text_area :body,
-                    rows: 1,
-                    class: "input",
-                    aria: { multiline: "true", label: "Edit message" },
-                    autofocus: true,
-                    data: {
-                      controller: "rich-autocomplete",
-                      action: rich_text_data_actions,
-                      rich_autocomplete_url_value: autocompletable_users_path(room_id: @room.id) } %>
+            <div class="composer__input composer__input--panel message__edit-input input input--actor full-width">
+              <div class="composer__input-text composer__editor flex flex-column flex-item-grow min-width">
+                <%= form.rich_text_area :body,
+                      rows: 1,
+                      class: "input",
+                      aria: { multiline: "true", label: "Edit message" },
+                      autofocus: true,
+                      data: {
+                        controller: "rich-autocomplete",
+                        action: rich_text_data_actions(composer: false, typing_notifications: false),
+                        rich_autocomplete_url_value: autocompletable_users_path(room_id: @room.id),
+                        composer_target: "text" } %>
+              </div>
+
+              <div class="composer__actions message__edit-actions flex align-center justify-space-between full-width">
+                <div class="composer__actions-start flex align-center">
+                  <%= tag.button type: "button",
+                        class: "btn btn--borderless flex-item-no-shrink composer__rich-text-btn",
+                        title: "Toggle text formatting",
+                        aria: { label: "Toggle text formatting", pressed: "false" },
+                        data: { action: "composer#toggleToolbar", composer_toolbar_toggle: true } do %>
+                    <%= uicon "text-options" %>
+                    <span class="for-screen-reader">Toggle text formatting</span>
+                  <% end %>
+
+                  <%= button_tag class: "btn btn--borderless message__edit-delete-btn", type: "submit", form: dom_id(@message, :delete_form),
+                          data: { turbo_confirm: "Are you sure you want to delete this message?" }, title: "Delete message", aria: { label: "Delete message" } do %>
+                    <%= uicon "trash" %>
+                    <span class="for-screen-reader">Delete message</span>
+                  <% end %>
+                </div>
+
+                <div class="composer__actions-end flex align-center">
+                  <%= button_tag type: "submit", class: "btn btn--reversed composer__send-btn message__edit-save-btn", title: "Save changes", aria: { label: "Save changes" } do %>
+                    <%= uicon "send", size: 16 %>
+                    <span class="for-screen-reader">Save changes</span>
+                  <% end %>
+                </div>
+              </div>
             </div>
 
             <%= link_to "Close editor and discard changes", room_message_path(@room, @message), data: { form_target: "cancel" }, hidden: true %>
-
-            <div class="message__edit-btns flex align-center justify-space-between gap full-width pad-block-start-half">
-              <%= button_tag type: "submit", class: "btn btn--reversed" do %>
-                <%= uicon "check" %>
-                <span class="for-screen-reader">Save changes</span>
-              <% end %>
-
-              <%= button_tag class: "btn btn--negative", type: "submit", form: dom_id(@message, :delete_form),
-                      data: { turbo_confirm: "Are you sure you want to delete this message?" } do %>
-                <%= uicon "trash" %>
-                <span class="for-screen-reader">Delete message</span>
-              <% end %>
-            </div>
           <% end %>
         </div>
       <% end %>

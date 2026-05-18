@@ -3726,7 +3726,7 @@ body:not(.sidebar) .sidebar__toggle {
 /* Composer — clean, minimal, modern. Single hairline input + a square primary send. */
 .composer {
   background: var(--gl-surface-page);
-  border-block-start: 1px solid var(--gl-card-border-color);
+  border-block-start: 0;
   padding: var(--gl-space-3) var(--aurora-row-gutter) var(--gl-space-4);
 }
 
@@ -3749,6 +3749,15 @@ body:not(.sidebar) .sidebar__toggle {
   --input-border-color: var(--aurora-input-border-focus);
   border-color: var(--aurora-input-border-focus) !important;
   box-shadow: none !important;
+}
+
+.composer__input--panel.input--actor {
+  align-items: stretch;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gl-space-2);
+  min-block-size: auto;
+  padding: var(--gl-space-2);
 }
 
 .composer__input.input--actor .input,
@@ -3777,6 +3786,50 @@ body:not(.sidebar) .sidebar__toggle {
   justify-content: center;
 }
 
+.composer__input--panel .composer__input-text {
+  inline-size: 100%;
+}
+
+.composer__input--panel trix-editor.input {
+  inline-size: 100%;
+  margin-block-start: 0 !important;
+}
+
+.composer__input--panel trix-toolbar {
+  border-block-end: 1px solid var(--gl-card-border-color);
+  inset: auto;
+  margin: 0;
+  overflow-x: auto;
+  padding: 0 0 var(--gl-space-2);
+  position: static;
+}
+
+.composer__input--panel trix-toolbar .trix-button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gl-space-1);
+}
+
+.composer__input--panel .trix-button-group {
+  display: inline-flex;
+  gap: 1px;
+}
+
+.composer__input--panel .trix-button {
+  block-size: var(--gl-space-7) !important;
+  inline-size: var(--gl-space-7) !important;
+}
+
+.composer__input--panel .trix-button::before {
+  opacity: 0.58 !important;
+  transform: scale(0.82);
+}
+
+.composer__input--panel .trix-button.trix-active::before,
+.composer__input--panel .trix-button:where(:hover, :focus-visible)::before {
+  opacity: 0.9 !important;
+}
+
 .composer__input trix-editor::placeholder,
 .composer__input trix-editor[placeholder]:empty::before {
   color: var(--gl-text-secondary);
@@ -3792,9 +3845,86 @@ body:not(.sidebar) .sidebar__toggle {
   color: var(--gl-text-secondary);
 }
 
+.composer__actions {
+  min-block-size: var(--gl-space-10);
+}
+
+.composer__actions-start,
+.composer__actions-end {
+  gap: var(--gl-space-1);
+}
+
 .composer__attachment-btn {
   margin-inline-start: var(--gl-space-1);
   margin-inline-end: calc(0px - var(--gl-space-1));
+}
+
+.composer__input--panel .composer__actions-start {
+  margin-inline-start: calc(0px - var(--gl-space-1));
+}
+
+.composer__input--panel .composer__attachment-btn,
+.composer__input--panel .composer__rich-text-btn,
+.composer__input--panel .message__edit-delete-btn {
+  align-items: center;
+  block-size: var(--gl-space-10);
+  border-color: transparent !important;
+  display: inline-flex;
+  inline-size: var(--gl-space-10);
+  justify-content: center;
+  min-block-size: var(--gl-space-10);
+  min-inline-size: var(--gl-space-10);
+  padding: 0;
+}
+
+.message__body-content--editing {
+  inline-size: min(96ch, 100%) !important;
+  padding: 0 !important;
+}
+
+.message__body:has(.message__body-content--editing) {
+  max-inline-size: min(96ch, 100%) !important;
+  inline-size: 100%;
+  position: relative;
+  z-index: 90;
+}
+
+.message__body-content--editing {
+  position: relative;
+  z-index: 90;
+}
+
+.message__edit-composer {
+  inline-size: 100%;
+}
+
+.message__edit-actions {
+  min-block-size: var(--gl-space-8);
+  position: relative;
+}
+
+.message__edit-composer .composer__actions-end {
+  inset-block-end: var(--gl-space-1);
+  inset-inline-end: var(--gl-space-2);
+  position: absolute;
+}
+
+.message__edit-composer .message__edit-save-btn {
+  align-self: center;
+  block-size: var(--gl-space-8) !important;
+  border-radius: var(--gl-radius-sm) !important;
+  inline-size: var(--gl-space-8) !important;
+  min-block-size: var(--gl-space-8) !important;
+  min-inline-size: var(--gl-space-8) !important;
+}
+
+.composer__send-btn .fi {
+  font-size: 16px !important;
+  line-height: 1;
+}
+
+.message__edit-delete-btn {
+  color: var(--color-negative);
 }
 
 .composer__attachment-btn:where(:not(:active):hover),
@@ -3820,7 +3950,8 @@ body:not(.sidebar) .sidebar__toggle {
    Sized to fit inside the 48px bar (with 4px padding), with a radius that
    echoes the bar's outer radius minus the padding. */
 .composer .btn.btn--reversed[type="submit"],
-.composer .btn--reversed[name="send"] {
+.composer .btn--reversed[name="send"],
+.message__edit-composer .composer__send-btn {
   --btn-background: var(--gl-action-primary-bg);
   --btn-border-color: var(--gl-action-primary-bg);
   --btn-color: var(--gl-action-primary-text);
@@ -3841,7 +3972,8 @@ body:not(.sidebar) .sidebar__toggle {
 }
 
 .composer .btn.btn--reversed[type="submit"] img,
-.composer .btn--reversed[name="send"] img {
+.composer .btn--reversed[name="send"] img,
+.message__edit-composer .composer__send-btn img {
   filter: var(--gl-icon-on-accent-filter) !important;
 }
 
@@ -3853,7 +3985,8 @@ body:not(.sidebar) .sidebar__toggle {
 }
 
 .composer .btn.btn--reversed[type="submit"]:where(:not(:active):hover),
-.composer .btn--reversed[name="send"]:where(:not(:active):hover) {
+.composer .btn--reversed[name="send"]:where(:not(:active):hover),
+.message__edit-composer .composer__send-btn:where(:not(:active):hover) {
   filter: brightness(1.06);
 }
 
@@ -4304,7 +4437,7 @@ body { isolation: isolate; }
   background: var(--btn-background) !important;
   border-color: var(--btn-border-color) !important;
   box-shadow: none !important;
-  inset-block-end: calc(var(--footer-height) + var(--gl-space-12)) !important;
+  inset-block-end: var(--latest-message-button-bottom, calc(var(--footer-height) + var(--gl-space-12))) !important;
   inset-inline-end: max(var(--aurora-row-gutter, var(--gl-space-4)), env(safe-area-inset-right)) !important;
   inset-inline-start: auto !important;
   outline: 0 !important;
@@ -4317,6 +4450,17 @@ body { isolation: isolate; }
   --btn-border-color: var(--gl-card-border-color);
   background: var(--btn-background) !important;
   border-color: var(--btn-border-color) !important;
+}
+
+body.editing-message .message-area__return-to-latest,
+body:has(.message__body-content--editing) .message-area__return-to-latest,
+.message-area__return-to-latest--editing,
+.message-area:has(.message__body-content--editing) .message-area__return-to-latest,
+.messages:has(.message__body-content--editing) ~ .message-area__return-to-latest {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
 }
 
 body.sidebar #nav,
@@ -4480,6 +4624,10 @@ button:active:not(:disabled):not([aria-disabled="true"]) {
 .composer .composer__rich-text-btn:focus,
 .composer .composer__rich-text-btn:focus-visible,
 .composer .composer__rich-text-btn:active,
+.message__edit-composer .composer__rich-text-btn,
+.message__edit-composer .composer__rich-text-btn:focus,
+.message__edit-composer .composer__rich-text-btn:focus-visible,
+.message__edit-composer .composer__rich-text-btn:active,
 .composer .composer__send-btn,
 .composer .composer__send-btn:focus,
 .composer .composer__send-btn:focus-visible,
@@ -4519,7 +4667,13 @@ button:active:not(:disabled):not([aria-disabled="true"]) {
 .composer .composer__rich-text-btn:focus,
 .composer .composer__rich-text-btn:focus-within,
 .composer .composer__rich-text-btn:focus-visible,
-.composer .composer__rich-text-btn:active {
+.composer .composer__rich-text-btn:active,
+.message__edit-composer .composer__rich-text-btn,
+.message__edit-composer .composer__rich-text-btn:hover,
+.message__edit-composer .composer__rich-text-btn:focus,
+.message__edit-composer .composer__rich-text-btn:focus-within,
+.message__edit-composer .composer__rich-text-btn:focus-visible,
+.message__edit-composer .composer__rich-text-btn:active {
   --btn-border-color: transparent !important;
   --btn-background: transparent !important;
   background: transparent !important;
@@ -4632,6 +4786,11 @@ button:active:not(:disabled):not([aria-disabled="true"]) {
   --btn-background: var(--gl-text-primary);
   --btn-border-color: transparent;
   --btn-color: var(--gl-surface-page);
+}
+
+.boost-composer__submit .fi {
+  font-size: 16px !important;
+  line-height: 1;
 }
 
 .boost-composer__cancel {

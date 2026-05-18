@@ -58,6 +58,7 @@ module IconsHelper
     "remove-circle" => "cross-circle",
     "reply" => "undo-alt",
     "search" => "search",
+    "send" => "envelope",
     "settings" => "settings-sliders",
     "share" => "share",
     "text-options" => "text",

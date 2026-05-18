@@ -14,6 +14,7 @@ export default class extends Controller {
   #paginator
   #formatter
   #scrollManager
+  #editObserver
 
   // Lifecycle
 
@@ -40,10 +41,12 @@ export default class extends Controller {
       this.#scrollManager.autoscroll(true)
     }
 
+    this.#monitorMessageEditing()
     this.#paginator.monitor()
   }
 
   disconnect() {
+    this.#editObserver?.disconnect()
     this.#paginator.disconnect()
   }
 
@@ -126,6 +129,20 @@ export default class extends Controller {
 
 
   // Internal
+
+  #monitorMessageEditing() {
+    this.#editObserver = new MutationObserver(this.#updateLatestButtonForEditing.bind(this))
+    this.#editObserver.observe(this.messagesTarget, { childList: true, subtree: true })
+    this.#updateLatestButtonForEditing()
+  }
+
+  #updateLatestButtonForEditing() {
+    this.latestTarget.classList.toggle("message-area__return-to-latest--editing", this.#editingMessage)
+  }
+
+  get #editingMessage() {
+    return this.messagesTarget.querySelector(".message__body-content--editing") !== null
+  }
 
   async #ensureUpToDate() {
     if (!this.#paginator.upToDate) {

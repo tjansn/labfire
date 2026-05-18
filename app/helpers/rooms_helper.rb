@@ -33,7 +33,7 @@ module RoomsHelper
   def button_to_jump_to_newest_message
     tag.button \
         class: "message-area__return-to-latest btn",
-        data: { action: "messages#returnToLatest", messages_target: "latest" },
+        data: { controller: "latest-message-button", action: "messages#returnToLatest", messages_target: "latest" },
         hidden: true do
       uicon("arrow-down", size: 20) +
       tag.span("Jump to newest message", class: "for-screen-reader")
