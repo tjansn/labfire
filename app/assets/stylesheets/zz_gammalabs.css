@@ -3559,7 +3559,8 @@ body:not(.sidebar) .sidebar__toggle {
 /* =========================================================================
    Hover toolbar — quick reactions + boost + overflow, anchored top-right of
    the message. Hidden by default, revealed on .message hover/focus or when
-   the overflow popup is open. On touch devices it stays visible.
+   the overflow popup is open. On touch devices it appears after tapping a
+   message.
    ========================================================================= */
 .message__actions.message__hover-actions {
   align-items: center;
@@ -3605,13 +3606,24 @@ body:not(.sidebar) .sidebar__toggle {
   }
 }
 
-/* Mobile/touch: the toolbar floats over the body content, slightly inset. */
+/* Mobile/touch: the toolbar floats over the body content, slightly inset, and
+   only becomes interactive after the message is tapped. */
 @media (hover: none), (pointer: coarse) {
   .message__hover-actions {
     background: transparent;
     border: 0;
     box-shadow: none;
     inset-block-start: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 120ms ease;
+  }
+
+  .message.message--actions-active .message__hover-actions,
+  .message:focus-within .message__hover-actions,
+  .message:has([open]) .message__hover-actions {
+    opacity: 1;
+    pointer-events: auto;
   }
 }
 
@@ -3782,6 +3794,7 @@ body:not(.sidebar) .sidebar__toggle {
 
 .composer__attachment-btn {
   margin-inline-start: var(--gl-space-1);
+  margin-inline-end: calc(0px - var(--gl-space-1));
 }
 
 .composer__attachment-btn:where(:not(:active):hover),
@@ -4493,15 +4506,20 @@ button:active:not(:disabled):not([aria-disabled="true"]) {
   filter: brightness(1.08) !important;
 }
 
-/* Attachment label is icon-only — strip the border/background it picks up
-   from the generic icon-button helper (line ~2699) so the file-picker
-   shows just the glyph in every state. */
+/* Composer icon buttons are icon-only — strip the border/background they pick up
+   from the generic icon-button helper so they show just the glyph in every state. */
 .composer .composer__attachment-btn,
 .composer .composer__attachment-btn:hover,
 .composer .composer__attachment-btn:focus,
 .composer .composer__attachment-btn:focus-within,
 .composer .composer__attachment-btn:focus-visible,
-.composer .composer__attachment-btn:active {
+.composer .composer__attachment-btn:active,
+.composer .composer__rich-text-btn,
+.composer .composer__rich-text-btn:hover,
+.composer .composer__rich-text-btn:focus,
+.composer .composer__rich-text-btn:focus-within,
+.composer .composer__rich-text-btn:focus-visible,
+.composer .composer__rich-text-btn:active {
   --btn-border-color: transparent !important;
   --btn-background: transparent !important;
   background: transparent !important;

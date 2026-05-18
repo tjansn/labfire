@@ -16,6 +16,15 @@
                 <span class="for-screen-reader">Attach a file</span>
               </label>
 
+              <%= tag.button type: "button",
+                    class: "btn btn--borderless flex-item-no-shrink composer__rich-text-btn",
+                    title: "Toggle text formatting",
+                    aria: { label: "Toggle text formatting", pressed: "false" },
+                    data: { action: "composer#toggleToolbar", composer_toolbar_toggle: true } do %>
+                <%= uicon "text-options" %>
+                <span class="for-screen-reader">Toggle text formatting</span>
+              <% end %>
+
               <div class="flex flex-column flex-item-grow min-width composer__input-text">
                 <%= form.rich_text_area :body,
                       rows: 1,

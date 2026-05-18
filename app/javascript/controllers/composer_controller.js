@@ -12,6 +12,8 @@ export default class extends Controller {
   #files = []
 
   connect() {
+    this.#setToolbarTogglePressed(this.element.classList.contains(this.toolbarClass))
+
     if (!this.#usingTouchDevice) {
       onNextEventLoopTick(() => this.textTarget.focus())
     }
@@ -35,12 +37,15 @@ export default class extends Controller {
   }
 
   toggleToolbar() {
-    this.element.classList.toggle(this.toolbarClass)
+    const expanded = this.element.classList.toggle(this.toolbarClass)
+
+    this.#setToolbarTogglePressed(expanded)
     this.textTarget.focus()
   }
 
   collapseToolbar() {
     this.element.classList.remove(this.toolbarClass)
+    this.#setToolbarTogglePressed(false)
   }
 
   replaceMessageContent(content) {
@@ -106,6 +111,12 @@ export default class extends Controller {
 
   offline() {
     this.fieldsTarget.disabled = true
+  }
+
+  #setToolbarTogglePressed(pressed) {
+    this.element.querySelectorAll("[data-composer-toolbar-toggle]").forEach((button) => {
+      button.setAttribute("aria-pressed", pressed)
+    })
   }
 
   get #usingTouchDevice() {
