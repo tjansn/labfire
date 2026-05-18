@@ -2881,7 +2881,6 @@ img.avatar,
 /* Annotation pass: frameless utility icons + calmer selected sidebar rows. */
 .gl-sidebar-brand__settings,
 .sidebar__toggle,
-.message-area__return-to-latest,
 #nav .btn:where(:has(> .for-screen-reader):has(> :is(img, .fi))):not(.room--current):not(.btn--reversed):not(.btn--negative),
 .button_to_change_notifying .btn,
 .dialog__close,
@@ -2897,7 +2896,6 @@ img.avatar,
 
 .gl-sidebar-brand__settings:where(:not(:active):hover),
 .sidebar__toggle:where(:not(:active):hover),
-.message-area__return-to-latest:where(:not(:active):hover),
 #nav .btn:where(:has(> .for-screen-reader):has(> :is(img, .fi))):not(.room--current):not(.btn--reversed):not(.btn--negative):where(:not(:active):hover),
 .button_to_change_notifying .btn:where(:not(:active):hover),
 .dialog__close:where(:not(:active):hover),
@@ -4433,34 +4431,27 @@ body { isolation: isolate; }
 .message-area__return-to-latest {
   --btn-background: color-mix(in srgb, var(--gl-surface-card) 94%, transparent);
   --btn-border-color: var(--gl-card-border-color);
-  animation: none !important;
-  background: var(--btn-background) !important;
-  border-color: var(--btn-border-color) !important;
-  box-shadow: none !important;
-  inset-block-end: var(--latest-message-button-bottom, calc(var(--footer-height) + var(--gl-space-12))) !important;
-  inset-inline-end: max(var(--aurora-row-gutter, var(--gl-space-4)), env(safe-area-inset-right)) !important;
-  inset-inline-start: auto !important;
-  outline: 0 !important;
-  position: fixed !important;
+  animation: none;
+  background: var(--btn-background);
+  border-color: var(--btn-border-color);
+  box-shadow: none;
+  inset-block-end: var(--latest-message-button-bottom, calc(var(--footer-height) + var(--gl-space-4)));
+  inset-inline-end: max(var(--aurora-row-gutter, var(--gl-space-4)), env(safe-area-inset-right));
+  inset-inline-start: auto;
+  outline: 0;
+  position: fixed;
   z-index: 65;
 }
 
 .message-area__return-to-latest:where(:not(:active):hover) {
   --btn-background: var(--gl-surface-section);
   --btn-border-color: var(--gl-card-border-color);
-  background: var(--btn-background) !important;
-  border-color: var(--btn-border-color) !important;
+  background: var(--btn-background);
+  border-color: var(--btn-border-color);
 }
 
-body.editing-message .message-area__return-to-latest,
-body:has(.message__body-content--editing) .message-area__return-to-latest,
-.message-area__return-to-latest--editing,
-.message-area:has(.message__body-content--editing) .message-area__return-to-latest,
-.messages:has(.message__body-content--editing) ~ .message-area__return-to-latest {
+.message-area__return-to-latest--editing {
   display: none !important;
-  opacity: 0 !important;
-  pointer-events: none !important;
-  visibility: hidden !important;
 }
 
 body.sidebar #nav,

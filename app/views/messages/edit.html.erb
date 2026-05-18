@@ -1,15 +1,5 @@
 <turbo-frame id="<%= dom_id(@message, :edit) %>">
-  <style>
-    body:has(.message__body-content--editing) .message-area__return-to-latest,
-    .message-area__return-to-latest {
-      display: none !important;
-      opacity: 0 !important;
-      pointer-events: none !important;
-      visibility: hidden !important;
-    }
-  </style>
-
-  <div class="message__body position-relative" data-controller="scroll-into-view" data-scroll-into-view-hide-latest-value="true">
+  <div class="message__body position-relative" data-controller="scroll-into-view">
     <div class="message__body-content message__body-content--editing gap">
       <% if @message.content_type.attachment? %>
         <%= message_attachment_presentation(@message) %>

@@ -73,7 +73,11 @@ module MessagesHelper
 
   private
     def messages_actions
-      "turbo:before-stream-render@document->messages#beforeStreamRender keydown.up@document->messages#editMyLastMessage"
+      [
+        "turbo:before-stream-render@document->messages#beforeStreamRender",
+        "keydown.up@document->messages#editMyLastMessage",
+        "latest-message-button:return->messages#returnToLatest"
+      ].join(" ")
     end
 
     def maintain_scroll_actions

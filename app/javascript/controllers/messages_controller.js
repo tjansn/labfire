@@ -6,7 +6,7 @@ import MessagePaginator from "models/message_paginator"
 import ScrollManager from "models/scroll_manager"
 
 export default class extends Controller {
-  static targets = [ "latest", "message", "body", "messages", "template" ]
+  static targets = [ "message", "body", "messages", "template" ]
   static classes = [ "firstOfDay", "formatted", "me", "mentioned", "grouped", "continued", "threaded" ]
   static values = { pageUrl: String }
 
@@ -14,7 +14,6 @@ export default class extends Controller {
   #paginator
   #formatter
   #scrollManager
-  #editObserver
 
   // Lifecycle
 
@@ -41,12 +40,10 @@ export default class extends Controller {
       this.#scrollManager.autoscroll(true)
     }
 
-    this.#monitorMessageEditing()
     this.#paginator.monitor()
   }
 
   disconnect() {
-    this.#editObserver?.disconnect()
     this.#paginator.disconnect()
   }
 
@@ -78,19 +75,19 @@ export default class extends Controller {
             this.#paginator.trimExcessMessages(true)
           })
           if (!didScroll) {
-            this.latestTarget.hidden = false
+            this.#latestContentAvailable()
           }
         }
       } else {
-        this.latestTarget.hidden = false
+        this.#latestContentAvailable()
       }
     }
   }
 
   async returnToLatest() {
-    this.latestTarget.hidden = true
     await this.#ensureUpToDate()
-    this.#scrollManager.autoscroll(true)
+    await this.#scrollManager.autoscroll(true)
+    this.#allContentViewed()
   }
 
   async editMyLastMessage() {
@@ -124,24 +121,14 @@ export default class extends Controller {
   // Callbacks
 
   #allContentViewed() {
-    this.latestTarget.hidden = true
+    this.dispatch("all-content-viewed", { target: document })
   }
 
 
   // Internal
 
-  #monitorMessageEditing() {
-    this.#editObserver = new MutationObserver(this.#updateLatestButtonForEditing.bind(this))
-    this.#editObserver.observe(this.messagesTarget, { childList: true, subtree: true })
-    this.#updateLatestButtonForEditing()
-  }
-
-  #updateLatestButtonForEditing() {
-    this.latestTarget.classList.toggle("message-area__return-to-latest--editing", this.#editingMessage)
-  }
-
-  get #editingMessage() {
-    return this.messagesTarget.querySelector(".message__body-content--editing") !== null
+  #latestContentAvailable() {
+    this.dispatch("latest-content-available", { target: document })
   }
 
   async #ensureUpToDate() {
