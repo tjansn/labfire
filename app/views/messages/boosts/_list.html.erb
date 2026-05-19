@@ -1,0 +1,3 @@
+<div class="boosts__list flex-inline flex-wrap gap" id="<%= dom_id(message, :boosts) %>" data-turbo-streaming-target="container">
+  <%= render partial: "messages/boosts/stack", collection: boost_stacks_for(message), as: :stack, locals: { message: message } %>
+</div>

@@ -8,17 +8,18 @@ class Messages::BoostsController < ApplicationController
   end
 
   def create
-    @boost = @message.boosts.create!(boost_params)
+    @boost = find_or_create_boost
 
-    broadcast_create
+    broadcast_replace if @boost.previously_new_record?
     redirect_to message_boosts_url(@message)
   end
 
   def destroy
-    @boost = Current.user.boosts.find(params[:id])
+    @boost = @message.boosts.where(booster: Current.user).find(params[:id])
     @boost.destroy!
 
-    broadcast_remove
+    broadcast_replace
+    redirect_to message_boosts_url(@message), status: :see_other
   end
 
   private
@@ -30,12 +31,14 @@ class Messages::BoostsController < ApplicationController
       params.require(:boost).permit(:content)
     end
 
-    def broadcast_create
-      @boost.broadcast_append_to @boost.message.room, :messages,
-        target: "boosts_message_#{@boost.message.client_message_id}", partial: "messages/boosts/boost", attributes: { maintain_scroll: true }
+    def find_or_create_boost
+      @message.boosts.find_or_create_by!(boost_params.merge(booster: Current.user))
+    rescue ActiveRecord::RecordNotUnique
+      @message.boosts.find_by!(boost_params.merge(booster: Current.user))
     end
 
-    def broadcast_remove
-      @boost.broadcast_remove_to @boost.message.room, :messages
+    def broadcast_replace
+      @message.broadcast_replace_to @message.room, :messages,
+        target: helpers.dom_id(@message, :boosts), partial: "messages/boosts/list", locals: { message: @message }, attributes: { maintain_scroll: true }
     end
 end

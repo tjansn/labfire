@@ -1,0 +1,73 @@
+<% reaction_label = boost_reaction_label(stack.contents) %>
+
+<div id="<%= boost_stack_dom_id(message, stack) %>"
+    class="boost boost-stack boost-item flex-inline position-relative max-width align-center fill-white gap">
+  <div class="boost-stack__avatars flex-inline align-center" role="group" aria-label="Reacted by <%= stack.boosters.map(&:name).to_sentence %>">
+    <% stack.visible_boosters.each do |booster| %>
+      <figure class="avatar boost__avatar boost-stack__avatar flex-item-no-shrink">
+        <%= avatar_tag booster, aria: { label: "#{booster.name} reacted with #{reaction_label}" } %>
+      </figure>
+    <% end %>
+
+    <% if stack.hidden_booster_count.positive? %>
+      <%= tag.details class: "position-relative boost-stack__more-wrapper",
+          data: { controller: "popup", action: "keydown.esc->popup#close toggle->popup#toggle click@document->popup#closeOnClickOutside", popup_orientation_top_class: "popup-orientation-top" } do %>
+        <summary class="btn boost-stack__more" aria-label="Show all #{stack.boosters.size} people who reacted with #{reaction_label}">
+          +<%= stack.hidden_booster_count %>
+        </summary>
+
+        <div class="boost-stack__reactors-menu border shadow" data-popup-target="menu">
+          <p class="boost-stack__reactors-title txt-small">Reacted with <%= reaction_label %></p>
+          <ul class="boost-stack__reactors-list">
+            <% stack.boosters.each do |booster| %>
+              <li class="boost-stack__reactor">
+                <figure class="avatar boost__avatar boost-stack__reactor-avatar flex-item-no-shrink">
+                  <%= avatar_tag booster %>
+                </figure>
+                <span><%= booster.name %></span>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="boost-stack__reactions flex-inline align-center">
+    <% stack.contents.each do |content| %>
+      <% reaction_id = boost_reaction_dom_id(message, content) %>
+      <% delete_label_id = "#{reaction_id}_delete_accessible_label" %>
+
+      <div id="<%= reaction_id %>"
+          class="boost-stack__reaction flex-inline align-center"
+          data-controller="boost-reaction"
+          data-boost-reaction-reveal-class="expanded"
+          data-boost-reaction-perform-class="boost--deleting"
+          data-boost-reaction-description-id-value="<%= delete_label_id %>">
+        <%= form_with model: [ message, Boost.new ], class: "boost-stack__reaction-form",
+            data: { turbo_frame: dom_id(message, :boosting) } do |form| %>
+          <%= hidden_field_tag "boost[content]", content %>
+          <%= form.button type: "submit",
+              class: [ "btn btn--borderless boost__content txt-small", { "txt-medium": content.all_emoji? } ],
+              aria: { label: "Reaction: #{content}" },
+              data: { action: "boost-reaction#submitOrReveal", boost_reaction_target: "content" } do %>
+            <%= content %>
+          <% end %>
+        <% end %>
+
+        <div class="boost-stack__delete-actions">
+          <% stack.boosts_for(content).each do |boost| %>
+            <%= button_to message_boost_path(message, boost), method: :delete, hidden: true,
+                data: { action: "boost-reaction#perform", boost_reaction_target: "deleteButton", boost_reaction_booster_id: boost.booster_id },
+                class: "btn btn--negative flex-item-justify-end boost__delete" do %>
+              <%= uicon "minus" %>
+              <span class="for-screen-reader">Delete this boost</span>
+            <% end %>
+          <% end %>
+        </div>
+
+        <span id="<%= delete_label_id %>" class="for-screen-reader">Press enter to delete your <%= content %> reaction</span>
+      </div>
+    <% end %>
+  </div>
+</div>

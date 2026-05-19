@@ -15,18 +15,27 @@ class BoostingMessagesTest < ApplicationSystemTestCase
     end
   end
 
+  test "adding a reaction by clicking an existing reaction" do
+    within_message messages(:first) do
+      find("button.boost__content", text: "Hello").click
+
+      assert_selector ".boost-stack__avatar", count: 2
+      assert_boost_text "Hello"
+    end
+  end
+
   test "deleting a boost" do
     using_session("David") do
       sign_in "david@37signals.com"
       join_room rooms(:designers)
 
-      within "#" + dom_id(boosts(:first)) do
+      within_message messages(:first) do
         find("button.boost__content", text: "Hello").click
         assert_selector "button", text: "Delete this boost", wait: 5
         click_on "Delete this boost"
       end
 
-      assert_no_text "Hello"
+      assert_no_selector ".boost__content", text: "Hello"
     end
   end
 

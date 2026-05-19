@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.2].define(version: 2025_12_12_154340) do
+ActiveRecord::Schema[8.2].define(version: 2026_05_19_000000) do
   create_table "accounts", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.text "custom_styles"
@@ -76,6 +76,7 @@ ActiveRecord::Schema[8.2].define(version: 2025_12_12_154340) do
     t.integer "message_id", null: false
     t.datetime "updated_at", null: false
     t.index ["booster_id"], name: "index_boosts_on_booster_id"
+    t.index ["message_id", "booster_id", "content"], name: "index_boosts_on_message_booster_and_content", unique: true
     t.index ["message_id"], name: "index_boosts_on_message_id"
   end
 
@@ -166,7 +167,6 @@ ActiveRecord::Schema[8.2].define(version: 2025_12_12_154340) do
     t.index ["user_id"], name: "index_webhooks_on_user_id"
   end
 
-  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "bans", "users"
   add_foreign_key "boosts", "messages"
