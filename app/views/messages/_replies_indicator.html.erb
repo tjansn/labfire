@@ -1,0 +1,18 @@
+<%# Renders a "N replies" indicator under a thread-parent message. Hidden when there are no replies. %>
+<% replies_count = message.replies.count %>
+
+<div id="<%= dom_id(message, :replies_indicator) %>" class="message__replies-indicator">
+  <% if replies_count > 0 %>
+    <%= link_to room_message_thread_path(message.room, message),
+          data: { turbo_frame: "thread-panel" },
+          class: "btn btn--borderless message__replies-link" do %>
+      <%= uicon "messages" %>
+      <span class="message__replies-count"><%= pluralize(replies_count, "reply") %></span>
+      <% if last_reply = message.replies.order(:created_at).last %>
+        <span class="message__replies-last txt-small color-secondary">
+          Last reply <%= local_datetime_tag last_reply.created_at, style: :datetime, class: "tabular-nums" %>
+        </span>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>

@@ -1,0 +1,36 @@
+<%= turbo_frame_tag "thread-panel" do %>
+  <aside class="thread-panel" data-controller="thread-panel" aria-label="Thread">
+    <header class="thread-panel__header">
+      <div class="thread-panel__title">
+        <%= uicon "messages" %>
+        <h2>Thread</h2>
+        <span class="thread-panel__subtitle txt-small color-secondary">
+          <%= link_to "#" + (@room.name || room_display_name(@room)), room_path(@room), class: "thread-panel__room-link" %>
+        </span>
+      </div>
+      <button type="button" class="btn btn--borderless thread-panel__close" data-action="thread-panel#close" aria-label="Close thread" title="Close thread">
+        <%= uicon "cross" %>
+      </button>
+    </header>
+
+    <div class="thread-panel__body" data-controller="thread-scroll">
+      <div class="thread-panel__parent">
+        <%= render "messages/message", message: @parent_message %>
+      </div>
+
+      <div class="thread-panel__divider" data-thread-panel-target="divider">
+        <span class="thread-panel__divider-label" id="<%= dom_id(@parent_message, :replies_count) %>">
+          <%= pluralize(@replies.size, "reply") %>
+        </span>
+      </div>
+
+      <div id="<%= dom_id(@parent_message, :replies) %>" class="thread-panel__replies" data-thread-scroll-target="anchor">
+        <%= render partial: "messages/message", collection: @replies %>
+      </div>
+
+      <%= turbo_stream_from @parent_message, :replies %>
+    </div>
+
+    <%= render "messages/threads/composer", room: @room, parent_message: @parent_message %>
+  </aside>
+<% end %>

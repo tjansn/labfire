@@ -38,10 +38,13 @@ class RoomsController < ApplicationController
     end
 
     def find_messages
-      messages = @room.messages.with_creator.with_attachment_details.with_boosts
+      messages = @room.messages.with_creator.with_attachment_details.with_boosts.top_level
 
-      if show_first_message = messages.find_by(id: params[:message_id])
-        @messages = messages.page_around(show_first_message)
+      anchor = @room.messages.find_by(id: params[:message_id])
+      anchor = anchor.parent_message if anchor&.reply?
+
+      if anchor
+        @messages = messages.page_around(anchor)
       else
         @messages = messages.last_page
       end

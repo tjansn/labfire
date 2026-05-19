@@ -1,0 +1,34 @@
+<div class="thread-composer" data-controller="thread-composer">
+  <%= form_with model: Message.new, url: room_messages_path(room),
+        id: dom_id(parent_message, :thread_composer),
+        class: "thread-composer__form",
+        data: { thread_composer_target: "form", action: "turbo:submit-end->thread-composer#submitEnd" } do |form| %>
+
+    <%= form.hidden_field :parent_message_id, value: parent_message.id %>
+    <%= form.hidden_field :client_message_id, data: { thread_composer_target: "clientid" } %>
+
+    <div class="thread-composer__input input input--actor full-width">
+      <%= form.rich_text_area :body,
+            rows: 1,
+            class: "input thread-composer__editor",
+            placeholder: "Reply in thread…",
+            aria: { multiline: "true", label: "Reply in thread" },
+            data: {
+              controller: "rich-autocomplete",
+              action: "keydown->thread-composer#submitByKeyboard",
+              rich_autocomplete_url_value: autocompletable_users_path(room_id: room.id),
+              permitted_attachment_types: "application/vnd.actiontext.opengraph-embed",
+              thread_composer_target: "text" } %>
+
+      <div class="thread-composer__actions flex align-center justify-end">
+        <%= form.button name: "send", type: "submit",
+              class: "send-btn thread-composer__send-btn",
+              data: { action: "thread-composer#submit" },
+              title: "Send reply", aria: { label: "Send reply" } do %>
+          <%= uicon "send", size: 16 %>
+          <span class="for-screen-reader">Send reply</span>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

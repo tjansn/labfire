@@ -22,11 +22,10 @@
         <div class="message__reaction-field input input--actor">
           <span class="message__reaction-field-icon" aria-hidden="true">:</span>
           <%= text_field_tag "custom_emoji[name]", nil, form: external_form_id, required: true, maxlength: 32, pattern: "[A-Za-z0-9_+-]+", placeholder: "emoji_name", aria: { label: "Custom emoji name" }, class: "input message__reaction-input message__custom-emoji-name" %>
+          <%= button_tag type: "submit", form: external_form_id, class: "send-btn message__reaction-submit message__custom-emoji-submit", title: "Upload custom emoji", aria: { label: "Upload custom emoji" }, data: { action: "popup#close" } do %>
+            <%= uicon "send", size: 16 %>
+          <% end %>
         </div>
-
-        <%= button_tag type: "submit", form: external_form_id, class: "btn message__reaction-submit message__custom-emoji-submit", title: "Upload custom emoji", aria: { label: "Upload custom emoji" }, data: { action: "popup#close" } do %>
-          <%= uicon "add", size: 16 %>
-        <% end %>
       </div>
     </div>
   <% else %>
@@ -44,11 +43,10 @@
         <div class="message__reaction-field input input--actor">
           <span class="message__reaction-field-icon" aria-hidden="true">:</span>
           <%= form.text_field :name, required: true, maxlength: 32, pattern: "[A-Za-z0-9_+-]+", placeholder: "emoji_name", aria: { label: "Custom emoji name" }, class: "input message__reaction-input message__custom-emoji-name" %>
+          <%= form.button type: "submit", class: "send-btn message__reaction-submit message__custom-emoji-submit", title: "Upload custom emoji", aria: { label: "Upload custom emoji" }, data: { action: "popup#close" } do %>
+            <%= uicon "send", size: 16 %>
+          <% end %>
         </div>
-
-        <%= form.button type: "submit", class: "btn message__reaction-submit message__custom-emoji-submit", title: "Upload custom emoji", aria: { label: "Upload custom emoji" }, data: { action: "popup#close" } do %>
-          <%= uicon "add", size: 16 %>
-        <% end %>
       </div>
     <% end %>
   <% end %>

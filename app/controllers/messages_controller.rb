@@ -36,7 +36,8 @@ class MessagesController < ApplicationController
   def update
     @message.update!(message_params)
 
-    @message.broadcast_replace_to @room, :messages, target: [ @message, :presentation ], partial: "messages/presentation", attributes: { maintain_scroll: true }
+    stream = @message.reply? ? [ @message.parent_message, :replies ] : [ @room, :messages ]
+    @message.broadcast_replace_to(*stream, target: [ @message, :presentation ], partial: "messages/presentation", attributes: { maintain_scroll: true })
     redirect_to room_message_url(@room, @message)
   end
 
@@ -58,17 +59,22 @@ class MessagesController < ApplicationController
     def find_paged_messages
       case
       when params[:before].present?
-        @room.messages.with_creator.page_before(@room.messages.find(params[:before]))
+        @room.messages.with_creator.top_level.page_before(@room.messages.find(params[:before]))
       when params[:after].present?
-        @room.messages.with_creator.page_after(@room.messages.find(params[:after]))
+        @room.messages.with_creator.top_level.page_after(@room.messages.find(params[:after]))
       else
-        @room.messages.with_creator.last_page
+        @room.messages.with_creator.top_level.last_page
       end
     end
 
 
     def message_params
-      params.require(:message).permit(:body, :attachment, :client_message_id)
+      params.require(:message).permit(:body, :attachment, :client_message_id, :parent_message_id).tap do |permitted|
+        if permitted[:parent_message_id].present?
+          parent = @room.messages.find_by(id: permitted[:parent_message_id])
+          permitted[:parent_message_id] = parent&.thread_root&.id
+        end
+      end
     end
 
 

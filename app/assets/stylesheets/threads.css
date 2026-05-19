@@ -1,0 +1,173 @@
+/* Thread panel — Slack-style side panel anchored to the right of the viewport. */
+
+.thread-panel-frame {
+  display: contents;
+}
+
+.thread-panel {
+  background-color: var(--color-bg);
+  border-inline-start: 1px solid var(--color-border-darker);
+  block-size: 100dvh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  inline-size: min(420px, 100vw);
+  inset: 0 0 0 auto;
+  position: fixed;
+  z-index: 4;
+
+  @media (max-width: 60ch) {
+    inline-size: 100vw;
+  }
+}
+
+body.thread-panel-open {
+  @media (min-width: 100ch) {
+    --sidebar-width: 0vw;
+  }
+}
+
+body.thread-panel-open #sidebar {
+  @media (min-width: 100ch) {
+    visibility: hidden;
+  }
+}
+
+.thread-panel__header {
+  align-items: center;
+  border-block-end: 1px solid var(--color-border);
+  display: flex;
+  gap: var(--inline-space);
+  justify-content: space-between;
+  padding: var(--block-space) var(--inline-space);
+}
+
+.thread-panel__title {
+  align-items: center;
+  display: flex;
+  gap: 0.5em;
+  min-inline-size: 0;
+}
+
+.thread-panel__title h2 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.thread-panel__subtitle {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.thread-panel__room-link {
+  color: var(--color-text-secondary);
+  text-decoration: none;
+}
+
+.thread-panel__room-link:hover {
+  text-decoration: underline;
+}
+
+.thread-panel__close {
+  flex-shrink: 0;
+}
+
+.thread-panel__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--block-space);
+  overflow-y: auto;
+  padding: var(--block-space) var(--inline-space);
+}
+
+.thread-panel__parent {
+  border-block-end: 1px solid var(--color-border);
+  padding-block-end: var(--block-space);
+}
+
+.thread-panel__divider {
+  align-items: center;
+  color: var(--color-text-secondary);
+  display: flex;
+  font-size: 0.85em;
+  gap: 0.5em;
+}
+
+.thread-panel__divider::before,
+.thread-panel__divider::after {
+  background: var(--color-border);
+  block-size: 1px;
+  content: "";
+  flex: 1;
+}
+
+.thread-panel__replies {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+}
+
+/* Replies indicator on a thread-parent message in the main feed. */
+.message__replies-indicator {
+  margin-block-start: 0.25em;
+}
+
+.message__replies-indicator:empty {
+  display: none;
+}
+
+.message__replies-link {
+  align-items: center;
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  color: var(--color-link);
+  display: inline-flex;
+  font-size: 0.85em;
+  gap: 0.5em;
+  padding-block: 0.2em;
+  padding-inline: 0.6em;
+  text-decoration: none;
+}
+
+.message__replies-link:hover {
+  background: var(--color-bg-tinted, oklch(var(--lch-black) / 0.04));
+  border-color: var(--color-border-darker);
+}
+
+.message__replies-count {
+  font-weight: 600;
+}
+
+.message__replies-last {
+  color: var(--color-text-secondary);
+}
+
+/* Thread composer */
+.thread-composer {
+  border-block-start: 1px solid var(--color-border);
+  padding: var(--block-space) var(--inline-space);
+}
+
+.thread-composer__input {
+  align-items: end;
+  display: grid;
+  gap: 0.5em;
+  grid-template-columns: 1fr auto;
+}
+
+.thread-composer__editor {
+  grid-column: 1 / -1;
+  min-block-size: 2.5em;
+}
+
+.thread-composer__actions {
+  grid-column: 1 / -1;
+}
+
+.thread-composer__send-btn {
+  align-items: center;
+  display: inline-flex;
+  justify-content: center;
+}

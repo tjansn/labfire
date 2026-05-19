@@ -59,7 +59,7 @@ module IconsHelper
     "remove-circle" => "cross-circle",
     "reply" => "undo-alt",
     "search" => "search",
-    "send" => "envelope",
+    "send" => "paper-plane-top",
     "settings" => "settings-sliders",
     "share" => "share",
     "text-options" => "text",

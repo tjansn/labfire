@@ -21,4 +21,6 @@
   <%= button_to_jump_to_newest_message %>
 <% end %>
 
+<%= turbo_frame_tag "thread-panel", class: "thread-panel-frame" %>
+
 <%= render "rooms/show/composer", room: @room %>

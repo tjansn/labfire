@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.2].define(version: 2026_05_19_010000) do
+ActiveRecord::Schema[8.2].define(version: 2026_05_19_020000) do
   create_table "accounts", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.text "custom_styles"
@@ -108,9 +108,11 @@ ActiveRecord::Schema[8.2].define(version: 2026_05_19_010000) do
     t.string "client_message_id", null: false
     t.datetime "created_at", null: false
     t.integer "creator_id", null: false
+    t.integer "parent_message_id"
     t.integer "room_id", null: false
     t.datetime "updated_at", null: false
     t.index ["creator_id"], name: "index_messages_on_creator_id"
+    t.index ["parent_message_id"], name: "index_messages_on_parent_message_id"
     t.index ["room_id"], name: "index_messages_on_room_id"
   end
 
@@ -180,6 +182,7 @@ ActiveRecord::Schema[8.2].define(version: 2026_05_19_010000) do
   add_foreign_key "bans", "users"
   add_foreign_key "boosts", "messages"
   add_foreign_key "custom_emojis", "users", column: "creator_id"
+  add_foreign_key "messages", "messages", column: "parent_message_id", on_delete: :cascade
   add_foreign_key "messages", "rooms"
   add_foreign_key "messages", "users", column: "creator_id"
   add_foreign_key "push_subscriptions", "users"

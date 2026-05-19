@@ -358,7 +358,7 @@
 .message__custom-emoji-form {
   align-items: center;
   column-gap: 0.5em;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: auto minmax(0, 1fr);
 }
 
 .message__custom-emoji-dropzone {

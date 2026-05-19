@@ -38,7 +38,8 @@ class Messages::BoostsController < ApplicationController
     end
 
     def broadcast_replace
-      @message.broadcast_replace_to @message.room, :messages,
-        target: helpers.dom_id(@message, :boosts), partial: "messages/boosts/list", locals: { message: @message }, attributes: { maintain_scroll: true }
+      stream = @message.reply? ? [ @message.parent_message, :replies ] : [ @message.room, :messages ]
+      @message.broadcast_replace_to(*stream,
+        target: helpers.dom_id(@message, :boosts), partial: "messages/boosts/list", locals: { message: @message }, attributes: { maintain_scroll: true })
     end
 end

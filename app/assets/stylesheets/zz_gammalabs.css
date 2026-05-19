@@ -3709,20 +3709,6 @@ body:not(.sidebar) .sidebar__toggle {
   font-family: var(--gl-font-mono);
 }
 
-.message__reaction-menu .message__reaction-submit,
-.message__hover-actions .message__reaction-submit {
-  --btn-background: var(--gl-action-primary-bg);
-  --btn-border-color: var(--gl-action-primary-bg);
-  --btn-border-radius: var(--gl-radius-sm);
-  --btn-color: var(--gl-action-primary-text);
-  block-size: var(--gl-space-9, 2.25rem);
-  flex: 0 0 var(--gl-space-9, 2.25rem);
-  inline-size: var(--gl-space-9, 2.25rem);
-  min-block-size: var(--gl-space-9, 2.25rem);
-  min-inline-size: var(--gl-space-9, 2.25rem);
-  padding: 0;
-}
-
 .message__custom-emoji-dropzone {
   background: color-mix(in srgb, var(--gl-surface-section) 44%, transparent);
   border-color: color-mix(in srgb, var(--gl-color-midtone) 28%, transparent);
@@ -4038,20 +4024,6 @@ body:not(.sidebar) .sidebar__toggle {
   position: absolute;
 }
 
-.message__edit-composer .message__edit-save-btn {
-  align-self: center;
-  block-size: var(--gl-space-8) !important;
-  border-radius: var(--gl-radius-sm) !important;
-  inline-size: var(--gl-space-8) !important;
-  min-block-size: var(--gl-space-8) !important;
-  min-inline-size: var(--gl-space-8) !important;
-}
-
-.composer__send-btn .fi {
-  font-size: 16px !important;
-  line-height: 1;
-}
-
 .message__edit-delete-btn {
   color: var(--color-negative);
 }
@@ -4075,49 +4047,9 @@ body:not(.sidebar) .sidebar__toggle {
   font-variant-numeric: tabular-nums;
 }
 
-/* Send button — square accent inset flush in the composer bar.
-   Sized to fit inside the 48px bar (with 4px padding), with a radius that
-   echoes the bar's outer radius minus the padding. */
-.composer .btn.btn--reversed[type="submit"],
-.composer .btn--reversed[name="send"],
-.message__edit-composer .composer__send-btn {
-  --btn-background: var(--gl-action-primary-bg);
-  --btn-border-color: var(--gl-action-primary-bg);
-  --btn-color: var(--gl-action-primary-text);
-  align-items: center;
-  align-self: center;
-  background: var(--gl-action-primary-bg) !important;
-  border: 0 !important;
-  border-radius: var(--gl-radius-md) !important;
-  color: var(--gl-action-primary-text);
-  display: inline-flex;
-  justify-content: center;
-  inline-size: var(--gl-space-10);
-  block-size: var(--gl-space-10);
-  min-block-size: var(--gl-space-10);
-  min-inline-size: var(--gl-space-10);
-  padding: 0;
-  transition: filter 140ms ease;
-}
-
-.composer .btn.btn--reversed[type="submit"] img,
-.composer .btn--reversed[name="send"] img,
-.message__edit-composer .composer__send-btn img {
-  filter: var(--gl-icon-on-accent-filter) !important;
-}
-
-/* Pull the send button in from the right edge so it isn't flush against the
-   input field. Overrides the -0.7em hugging margin from .input--actor's
-   :last-child rule (inputs.css). */
-.composer .composer__input.input--actor .composer__send-btn {
-  margin-inline-end: var(--gl-space-1) !important;
-}
-
-.composer .btn.btn--reversed[type="submit"]:where(:not(:active):hover),
-.composer .btn--reversed[name="send"]:where(:not(:active):hover),
-.message__edit-composer .composer__send-btn:where(:not(:active):hover) {
-  filter: brightness(1.06);
-}
+/* Composer send button now uses the shared .send-btn component (see end of
+   this file). The composer keeps a slightly larger button to balance the
+   taller multi-line input bar. */
 
 /* Typing indicator — quiet metadata strip. */
 .typing-indicator {
@@ -4924,9 +4856,11 @@ button:active:not(:disabled):not([aria-disabled="true"]) {
   gap: 2px;
 }
 
-.boost-composer__submit,
 .boost-composer__cancel {
+  --btn-background: transparent;
+  --btn-border-color: transparent;
   --btn-border-radius: var(--gl-radius-sm);
+  --btn-color: var(--gl-text-secondary);
   --btn-padding: 0;
   align-items: center;
   block-size: var(--gl-space-7);
@@ -4940,28 +4874,6 @@ button:active:not(:disabled):not([aria-disabled="true"]) {
   outline: 0 !important;
   padding: 0 !important;
   transform: none !important;
-}
-
-.boost-composer__submit {
-  --btn-background: var(--gl-text-primary);
-  --btn-border-color: transparent;
-  --btn-color: var(--gl-surface-page);
-}
-
-.boost-composer__submit .fi {
-  font-size: 16px !important;
-  line-height: 1;
-}
-
-.boost-composer__cancel {
-  --btn-background: transparent;
-  --btn-border-color: transparent;
-  --btn-color: var(--gl-text-secondary);
-}
-
-.boost-composer__submit:where(:hover, :focus-visible) {
-  --btn-background: color-mix(in srgb, var(--gl-text-primary) 88%, var(--gl-surface-page));
-  filter: none !important;
 }
 
 .boost-composer__cancel:where(:hover, :focus-visible) {
@@ -5001,4 +4913,112 @@ button:active:not(:disabled):not([aria-disabled="true"]) {
   .boost-composer .input--boost {
     inline-size: 100%;
   }
+}
+
+/* =========================================================================
+   Unified send button — modeled on originui's input-with-end-inline-button.
+   Visual contract: transparent fill, muted paper-plane glyph, full input
+   height with the trailing corners rounded to match the input border so
+   the button sits flush inside the field. Subtle in the resting state —
+   icon deepens on hover/focus, no accent fill.
+
+   Each input wrapper sets --send-btn-pull-y/--send-btn-pull-x equal to its
+   own internal padding; the button uses those as negative margins to reach
+   the wrapper's border edge cleanly.
+   ========================================================================= */
+.send-btn {
+  --send-btn-size: var(--gl-space-9, 2.25rem);
+  --send-btn-pull-y: 0px;
+  --send-btn-pull-x: 0px;
+  --send-btn-color: var(--gl-text-secondary);
+  --send-btn-color-hover: var(--gl-text-primary);
+  --send-btn-radius: var(--input-border-radius, var(--gl-radius-md));
+
+  align-items: center;
+  align-self: stretch;
+  background: transparent !important;
+  block-size: auto;
+  border: 0 !important;
+  border-radius: 0 var(--send-btn-radius) var(--send-btn-radius) 0 !important;
+  box-shadow: none !important;
+  color: var(--send-btn-color) !important;
+  cursor: pointer;
+  display: inline-flex;
+  flex: 0 0 var(--send-btn-size);
+  inline-size: var(--send-btn-size);
+  justify-content: center;
+  margin-block: calc(var(--send-btn-pull-y) * -1) !important;
+  margin-inline-end: calc(var(--send-btn-pull-x) * -1) !important;
+  margin-inline-start: 0 !important;
+  min-block-size: var(--send-btn-size);
+  outline: 0 !important;
+  padding: 0 !important;
+  transition: color 140ms ease, background-color 140ms ease;
+}
+
+.send-btn .fi {
+  color: inherit;
+  font-size: 16px;
+  line-height: 1;
+  opacity: 0.85;
+  transition: opacity 140ms ease;
+}
+
+.send-btn:where(:hover, :focus-visible) {
+  background: color-mix(in srgb, var(--gl-text-primary) 6%, transparent) !important;
+  color: var(--send-btn-color-hover) !important;
+}
+
+.send-btn:where(:hover, :focus-visible) .fi {
+  opacity: 1;
+}
+
+.send-btn:where(:active) {
+  background: color-mix(in srgb, var(--gl-text-primary) 10%, transparent) !important;
+}
+
+.send-btn:where(:disabled, [disabled]) {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+/* Wrapper-specific edge pulls. Each input wrapper hands the send button the
+   padding values it needs to escape so it can sit flush at the border. */
+
+/* Search bar and other single-row composer__input wrappers (padding 4px 8px,
+   radius gl-radius-lg). The send button is the wrapper's direct last child. */
+.composer__input.input--actor:not(.composer__input--panel) > .send-btn:last-child {
+  --send-btn-pull-y: var(--gl-space-1);
+  --send-btn-pull-x: var(--gl-space-2);
+  --send-btn-radius: var(--gl-radius-lg);
+}
+
+/* Multi-line composer panel (chat compose, message edit). The input is
+   multi-line so the button can't sit inline with the editor; instead it
+   lives in the action footer as a peer to attach/format/emoji icon
+   buttons, sharing their subtle treatment. */
+.composer__input--panel.input--actor .composer__actions-end .send-btn {
+  --send-btn-pull-y: 0px;
+  --send-btn-pull-x: 0px;
+
+  align-self: center;
+  block-size: var(--send-btn-size);
+  border-radius: var(--gl-radius-sm) !important;
+}
+
+/* Emoji reaction inputs (padding 0 8px, radius gl-radius-md). */
+.message__reaction-field.input.input--actor .send-btn:last-child {
+  --send-btn-pull-y: 0px;
+  --send-btn-pull-x: var(--gl-space-2);
+  --send-btn-radius: var(--gl-radius-md);
+}
+
+/* Boost composer wrapper has 2px inner padding and the send button is
+   followed by a cancel link; round both ends of the button for visual
+   independence and pull only the block (vertical) padding. */
+.boost-composer__form .send-btn.boost-composer__submit {
+  --send-btn-pull-y: 2px;
+  --send-btn-pull-x: 0px;
+  --send-btn-radius: var(--gl-radius-sm);
+  border-radius: var(--gl-radius-sm) !important;
 }

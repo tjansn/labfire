@@ -36,6 +36,15 @@
     <% end %>
   <% end %>
 
+  <%= link_to room_message_thread_path(message.room, message.thread_root),
+        class: "btn message__action-btn message__inline-action message__thread-btn",
+        hidden: true,
+        data: { message_actions_target: "inlineAction", turbo_frame: "thread-panel" },
+        title: "Reply in thread", aria: { label: "Reply in thread" } do %>
+    <%= uicon "messages-add" %>
+    <span class="for-screen-reader">Reply in thread</span>
+  <% end %>
+
   <%= tag.button class: "btn message__action-btn message__inline-action", hidden: true, title: "Copy link", aria: { label: "Copy link" }, data: { message_actions_target: "inlineAction", controller: "copy-to-clipboard", action: "copy-to-clipboard#copy", copy_to_clipboard_success_class: "btn--success", copy_to_clipboard_content_value: url } do %>
     <%= uicon "link" %>
     <span class="for-screen-reader">Copy link</span>
@@ -69,6 +78,13 @@
           <%= tag.button class: "btn message__action-btn center full-width", data: { action: "reply#reply" }, title: "Reply", aria: { label: "Reply" } do %>
             <%= uicon "reply" %>
           <% end %>
+        <% end %>
+
+        <%= link_to room_message_thread_path(message.room, message.thread_root),
+              class: "btn message__action-btn center full-width message__thread-btn",
+              data: { turbo_frame: "thread-panel" },
+              title: "Reply in thread", aria: { label: "Reply in thread" } do %>
+          <%= uicon "messages-add" %>
         <% end %>
 
         <%= tag.button class: "btn message__action-btn center full-width", title: "Copy link", aria: { label: "Copy link" }, data: { controller: "copy-to-clipboard", action: "copy-to-clipboard#copy", copy_to_clipboard_success_class: "btn--success", copy_to_clipboard_content_value: url } do %>

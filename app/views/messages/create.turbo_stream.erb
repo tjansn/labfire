@@ -1,1 +1,6 @@
-<%= turbo_stream.append dom_id(@message.room, :messages), @message %>
+<% if @message.reply? %>
+  <%= turbo_stream.append dom_id(@message.parent_message, :replies), @message %>
+  <%= turbo_stream.replace dom_id(@message.parent_message, :replies_indicator), partial: "messages/replies_indicator", locals: { message: @message.parent_message } %>
+<% else %>
+  <%= turbo_stream.append dom_id(@message.room, :messages), @message %>
+<% end %>

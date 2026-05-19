@@ -8,7 +8,7 @@
     <div class="message__reaction-field input input--actor">
       <span class="message__reaction-field-icon" aria-hidden="true">🙂</span>
       <input type="text" maxlength="64" pattern="\\S+.*" placeholder="Paste any emoji…" aria-label="Any emoji" class="input message__reaction-input composer__any-emoji-input" data-emoji-insert-target="input" data-action="keydown.enter->emoji-insert#insertInput">
-      <button type="button" class="btn message__reaction-submit composer__any-emoji-submit" title="Insert typed emoji" aria-label="Insert typed emoji" data-action="emoji-insert#insertInput">
+      <button type="button" class="send-btn message__reaction-submit composer__any-emoji-submit" title="Insert typed emoji" aria-label="Insert typed emoji" data-action="emoji-insert#insertInput">
         <%= uicon "send", size: 16 %>
       </button>
     </div>

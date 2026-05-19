@@ -63,6 +63,7 @@
 .fi-rr-minus-small::before { content: "\f94d"; }
 .fi-rr-mobile-button::before { content: "\f951"; }
 .fi-rr-palette::before { content: "\f9ed"; }
+.fi-rr-paper-plane-top::before { content: "\f9f6"; }
 .fi-rr-paperclip-vertical::before { content: "\f9f8"; }
 .fi-rr-pencil::before { content: "\fa29"; }
 .fi-rr-plus::before { content: "\faac"; }
