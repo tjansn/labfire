@@ -9,7 +9,7 @@
         </figure>
 
         <span class="for-screen-reader">Add a boost</span>
-        <%= form.text_field :content, id: nil, autofocus: true, autocomplete: "off", autocorrect: "off", maxlength: 16,
+        <%= form.text_field :content, id: nil, autofocus: true, autocomplete: "off", autocorrect: "off", maxlength: 64,
               required: true, pattern: /\S+.*/, data: { boost_form_target: "input" }, class: "input input--boost boost-composer__input txt-small",
               placeholder: "Add a boost…", aria: { label: "Boost text" } %>
       </label>

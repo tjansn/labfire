@@ -3573,14 +3573,13 @@ body:not(.sidebar) .sidebar__toggle {
   isolation: isolate;
   margin: 0;
   padding: 2px;
-  position: absolute;
-  inset-block-start: calc(var(--gl-space-3) * -1);
-  inset-block-end: auto;
-  inset-inline-end: var(--aurora-row-gutter, var(--gl-space-4));
-  inset-inline-start: auto;
+  position: fixed;
+  inset: auto;
+  inset-block-start: var(--message-actions-top, calc(var(--gl-space-3) * -1));
+  inset-inline-start: var(--message-actions-left, var(--aurora-row-gutter, var(--gl-space-4)));
   transform: none;
   white-space: nowrap;
-  z-index: 2;
+  z-index: 20;
 }
 
 .dark .message__hover-actions {
@@ -3611,7 +3610,7 @@ body:not(.sidebar) .sidebar__toggle {
     background: transparent;
     border: 0;
     box-shadow: none;
-    inset-block-start: 0;
+    inset-block-start: var(--message-actions-top, 0);
     opacity: 0;
     pointer-events: none;
     transition: opacity 120ms ease;
@@ -3660,9 +3659,126 @@ body:not(.sidebar) .sidebar__toggle {
   margin: 0;
 }
 
+.message__hover-actions .message__reaction-composer,
+.message__hover-actions .message__custom-emoji-form {
+  display: grid;
+}
+
+.message__reaction-panel {
+  border-color: var(--gl-card-border-color);
+  gap: var(--gl-space-2);
+  margin-block-start: var(--gl-space-3);
+  padding-block-start: var(--gl-space-3);
+}
+
+.message__reaction-panel-title {
+  color: var(--gl-text-primary);
+  font-family: var(--gl-font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.message__reaction-panel-copy {
+  color: var(--gl-text-secondary);
+  font-family: var(--gl-font-sans);
+  font-size: 0.72rem;
+  line-height: 1.25;
+}
+
+.message__reaction-field.input.input--actor {
+  --input-border-radius: var(--gl-radius-md);
+  --input-padding: var(--gl-space-1) var(--gl-space-2);
+  min-block-size: var(--gl-space-9, 2.25rem);
+}
+
+.message__reaction-field-icon {
+  color: var(--gl-text-secondary);
+  font-family: var(--gl-font-mono);
+}
+
+.message__hover-actions .message__reaction-submit {
+  --btn-background: var(--gl-action-primary-bg);
+  --btn-border-color: var(--gl-action-primary-bg);
+  --btn-border-radius: var(--gl-radius-sm);
+  --btn-color: var(--gl-action-primary-text);
+  block-size: var(--gl-space-7);
+  flex: 0 0 var(--gl-space-7);
+  inline-size: var(--gl-space-7);
+  min-block-size: var(--gl-space-7);
+  min-inline-size: var(--gl-space-7);
+  padding: 0;
+}
+
+.message__custom-emoji-dropzone {
+  background: color-mix(in srgb, var(--gl-surface-section) 44%, transparent);
+  border-color: color-mix(in srgb, var(--gl-color-midtone) 28%, transparent);
+  border-radius: var(--gl-radius-md);
+  inline-size: var(--gl-space-12);
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+
+.message__custom-emoji-dropzone:where(:hover, :focus-within) {
+  background: color-mix(in srgb, var(--gl-surface-section) 72%, transparent);
+  border-color: color-mix(in srgb, var(--gl-color-midtone) 44%, transparent);
+}
+
+.message__custom-emoji-dropzone:not(.gl-avatar-upload--empty) {
+  background: transparent;
+  border-color: transparent;
+}
+
+.message__custom-emoji-placeholder {
+  align-items: center;
+  background: var(--gl-surface-card);
+  border: 1px solid var(--gl-card-border-color);
+  border-radius: 999px;
+  color: var(--gl-text-primary);
+  display: inline-flex;
+  justify-content: center;
+  min-block-size: var(--gl-space-7);
+  min-inline-size: var(--gl-space-7);
+}
+
 .message__reaction-btn .boost-character {
   font-size: 1.05rem;
   line-height: 1;
+}
+
+.message__reaction-btn:has(.custom-emoji),
+.message__reaction-menu-btn:has(.custom-emoji) {
+  --btn-background: transparent;
+  --btn-border-color: transparent;
+  --btn-border-radius: var(--gl-radius-sm);
+  aspect-ratio: auto !important;
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  display: inline-flex !important;
+  place-items: center;
+}
+
+.message__reaction-btn:has(.custom-emoji) > *,
+.message__reaction-menu-btn:has(.custom-emoji) > * {
+  grid-area: auto !important;
+}
+
+.boost__content:has(.custom-emoji) {
+  --btn-background: transparent;
+  --btn-border-color: transparent;
+  aspect-ratio: auto !important;
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  min-block-size: auto !important;
+  min-inline-size: auto !important;
+}
+
+.custom-emoji {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
 }
 
 .message__overflow {
@@ -3691,9 +3807,9 @@ body:not(.sidebar) .sidebar__toggle {
   opacity: 1;
 }
 
-/* Right-margin nudge for .message--me so the toolbar doesn't overlap content. */
+/* The toolbar is positioned by message_actions_controller so it can be clamped into the viewport. */
 .message--me .message__hover-actions {
-  inset-inline-end: var(--aurora-row-gutter, var(--gl-space-4));
+  inset-inline-end: auto;
 }
 
 .boost-character {

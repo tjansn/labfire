@@ -1,6 +1,6 @@
 <%# Be sure to check/update messages/_template.html.erb when changing this file %>
 
-<% cache message do %>
+<% cache [ message, reaction_picker_cache_key ] do %>
   <%= message_tag message do %>
     <div class="message__day-separator" role="separator" aria-label="<%= l(message.created_at.to_date, format: :long) rescue message.created_at.strftime("%B %-d, %Y") %>">
       <%= local_datetime_tag message.created_at, style: :date %>

@@ -7,6 +7,15 @@ class BoostTest < ActiveSupport::TestCase
     assert_not duplicate.valid?
   end
 
+  test "returns popular contents by usage" do
+    message = messages(:third)
+    message.boosts.create! booster: users(:david), content: "🔥"
+    message.boosts.create! booster: users(:jason), content: "🔥"
+    message.boosts.create! booster: users(:kevin), content: "✅"
+
+    assert_equal "🔥", Boost.popular_contents(limit: 1).first
+  end
+
   test "stacks reactions by matching booster sets" do
     message = messages(:third)
 

@@ -1,0 +1,16 @@
+<section class="message__reaction-panel message__reaction-panel--any" aria-labelledby="<%= dom_id(message, :any_emoji_heading) %>">
+  <div class="message__reaction-panel-heading">
+    <strong id="<%= dom_id(message, :any_emoji_heading) %>" class="message__reaction-panel-title">Any emoji</strong>
+    <span class="message__reaction-panel-copy">Paste an emoji or shortcode.</span>
+  </div>
+
+  <%= form_with model: [ message, Boost.new ], data: { turbo_frame: dom_id(message, :boosting) }, class: "message__reaction-composer message__any-emoji-form" do |form| %>
+    <div class="message__reaction-field input input--actor">
+      <span class="message__reaction-field-icon" aria-hidden="true">🙂</span>
+      <%= form.text_field :content, id: nil, required: true, maxlength: 64, pattern: "\\S+.*", placeholder: "Paste any emoji…", aria: { label: "Any emoji reaction" }, class: "input message__reaction-input message__any-emoji-input" %>
+      <%= form.button type: "submit", class: "btn message__reaction-submit message__any-emoji-submit", title: "React with typed emoji", aria: { label: "React with typed emoji" } do %>
+        <%= uicon "send", size: 16 %>
+      <% end %>
+    </div>
+  <% end %>
+</section>

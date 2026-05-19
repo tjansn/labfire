@@ -3,14 +3,28 @@
 <%# Discord-style hover toolbar. Quick emoji reactions + Add boost + message actions.
     Menu-only fallback remains available when the inline actions would overflow the viewport. %>
 <div class="message__actions message__hover-actions" data-controller="soft-keyboard message-actions" data-message-actions-viewport-margin-value="8" role="toolbar" aria-label="Message reactions and actions">
-  <% EmojiHelper::REACTIONS.first(4).each do |character, title| %>
-    <%= form_with model: [ message, Boost.new ], data: { turbo_frame: dom_id(message, :boosting) }, class: "message__hover-action" do |form| %>
-      <%= hidden_field_tag "boost[content]", character %>
-      <%= form.button type: "submit", title: title, class: "btn message__action-btn message__reaction-btn", data: { emoji: character } do %>
-        <span class="boost-character" aria-hidden="true"><%= character %></span>
-        <span class="for-screen-reader">React with <%= title %></span>
-      <% end %>
-    <% end %>
+  <% quick_reaction_options.each do |reaction| %>
+    <%= render "messages/boosts/reaction_form", message: message, reaction: reaction %>
+  <% end %>
+
+  <%= tag.details class: "position-relative message__hover-action message__reaction-picker",
+      data: { controller: "popup", action: "keydown.esc->popup#close toggle->popup#toggle click@document->popup#closeOnClickOutside", popup_orientation_top_class: "popup-orientation-top" } do %>
+    <summary class="btn message__action-btn message__reaction-picker-btn" aria-label="More reactions" title="More reactions">
+      <%= uicon "add" %>
+      <span class="for-screen-reader">More reactions</span>
+    </summary>
+
+    <div class="message__reaction-menu border shadow" data-popup-target="menu">
+      <div class="message__reaction-grid" aria-label="All reactions">
+        <% all_reaction_options.each do |reaction| %>
+          <%= render "messages/boosts/reaction_form", message: message, reaction: reaction,
+                form_class: "message__reaction-grid-item", button_class: "btn message__action-btn message__reaction-btn message__reaction-menu-btn" %>
+        <% end %>
+      </div>
+
+      <%= render "messages/boosts/any_emoji_form", message: message %>
+      <%= render "messages/boosts/custom_emoji_form", message: message %>
+    </div>
   <% end %>
 
   <%= link_to new_message_boost_path(message),

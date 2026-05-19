@@ -1,1 +1,1 @@
-<%= render partial: "messages/message", collection: @messages, cached: true %>
+<%= render partial: "messages/message", collection: @messages, cached: -> message { [ message, reaction_picker_cache_key ] } %>

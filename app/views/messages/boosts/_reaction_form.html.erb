@@ -1,0 +1,7 @@
+<%= form_with model: [ message, Boost.new ], data: { turbo_frame: dom_id(message, :boosting) }, class: local_assigns.fetch(:form_class, "message__hover-action") do |form| %>
+  <%= hidden_field_tag "boost[content]", reaction[:content] %>
+  <%= form.button type: "submit", title: reaction[:title], class: local_assigns.fetch(:button_class, "btn message__action-btn message__reaction-btn") do %>
+    <%= reaction_content_tag reaction[:content], custom_emoji: reaction[:custom_emoji], class: "boost-character" %>
+    <span class="for-screen-reader">React with <%= reaction[:title] %></span>
+  <% end %>
+<% end %>

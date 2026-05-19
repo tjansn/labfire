@@ -1,4 +1,4 @@
-<% reaction_label = boost_reaction_label(stack.contents) %>
+<% reaction_label = boost_reaction_label(stack.contents.map { |content| reaction_title(content) }) %>
 
 <div id="<%= boost_stack_dom_id(message, stack) %>"
     class="boost boost-stack boost-item flex-inline position-relative max-width align-center fill-white gap">
@@ -49,9 +49,9 @@
           <%= hidden_field_tag "boost[content]", content %>
           <%= form.button type: "submit",
               class: [ "btn btn--borderless boost__content txt-small", { "txt-medium": content.all_emoji? } ],
-              aria: { label: "Reaction: #{content}" },
+              aria: { label: "Reaction: #{reaction_title(content)}" },
               data: { action: "boost-reaction#submitOrReveal", boost_reaction_target: "content" } do %>
-            <%= content %>
+            <%= reaction_content_tag content, class: "boost-character" %>
           <% end %>
         <% end %>
 
@@ -66,7 +66,7 @@
           <% end %>
         </div>
 
-        <span id="<%= delete_label_id %>" class="for-screen-reader">Press enter to delete your <%= content %> reaction</span>
+        <span id="<%= delete_label_id %>" class="for-screen-reader">Press enter to delete your <%= reaction_title(content) %> reaction</span>
       </div>
     <% end %>
   </div>

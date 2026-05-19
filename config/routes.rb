@@ -91,6 +91,8 @@ Rails.application.routes.draw do
     delete :clear, on: :collection
   end
 
+  resources :custom_emojis, only: :create
+
   resource :unfurl_link, only: :create
 
   get "webmanifest"    => "pwa#manifest"

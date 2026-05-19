@@ -17,7 +17,7 @@ module RasterImageAttachmentValidation
         end
 
         if blob.byte_size > max_byte_size
-          errors.add name, "must be 5 MB or smaller"
+          errors.add name, "must be #{max_byte_size / 1.megabyte} MB or smaller"
         end
 
         unless blob.variable?
