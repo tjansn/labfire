@@ -1,0 +1,26 @@
+<% mode = mode.to_sym %>
+
+<div class="message__reaction-grid" aria-label="<%= mode == :reaction ? "All reactions" : "All emojis" %>">
+  <% all_reaction_options.each do |reaction| %>
+    <% if mode == :reaction %>
+      <%= render "messages/boosts/reaction_form", message: message, reaction: reaction,
+            form_class: "message__reaction-grid-item", button_class: "btn message__action-btn message__reaction-btn message__reaction-menu-btn" %>
+    <% else %>
+      <%= tag.div class: "message__reaction-grid-item" do %>
+        <%= tag.button type: "button", title: reaction[:title], class: "btn message__action-btn message__reaction-btn message__reaction-menu-btn composer__emoji-option",
+            data: emoji_insert_data_for(reaction) do %>
+          <%= reaction_content_tag reaction[:content], custom_emoji: reaction[:custom_emoji], class: "boost-character" %>
+          <span class="for-screen-reader">Insert <%= reaction[:title] %></span>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>
+
+<% if mode == :reaction %>
+  <%= render "messages/boosts/any_emoji_form", message: message %>
+<% else %>
+  <%= render "messages/boosts/any_emoji_insert_form", id_prefix: id_prefix %>
+<% end %>
+
+<%= render "messages/boosts/custom_emoji_form", message: local_assigns[:message], id_prefix: id_prefix, form_id: local_assigns[:custom_emoji_form_id] %>

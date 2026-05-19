@@ -40,6 +40,8 @@
                     <%= uicon "text-options" %>
                     <span class="for-screen-reader">Toggle text formatting</span>
                   <% end %>
+
+                  <%= render "messages/boosts/composer_emoji_picker" %>
                 </div>
 
                 <div class="composer__actions-end flex align-center">
@@ -62,5 +64,10 @@
         <%= form.hidden_field :client_message_id, data: { composer_target: "clientid" } %>
       <% end %>
     </turbo-frame>
+
+    <%= form_with model: CustomEmoji.new, url: custom_emojis_path,
+          html: { id: "composer_custom_emoji_form", multipart: true, hidden: true },
+          data: { turbo_frame: "_top" } do %>
+    <% end %>
   </div>
 <% end %>

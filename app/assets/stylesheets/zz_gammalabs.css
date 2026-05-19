@@ -3624,8 +3624,13 @@ body:not(.sidebar) .sidebar__toggle {
   }
 }
 
-/* Inline buttons inside the toolbar. */
-.message__hover-actions :where(.btn, button, a) {
+/* Inline buttons inside the toolbar. Keep this scoped to the toolbar row so
+   dropdown menu buttons don't inherit toolbar-only sizing. */
+.message__hover-actions > .message__hover-action > .message__action-btn,
+.message__hover-actions > .message__hover-action > summary,
+.message__hover-actions > .message__boost-btn,
+.message__hover-actions > .message__inline-action,
+.message__hover-actions > .message__overflow > summary {
   --btn-background: transparent;
   --btn-border-color: transparent;
   background: transparent;
@@ -3645,16 +3650,24 @@ body:not(.sidebar) .sidebar__toggle {
   display: none !important;
 }
 
-.message__hover-actions :where(.btn, button, a):where(:not(:active):hover) {
+.message__hover-actions > .message__hover-action > .message__action-btn:where(:not(:active):hover),
+.message__hover-actions > .message__hover-action > summary:where(:not(:active):hover),
+.message__hover-actions > .message__boost-btn:where(:not(:active):hover),
+.message__hover-actions > .message__inline-action:where(:not(:active):hover),
+.message__hover-actions > .message__overflow > summary:where(:not(:active):hover) {
   background: color-mix(in srgb, var(--gl-surface-section) 70%, transparent);
 }
 
-.dark .message__hover-actions :where(.btn, button, a):where(:not(:active):hover) {
+.dark .message__hover-actions > .message__hover-action > .message__action-btn:where(:not(:active):hover),
+.dark .message__hover-actions > .message__hover-action > summary:where(:not(:active):hover),
+.dark .message__hover-actions > .message__boost-btn:where(:not(:active):hover),
+.dark .message__hover-actions > .message__inline-action:where(:not(:active):hover),
+.dark .message__hover-actions > .message__overflow > summary:where(:not(:active):hover) {
   background: color-mix(in srgb, var(--gl-color-porcelain) 10%, transparent);
 }
 
-.message__hover-actions form,
-.message__hover-action {
+.message__hover-actions > form,
+.message__hover-actions > .message__hover-action {
   display: inline-flex;
   margin: 0;
 }
@@ -3666,28 +3679,28 @@ body:not(.sidebar) .sidebar__toggle {
 
 .message__reaction-panel {
   border-color: var(--gl-card-border-color);
-  gap: var(--gl-space-2);
-  margin-block-start: var(--gl-space-3);
-  padding-block-start: var(--gl-space-3);
+  gap: var(--gl-space-1);
+  margin-block-start: var(--gl-space-2);
+  padding-block-start: var(--gl-space-2);
 }
 
 .message__reaction-panel-title {
   color: var(--gl-text-primary);
   font-family: var(--gl-font-mono);
-  font-size: 0.68rem;
+  font-size: 0.64rem;
   font-weight: 700;
 }
 
 .message__reaction-panel-copy {
   color: var(--gl-text-secondary);
   font-family: var(--gl-font-sans);
-  font-size: 0.72rem;
-  line-height: 1.25;
+  font-size: 0.68rem;
+  line-height: 1.2;
 }
 
 .message__reaction-field.input.input--actor {
   --input-border-radius: var(--gl-radius-md);
-  --input-padding: var(--gl-space-1) var(--gl-space-2);
+  --input-padding: 0 var(--gl-space-2);
   min-block-size: var(--gl-space-9, 2.25rem);
 }
 
@@ -3696,24 +3709,25 @@ body:not(.sidebar) .sidebar__toggle {
   font-family: var(--gl-font-mono);
 }
 
+.message__reaction-menu .message__reaction-submit,
 .message__hover-actions .message__reaction-submit {
   --btn-background: var(--gl-action-primary-bg);
   --btn-border-color: var(--gl-action-primary-bg);
   --btn-border-radius: var(--gl-radius-sm);
   --btn-color: var(--gl-action-primary-text);
-  block-size: var(--gl-space-7);
-  flex: 0 0 var(--gl-space-7);
-  inline-size: var(--gl-space-7);
-  min-block-size: var(--gl-space-7);
-  min-inline-size: var(--gl-space-7);
+  block-size: var(--gl-space-9, 2.25rem);
+  flex: 0 0 var(--gl-space-9, 2.25rem);
+  inline-size: var(--gl-space-9, 2.25rem);
+  min-block-size: var(--gl-space-9, 2.25rem);
+  min-inline-size: var(--gl-space-9, 2.25rem);
   padding: 0;
 }
 
 .message__custom-emoji-dropzone {
   background: color-mix(in srgb, var(--gl-surface-section) 44%, transparent);
   border-color: color-mix(in srgb, var(--gl-color-midtone) 28%, transparent);
-  border-radius: var(--gl-radius-md);
-  inline-size: var(--gl-space-12);
+  border-radius: var(--gl-radius-sm);
+  inline-size: var(--gl-space-9, 2.25rem);
   transition: background-color 120ms ease, border-color 120ms ease;
 }
 
@@ -3735,8 +3749,8 @@ body:not(.sidebar) .sidebar__toggle {
   color: var(--gl-text-primary);
   display: inline-flex;
   justify-content: center;
-  min-block-size: var(--gl-space-7);
-  min-inline-size: var(--gl-space-7);
+  min-block-size: var(--gl-space-6);
+  min-inline-size: var(--gl-space-6);
 }
 
 .message__reaction-btn .boost-character {
@@ -3979,6 +3993,7 @@ body:not(.sidebar) .sidebar__toggle {
 
 .composer__input--panel .composer__attachment-btn,
 .composer__input--panel .composer__rich-text-btn,
+.composer__input--panel .composer__emoji-btn,
 .composer__input--panel .message__edit-delete-btn {
   align-items: center;
   block-size: var(--gl-space-10);
@@ -4785,6 +4800,44 @@ button:active:not(:disabled):not([aria-disabled="true"]) {
   --btn-background: transparent !important;
   background: transparent !important;
   border-color: transparent !important;
+}
+
+/* Emoji menu isolation: the composer nests its picker inside .composer__input,
+   whose broad input rules otherwise restyle fields inside the shared menu. */
+.message__reaction-menu {
+  line-height: 1.5;
+}
+
+.message__reaction-menu .message__reaction-field.input.input--actor {
+  --input-background: var(--aurora-input-bg, var(--gl-surface-card));
+  --input-border-color: var(--aurora-input-border, color-mix(in srgb, var(--gl-color-midtone) 22%, transparent));
+  --input-border-radius: var(--gl-radius-md);
+  --input-padding: 0 var(--gl-space-2);
+  background-color: var(--input-background);
+  border: 1px solid var(--input-border-color);
+  border-radius: var(--input-border-radius);
+  min-block-size: var(--gl-space-9, 2.25rem);
+  padding: var(--input-padding);
+}
+
+.message__reaction-menu .message__reaction-input.input {
+  background: transparent;
+  border: 0;
+  min-block-size: var(--gl-space-8);
+  padding: 0;
+}
+
+.message__reaction-menu .btn:not(.avatar) {
+  margin-block: 0;
+}
+
+.message__reaction-menu .btn:not(.avatar):last-child {
+  margin-inline-end: 0;
+}
+
+.message__reaction-menu .btn.message__reaction-submit:not(.avatar),
+.message__reaction-menu .btn.message__reaction-submit:not(.avatar):last-child {
+  margin-inline-end: 0.3rem;
 }
 
 /* =========================================================================

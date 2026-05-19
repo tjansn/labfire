@@ -21,6 +21,7 @@ module IconsHelper
     "disclosure" => "angle-small-right",
     "download" => "download",
     "email" => "envelope",
+    "emoji" => "palette",
     "everyone" => "users-alt",
     "help" => "interrogation",
     "help-circle" => "info",

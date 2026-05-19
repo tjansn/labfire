@@ -1,0 +1,18 @@
+<% mode = local_assigns.fetch(:mode).to_sym %>
+<% id_prefix = local_assigns.fetch(:id_prefix) { mode == :reaction ? dom_id(message) : "composer" } %>
+<% picker_class = local_assigns.fetch(:picker_class, "position-relative message__hover-action message__reaction-picker") %>
+<% button_class = local_assigns.fetch(:button_class, "btn message__action-btn message__reaction-picker-btn") %>
+<% fixed = local_assigns.fetch(:fixed, true) %>
+<% menu_class = [ local_assigns.fetch(:menu_class, "message__reaction-menu border shadow"), ("emoji-menu--fixed" if fixed) ].compact.join(" ") %>
+
+<%= tag.details class: picker_class,
+    data: { controller: "popup", action: "keydown.esc->popup#close toggle->popup#toggle pointerdown@document->popup#closeOnClickOutside", popup_orientation_top_class: "popup-orientation-top", popup_fixed_value: fixed } do %>
+  <summary class="<%= button_class %>" aria-label="Emoji menu" title="Emoji menu">
+    <%= emoji_menu_icon_tag %>
+    <span class="for-screen-reader">Emoji menu</span>
+  </summary>
+
+  <div class="<%= menu_class %>" data-popup-target="menu">
+    <%= render "messages/boosts/emoji_menu_content", mode: mode, message: local_assigns[:message], id_prefix: id_prefix, custom_emoji_form_id: local_assigns[:custom_emoji_form_id] %>
+  </div>
+<% end %>

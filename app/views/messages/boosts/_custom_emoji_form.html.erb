@@ -1,28 +1,55 @@
-<section class="message__reaction-panel message__reaction-panel--upload" aria-labelledby="<%= dom_id(message, :custom_emoji_heading) %>">
+<% id_prefix = local_assigns.fetch(:id_prefix) { dom_id(message) } %>
+<% external_form_id = local_assigns[:form_id] %>
+
+<section class="message__reaction-panel message__reaction-panel--upload" aria-labelledby="<%= id_prefix %>_custom_emoji_heading">
   <div class="message__reaction-panel-heading">
-    <strong id="<%= dom_id(message, :custom_emoji_heading) %>" class="message__reaction-panel-title">Custom emoji</strong>
+    <strong id="<%= id_prefix %>_custom_emoji_heading" class="message__reaction-panel-title">Custom emoji</strong>
     <span class="message__reaction-panel-copy">Upload a square PNG, JPEG, or WebP.</span>
   </div>
 
-  <%= form_with model: CustomEmoji.new, url: custom_emojis_path, html: { multipart: true }, class: "message__custom-emoji-form" do |form| %>
-    <label class="message__custom-emoji-dropzone gl-avatar-upload--empty" title="Choose custom emoji image" data-controller="upload-preview">
-      <%= image_tag "default-avatar.svg", alt: "", class: "message__custom-emoji-preview", aria: { hidden: "true" }, data: { upload_preview_target: "image" } %>
-      <span class="message__custom-emoji-placeholder" data-upload-preview-target="placeholder" aria-hidden="true">
-        <%= uicon "camera", size: 16 %>
-      </span>
-      <span class="for-screen-reader">Choose custom emoji image</span>
-      <%= form.file_field :image, id: dom_id(message, :custom_emoji_image), required: true, accept: "image/png,image/jpeg,image/webp", aria: { label: "Custom emoji image" }, class: "message__custom-emoji-file", data: { upload_preview_target: "input", action: "upload-preview#previewImage" } %>
-    </label>
+  <% if external_form_id.present? %>
+    <div class="message__custom-emoji-form">
+      <label class="message__custom-emoji-dropzone gl-avatar-upload--empty" title="Choose custom emoji image" data-controller="upload-preview">
+        <%= image_tag "default-avatar.svg", alt: "", class: "message__custom-emoji-preview", aria: { hidden: "true" }, data: { upload_preview_target: "image" } %>
+        <span class="message__custom-emoji-placeholder" data-upload-preview-target="placeholder" aria-hidden="true">
+          <%= uicon "camera", size: 16 %>
+        </span>
+        <span class="for-screen-reader">Choose custom emoji image</span>
+        <%= file_field_tag "custom_emoji[image]", id: "#{id_prefix}_custom_emoji_image", form: external_form_id, required: true, accept: "image/png,image/jpeg,image/webp", aria: { label: "Custom emoji image" }, class: "message__custom-emoji-file", data: { upload_preview_target: "input", action: "upload-preview#previewImage" } %>
+      </label>
 
-    <div class="message__custom-emoji-fields">
-      <div class="message__reaction-field input input--actor">
-        <span class="message__reaction-field-icon" aria-hidden="true">:</span>
-        <%= form.text_field :name, required: true, maxlength: 32, pattern: "[A-Za-z0-9_+-]+", placeholder: "emoji_name", aria: { label: "Custom emoji name" }, class: "input message__reaction-input message__custom-emoji-name" %>
+      <div class="message__custom-emoji-fields">
+        <div class="message__reaction-field input input--actor">
+          <span class="message__reaction-field-icon" aria-hidden="true">:</span>
+          <%= text_field_tag "custom_emoji[name]", nil, form: external_form_id, required: true, maxlength: 32, pattern: "[A-Za-z0-9_+-]+", placeholder: "emoji_name", aria: { label: "Custom emoji name" }, class: "input message__reaction-input message__custom-emoji-name" %>
+        </div>
+
+        <%= button_tag type: "submit", form: external_form_id, class: "btn message__reaction-submit message__custom-emoji-submit", title: "Upload custom emoji", aria: { label: "Upload custom emoji" }, data: { action: "popup#close" } do %>
+          <%= uicon "add", size: 16 %>
+        <% end %>
       </div>
-
-      <%= form.button type: "submit", class: "btn message__reaction-submit message__custom-emoji-submit", title: "Upload custom emoji", aria: { label: "Upload custom emoji" } do %>
-        <%= uicon "add", size: 16 %>
-      <% end %>
     </div>
+  <% else %>
+    <%= form_with model: CustomEmoji.new, url: custom_emojis_path, html: { multipart: true }, class: "message__custom-emoji-form" do |form| %>
+      <label class="message__custom-emoji-dropzone gl-avatar-upload--empty" title="Choose custom emoji image" data-controller="upload-preview">
+        <%= image_tag "default-avatar.svg", alt: "", class: "message__custom-emoji-preview", aria: { hidden: "true" }, data: { upload_preview_target: "image" } %>
+        <span class="message__custom-emoji-placeholder" data-upload-preview-target="placeholder" aria-hidden="true">
+          <%= uicon "camera", size: 16 %>
+        </span>
+        <span class="for-screen-reader">Choose custom emoji image</span>
+        <%= form.file_field :image, id: "#{id_prefix}_custom_emoji_image", required: true, accept: "image/png,image/jpeg,image/webp", aria: { label: "Custom emoji image" }, class: "message__custom-emoji-file", data: { upload_preview_target: "input", action: "upload-preview#previewImage" } %>
+      </label>
+
+      <div class="message__custom-emoji-fields">
+        <div class="message__reaction-field input input--actor">
+          <span class="message__reaction-field-icon" aria-hidden="true">:</span>
+          <%= form.text_field :name, required: true, maxlength: 32, pattern: "[A-Za-z0-9_+-]+", placeholder: "emoji_name", aria: { label: "Custom emoji name" }, class: "input message__reaction-input message__custom-emoji-name" %>
+        </div>
+
+        <%= form.button type: "submit", class: "btn message__reaction-submit message__custom-emoji-submit", title: "Upload custom emoji", aria: { label: "Upload custom emoji" }, data: { action: "popup#close" } do %>
+          <%= uicon "add", size: 16 %>
+        <% end %>
+      </div>
+    <% end %>
   <% end %>
 </section>

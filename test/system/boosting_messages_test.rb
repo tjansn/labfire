@@ -27,10 +27,10 @@ class BoostingMessagesTest < ApplicationSystemTestCase
   test "uploading and choosing a custom emoji" do
     within_message messages(:third) do
       reveal_message_actions
-      find("summary[aria-label='More reactions']").click
+      find(".message__reaction-picker summary[aria-label='Emoji menu']").click
 
       find(".message__custom-emoji-name").fill_in with: "moon"
-      custom_emoji_file_input = find("##{dom_id(messages(:third), :custom_emoji_image)}", visible: :all)
+      custom_emoji_file_input = find("##{dom_id(messages(:third))}_custom_emoji_image", visible: :all)
       page.execute_script("arguments[0].style.opacity = 1; arguments[0].style.position = 'static'", custom_emoji_file_input)
       custom_emoji_file_input.set Rails.root.join("test/fixtures/files/moon.jpg")
       click_on "Upload custom emoji"
@@ -38,7 +38,7 @@ class BoostingMessagesTest < ApplicationSystemTestCase
 
     within_message messages(:third) do
       reveal_message_actions
-      find("summary[aria-label='More reactions']").click
+      find(".message__reaction-picker summary[aria-label='Emoji menu']").click
       click_on "React with Moon"
 
       assert_selector ".boost .custom-emoji"

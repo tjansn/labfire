@@ -1,0 +1,16 @@
+<section class="message__reaction-panel message__reaction-panel--any" aria-labelledby="<%= id_prefix %>_any_emoji_heading" data-controller="emoji-insert">
+  <div class="message__reaction-panel-heading">
+    <strong id="<%= id_prefix %>_any_emoji_heading" class="message__reaction-panel-title">Any emoji</strong>
+    <span class="message__reaction-panel-copy">Paste an emoji or shortcode.</span>
+  </div>
+
+  <div class="message__reaction-composer composer__any-emoji-form">
+    <div class="message__reaction-field input input--actor">
+      <span class="message__reaction-field-icon" aria-hidden="true">🙂</span>
+      <input type="text" maxlength="64" pattern="\\S+.*" placeholder="Paste any emoji…" aria-label="Any emoji" class="input message__reaction-input composer__any-emoji-input" data-emoji-insert-target="input" data-action="keydown.enter->emoji-insert#insertInput">
+      <button type="button" class="btn message__reaction-submit composer__any-emoji-submit" title="Insert typed emoji" aria-label="Insert typed emoji" data-action="emoji-insert#insertInput">
+        <%= uicon "send", size: 16 %>
+      </button>
+    </div>
+  </div>
+</section>

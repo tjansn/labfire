@@ -131,13 +131,14 @@ export default class extends Controller {
       await nextFrame()
 
       this.clientidTarget.value = clientMessageId
+      this.#serializeCustomEmojisForSubmission()
       this.element.requestSubmit()
       this.#reset()
     }
   }
 
   #validInput() {
-    return this.textTarget.textContent.trim().length > 0
+    return this.textTarget.textContent.trim().length > 0 || this.textTarget.querySelector("[data-custom-emoji-shortcode]")
   }
 
   async #submitFiles() {
@@ -170,6 +171,19 @@ export default class extends Controller {
 
   #reset() {
     this.textTarget.value = ""
+  }
+
+  #serializeCustomEmojisForSubmission() {
+    const input = this.textTarget.inputElement
+    if (!input?.value.includes("data-custom-emoji-shortcode")) return
+
+    const document = new DOMParser().parseFromString(input.value, "text/html")
+
+    document.querySelectorAll("[data-custom-emoji-shortcode]").forEach((emoji) => {
+      emoji.replaceWith(document.createTextNode(emoji.dataset.customEmojiShortcode))
+    })
+
+    input.value = document.body.innerHTML
   }
 
   #updateFileList() {

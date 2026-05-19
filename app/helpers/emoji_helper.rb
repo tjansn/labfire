@@ -85,6 +85,40 @@ module EmojiHelper
     end
   end
 
+  def emoji_menu_icon_tag
+    uicon "emoji", size: 18, class: "emoji-menu-icon"
+  end
+
+  def emoji_insert_data_for(reaction)
+    data = { controller: "emoji-insert", action: "emoji-insert#insert" }
+
+    if reaction[:custom_emoji]
+      data[:emoji_insert_html_value] = custom_emoji_editor_tag(reaction[:custom_emoji])
+    else
+      data[:emoji_insert_content_value] = reaction[:content]
+    end
+
+    data
+  end
+
+  def custom_emoji_editor_tag(custom_emoji)
+    tag.span custom_emoji.shortcode,
+      role: "img",
+      title: custom_emoji.title,
+      class: "custom-emoji custom-emoji--editor",
+      aria: { label: custom_emoji.title },
+      data: { custom_emoji_shortcode: custom_emoji.shortcode },
+      style: "background-image: url(#{url_for(custom_emoji.image)})"
+  end
+
+  def render_custom_emojis(html)
+    return html unless custom_emojis.any?
+
+    fragment = Nokogiri::HTML5.fragment(html.to_s)
+    replace_custom_emoji_text_nodes(fragment)
+    fragment.to_html.html_safe
+  end
+
   def reaction_title(content)
     reaction_option_for(content)[:title]
   end
@@ -100,6 +134,42 @@ module EmojiHelper
 
     def reaction_content_quick_accessible?(content)
       content.all_emoji? || custom_emoji_for(content).present?
+    end
+
+    def replace_custom_emoji_text_nodes(node)
+      node.children.each do |child|
+        if child.text?
+          replace_custom_emoji_text_node(child)
+        else
+          replace_custom_emoji_text_nodes(child) unless child.name.in?(%w[ code pre script style ])
+        end
+      end
+    end
+
+    def replace_custom_emoji_text_node(text_node)
+      parts = text_node.text.split(/(:[a-z0-9_+-]+:)/)
+      return if parts.one?
+
+      replacement = Nokogiri::HTML5.fragment("")
+      replaced = false
+
+      parts.each do |part|
+        if custom_emoji = custom_emoji_for(part)
+          replacement.add_child Nokogiri::HTML5.fragment(custom_emoji_message_tag(custom_emoji))
+          replaced = true
+        else
+          replacement.add_child Nokogiri::XML::Text.new(part, replacement.document)
+        end
+      end
+
+      text_node.replace(replacement) if replaced
+    end
+
+    def custom_emoji_message_tag(custom_emoji)
+      image_tag custom_emoji.image,
+        alt: custom_emoji.shortcode,
+        title: custom_emoji.title,
+        class: "custom-emoji custom-emoji--message"
     end
 
     def built_in_reaction_options

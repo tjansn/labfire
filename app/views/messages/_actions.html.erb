@@ -7,25 +7,7 @@
     <%= render "messages/boosts/reaction_form", message: message, reaction: reaction %>
   <% end %>
 
-  <%= tag.details class: "position-relative message__hover-action message__reaction-picker",
-      data: { controller: "popup", action: "keydown.esc->popup#close toggle->popup#toggle click@document->popup#closeOnClickOutside", popup_orientation_top_class: "popup-orientation-top" } do %>
-    <summary class="btn message__action-btn message__reaction-picker-btn" aria-label="More reactions" title="More reactions">
-      <%= uicon "add" %>
-      <span class="for-screen-reader">More reactions</span>
-    </summary>
-
-    <div class="message__reaction-menu border shadow" data-popup-target="menu">
-      <div class="message__reaction-grid" aria-label="All reactions">
-        <% all_reaction_options.each do |reaction| %>
-          <%= render "messages/boosts/reaction_form", message: message, reaction: reaction,
-                form_class: "message__reaction-grid-item", button_class: "btn message__action-btn message__reaction-btn message__reaction-menu-btn" %>
-        <% end %>
-      </div>
-
-      <%= render "messages/boosts/any_emoji_form", message: message %>
-      <%= render "messages/boosts/custom_emoji_form", message: message %>
-    </div>
-  <% end %>
+  <%= render "messages/boosts/emoji_menu", mode: :reaction, message: message %>
 
   <%= link_to new_message_boost_path(message),
         class: "btn message__action-btn message__boost-btn",
