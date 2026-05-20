@@ -1,30 +1,44 @@
 <%= turbo_frame_tag "thread-panel" do %>
-  <aside class="thread-panel" data-controller="thread-panel" aria-label="Thread">
+  <aside class="thread-panel" aria-label="Thread">
     <header class="thread-panel__header">
       <div class="thread-panel__title">
-        <%= uicon "messages" %>
-        <h2>Thread</h2>
-        <span class="thread-panel__subtitle txt-small color-secondary">
-          <%= link_to "#" + (@room.name || room_display_name(@room)), room_path(@room), class: "thread-panel__room-link" %>
-        </span>
+        <%= uicon "messages", size: 18 %>
+        <div class="thread-panel__title-text">
+          <h2>Thread</h2>
+          <%= link_to "#" + room_display_name(@room),
+                room_path(@room),
+                target: "_top",
+                class: "thread-panel__room-link" %>
+        </div>
       </div>
-      <button type="button" class="btn btn--borderless thread-panel__close" data-action="thread-panel#close" aria-label="Close thread" title="Close thread">
-        <%= uicon "cross" %>
-      </button>
+      <%= button_to room_message_thread_path(@room, @parent_message),
+            method: :delete,
+            form: { class: "thread-panel__close-form", data: { turbo_frame: "thread-panel" } },
+            class: "btn btn--borderless thread-panel__close",
+            title: "Close thread",
+            aria: { label: "Close thread" } do %>
+        <%= uicon "cancel", size: 18 %>
+      <% end %>
     </header>
 
-    <div class="thread-panel__body" data-controller="thread-scroll">
+    <div class="thread-panel__body"
+         data-controller="thread-replies"
+         data-thread-replies-first-of-day-class="message--first-of-day"
+         data-thread-replies-formatted-class="message--formatted"
+         data-thread-replies-me-class="message--me"
+         data-thread-replies-mentioned-class="message--mentioned"
+         data-thread-replies-grouped-class="message--grouped"
+         data-thread-replies-continued-class="message--continued"
+         data-thread-replies-threaded-class="message--threaded">
       <div class="thread-panel__parent">
         <%= render "messages/message", message: @parent_message %>
       </div>
 
-      <div class="thread-panel__divider" data-thread-panel-target="divider">
-        <span class="thread-panel__divider-label" id="<%= dom_id(@parent_message, :replies_count) %>">
-          <%= pluralize(@replies.size, "reply") %>
-        </span>
+      <div class="thread-panel__divider" role="separator">
+        <span><%= pluralize(@replies.size, "reply") %></span>
       </div>
 
-      <div id="<%= dom_id(@parent_message, :replies) %>" class="thread-panel__replies" data-thread-scroll-target="anchor">
+      <div id="<%= dom_id(@parent_message, :replies) %>" class="thread-panel__replies">
         <%= render partial: "messages/message", collection: @replies %>
       </div>
 

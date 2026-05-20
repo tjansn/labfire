@@ -3,10 +3,14 @@ class Messages::ThreadsController < ApplicationController
 
   layout false
 
-  before_action :set_parent_message
+  before_action :set_parent_message, only: :show
 
   def show
     @replies = @parent_message.replies.with_creator.with_attachment_details.with_boosts
+  end
+
+  def destroy
+    render template: "messages/threads/destroy"
   end
 
   private

@@ -1,34 +1,74 @@
-<div class="thread-composer" data-controller="thread-composer">
+<% composer_id = dom_id(parent_message, :thread_composer) %>
+
+<div class="composer thread-composer position-relative"
+     data-controller="thread-composer"
+     data-thread-composer-toolbar-class="composer--rich-text">
   <%= form_with model: Message.new, url: room_messages_path(room),
-        id: dom_id(parent_message, :thread_composer),
+        id: composer_id,
         class: "thread-composer__form",
+        multipart: true,
         data: { thread_composer_target: "form", action: "turbo:submit-end->thread-composer#submitEnd" } do |form| %>
 
     <%= form.hidden_field :parent_message_id, value: parent_message.id %>
     <%= form.hidden_field :client_message_id, data: { thread_composer_target: "clientid" } %>
 
-    <div class="thread-composer__input input input--actor full-width">
-      <%= form.rich_text_area :body,
-            rows: 1,
-            class: "input thread-composer__editor",
-            placeholder: "Reply in thread…",
-            aria: { multiline: "true", label: "Reply in thread" },
-            data: {
-              controller: "rich-autocomplete",
-              action: "keydown->thread-composer#submitByKeyboard",
-              rich_autocomplete_url_value: autocompletable_users_path(room_id: room.id),
-              permitted_attachment_types: "application/vnd.actiontext.opengraph-embed",
-              thread_composer_target: "text" } %>
+    <fieldset data-thread-composer-target="fields" contents>
+      <div class="flex flex-column">
+        <div class="composer__filelist flex flex--align-center gap flex-wrap" data-thread-composer-target="fileList"></div>
 
-      <div class="thread-composer__actions flex align-center justify-end">
-        <%= form.button name: "send", type: "submit",
-              class: "send-btn thread-composer__send-btn",
-              data: { action: "thread-composer#submit" },
-              title: "Send reply", aria: { label: "Send reply" } do %>
-          <%= uicon "send", size: 16 %>
-          <span class="for-screen-reader">Send reply</span>
-        <% end %>
+        <div class="composer__input composer__input--panel thread-composer__input input input--actor full-width">
+          <div class="composer__input-text composer__editor flex flex-column flex-item-grow min-width">
+            <%= form.rich_text_area :body,
+                  rows: 1,
+                  class: "input thread-composer__editor",
+                  placeholder: "Reply in thread…",
+                  aria: { multiline: "true", label: "Reply in thread" },
+                  data: {
+                    controller: "rich-autocomplete",
+                    action: "keydown->thread-composer#submitByKeyboard paste->thread-composer#pasteFiles",
+                    rich_autocomplete_url_value: autocompletable_users_path(room_id: room.id),
+                    permitted_attachment_types: "application/vnd.actiontext.opengraph-embed",
+                    thread_composer_target: "text" } %>
+          </div>
+
+          <div class="composer__actions flex align-center justify-space-between full-width">
+            <div class="composer__actions-start flex align-center">
+              <label class="btn btn--borderless flex-item-no-shrink composer__attachment-btn input--file" title="Attach a file">
+                <%= uicon "attachment" %>
+                <input type="file" data-action="thread-composer#filePicked" multiple aria-label="Attach a file">
+                <span class="for-screen-reader">Attach a file</span>
+              </label>
+
+              <%= tag.button type: "button",
+                    class: "btn btn--borderless flex-item-no-shrink composer__rich-text-btn",
+                    title: "Toggle text formatting",
+                    aria: { label: "Toggle text formatting", pressed: "false" },
+                    data: { action: "thread-composer#toggleToolbar", thread_composer_toolbar_toggle: true } do %>
+                <%= uicon "text-options" %>
+                <span class="for-screen-reader">Toggle text formatting</span>
+              <% end %>
+
+              <%= render "messages/boosts/emoji_menu",
+                    mode: :insert,
+                    id_prefix: composer_id,
+                    picker_class: "position-relative composer__emoji-picker",
+                    button_class: "btn btn--borderless flex-item-no-shrink composer__emoji-btn",
+                    menu_class: "composer__emoji-menu message__reaction-menu border shadow",
+                    custom_emoji_form_id: "composer_custom_emoji_form" %>
+            </div>
+
+            <div class="composer__actions-end flex align-center">
+              <%= form.button name: "send", type: "submit",
+                    class: "send-btn composer__send-btn thread-composer__send-btn",
+                    data: { action: "thread-composer#submit" },
+                    title: "Send reply", aria: { label: "Send reply" } do %>
+                <%= uicon "send", size: 16 %>
+                <span class="for-screen-reader">Send reply</span>
+              <% end %>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+    </fieldset>
   <% end %>
 </div>

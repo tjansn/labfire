@@ -1,15 +1,21 @@
 export default class FileUploader {
-  constructor(file, url, clientMessageId, progressCallback) {
+  constructor(file, url, clientMessageId, progressCallback, extraParams = {}) {
     this.file = file
     this.url = url
     this.clientMessageId = clientMessageId
     this.progressCallback = progressCallback
+    this.extraParams = extraParams
   }
 
   upload() {
     const formdata = new FormData()
     formdata.append("message[attachment]", this.file)
     formdata.append("message[client_message_id]", this.clientMessageId)
+    for (const [key, value] of Object.entries(this.extraParams)) {
+      if (value != null && value !== "") {
+        formdata.append(`message[${key}]`, value)
+      }
+    }
 
     const req = new XMLHttpRequest()
     req.open("POST", this.url)

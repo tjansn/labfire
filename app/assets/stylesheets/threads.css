@@ -1,100 +1,123 @@
-/* Thread panel — Slack-style side panel anchored to the right of the viewport. */
+/* ----- Layout integration -------------------------------------------------
+   Panel sits below the navbar on the far right, covering the sidebar like
+   Slack's thread pane. No layout shift, no Stimulus required. */
 
 .thread-panel-frame {
   display: contents;
 }
 
+/* ----- Panel shell -------------------------------------------------------- */
+
 .thread-panel {
+  /* Inherit the same message spacing tokens that `.messages` defines so
+     replies render with the identical avatar/heading/row spacing as the
+     main feed. Without these the message grid's column-gap and the
+     between-messages row-gap fall back to 0. */
+  --message-column-gap: var(--gl-space-3);
+  --message-row-gap: 0;
+  --message-space: var(--gl-space-4);
+  --aurora-row-gutter: var(--gl-space-4);
+
   background-color: var(--color-bg);
-  border-inline-start: 1px solid var(--color-border-darker);
-  block-size: 100dvh;
+  block-size: calc(100dvh - var(--navbar-height));
+  border-inline-start: 1px solid var(--color-border);
+  box-shadow: -8px 0 24px oklch(0 0 0 / 0.08);
   display: grid;
   grid-template-rows: auto 1fr auto;
-  inline-size: min(420px, 100vw);
-  inset: 0 0 0 auto;
+  inline-size: min(528px, 100vw);
+  inset: var(--navbar-height) 0 0 auto;
   position: fixed;
-  z-index: 4;
+  z-index: 20;
 
   @media (max-width: 60ch) {
     inline-size: 100vw;
   }
 }
 
-body.thread-panel-open {
-  @media (min-width: 100ch) {
-    --sidebar-width: 0vw;
-  }
-}
-
-body.thread-panel-open #sidebar {
-  @media (min-width: 100ch) {
-    visibility: hidden;
-  }
-}
-
 .thread-panel__header {
   align-items: center;
+  background: var(--color-bg);
   border-block-end: 1px solid var(--color-border);
   display: flex;
   gap: var(--inline-space);
   justify-content: space-between;
-  padding: var(--block-space) var(--inline-space);
+  padding: var(--block-space-half, 0.5rem) var(--block-space);
 }
 
 .thread-panel__title {
   align-items: center;
   display: flex;
-  gap: 0.5em;
+  gap: 0.6em;
   min-inline-size: 0;
 }
 
-.thread-panel__title h2 {
+.thread-panel__title > i {
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+.thread-panel__title-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+  min-inline-size: 0;
+}
+
+.thread-panel__title-text h2 {
   font-size: 1rem;
   font-weight: 600;
   margin: 0;
 }
 
-.thread-panel__subtitle {
+.thread-panel__room-link {
+  color: var(--color-text);
+  font-size: 0.8rem;
+  opacity: 0.6;
   overflow: hidden;
+  text-decoration: none;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.thread-panel__room-link {
-  color: var(--color-text-secondary);
-  text-decoration: none;
+.thread-panel__room-link:hover {
+  opacity: 1;
+  text-decoration: underline;
 }
 
-.thread-panel__room-link:hover {
-  text-decoration: underline;
+.thread-panel__close-form {
+  display: contents;
+  margin: 0;
 }
 
 .thread-panel__close {
   flex-shrink: 0;
 }
 
+/* ----- Panel body --------------------------------------------------------- */
+
 .thread-panel__body {
   display: flex;
   flex-direction: column;
-  gap: var(--block-space);
   overflow-y: auto;
-  padding: var(--block-space) var(--inline-space);
+  padding-block: var(--block-space-half, 0.5rem) var(--block-space);
 }
 
 .thread-panel__parent {
   border-block-end: 1px solid var(--color-border);
-  padding-block-end: var(--block-space);
+  padding-block-end: var(--block-space-half, 0.5rem);
 }
 
 .thread-panel__divider {
   align-items: center;
-  color: var(--color-text-secondary);
+  color: var(--color-text);
   display: flex;
-  font-size: 0.85em;
+  font-size: 0.78rem;
+  font-weight: 600;
   gap: 0.5em;
+  opacity: 0.55;
+  padding: var(--block-space) var(--block-space) calc(var(--block-space) / 2);
 }
 
-.thread-panel__divider::before,
 .thread-panel__divider::after {
   background: var(--color-border);
   block-size: 1px;
@@ -105,12 +128,47 @@ body.thread-panel-open #sidebar {
 .thread-panel__replies {
   display: flex;
   flex-direction: column;
-  gap: 0.5em;
+  row-gap: var(--message-space);
 }
 
-/* Replies indicator on a thread-parent message in the main feed. */
+/* ----- Message overrides inside the panel --------------------------------
+   Reuse the main feed's message design (avatar, heading, card body) so the
+   header layout matches. Only override what doesn't work in the narrower
+   column: the viewport-relative side padding and the wide-layout extras
+   (day separator, "in room X" tag) that don't make sense in a thread. */
+
+.thread-panel .message__day-separator,
+.thread-panel .message__room {
+  display: none;
+}
+
+/* Keep author and timestamp on one row in the narrow panel. The wrap
+   normally happens because the inline action toolbar (quick reactions,
+   boost, reply, etc.) competes for horizontal space in the same flex row.
+   Hiding the inline action buttons in the panel frees the full column
+   for the heading. The overflow menu (3-dot) remains so all actions stay
+   accessible. */
+.thread-panel .message__actions form,
+.thread-panel .message__reaction-picker,
+.thread-panel .message__boost-btn,
+.thread-panel .message__inline-action {
+  display: none !important;
+}
+
+.thread-panel .message__heading,
+.thread-panel .message--me .message__heading {
+  flex-wrap: nowrap !important;
+}
+
+.thread-panel .message__permalink {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* ----- Replies indicator (under thread-parent messages in the feed) ------- */
+
 .message__replies-indicator {
-  margin-block-start: 0.25em;
+  margin-block-start: 0.35em;
 }
 
 .message__replies-indicator:empty {
@@ -119,21 +177,24 @@ body.thread-panel-open #sidebar {
 
 .message__replies-link {
   align-items: center;
-  background: transparent;
+  background-color: transparent;
   border: 1px solid var(--color-border);
   border-radius: 999px;
   color: var(--color-link);
   display: inline-flex;
-  font-size: 0.85em;
-  gap: 0.5em;
-  padding-block: 0.2em;
-  padding-inline: 0.6em;
+  font-size: 0.82rem;
+  font-weight: 500;
+  gap: 0.4em;
+  padding-block: 0.25em;
+  padding-inline: 0.7em 0.85em;
   text-decoration: none;
+  transition: background-color 0.15s, border-color 0.15s;
 }
 
 .message__replies-link:hover {
-  background: var(--color-bg-tinted, oklch(var(--lch-black) / 0.04));
-  border-color: var(--color-border-darker);
+  background-color: var(--color-message-bg);
+  border-color: var(--color-border-dark);
+  text-decoration: none;
 }
 
 .message__replies-count {
@@ -141,33 +202,22 @@ body.thread-panel-open #sidebar {
 }
 
 .message__replies-last {
-  color: var(--color-text-secondary);
+  color: var(--color-text);
+  font-size: 0.78rem;
+  opacity: 0.55;
 }
 
-/* Thread composer */
+/* ----- Composer -----------------------------------------------------------
+   The thread composer reuses .composer__* classes from the room composer
+   so the toolbar, attachment button, emoji picker, and rich-text styling
+   all behave identically. Only the outer padding/positioning differs. */
+
 .thread-composer {
+  background: var(--color-bg);
   border-block-start: 1px solid var(--color-border);
-  padding: var(--block-space) var(--inline-space);
+  padding: calc(var(--block-space) * 0.75) var(--block-space);
 }
 
-.thread-composer__input {
-  align-items: end;
-  display: grid;
-  gap: 0.5em;
-  grid-template-columns: 1fr auto;
-}
-
-.thread-composer__editor {
-  grid-column: 1 / -1;
-  min-block-size: 2.5em;
-}
-
-.thread-composer__actions {
-  grid-column: 1 / -1;
-}
-
-.thread-composer__send-btn {
-  align-items: center;
-  display: inline-flex;
-  justify-content: center;
+.thread-composer__form {
+  margin: 0;
 }
