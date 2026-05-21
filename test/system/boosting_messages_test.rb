@@ -45,6 +45,29 @@ class BoostingMessagesTest < ApplicationSystemTestCase
     end
   end
 
+  test "thread panel messages show the same hover actions as the main stream" do
+    within_message messages(:third) do
+      reveal_message_actions
+      click_on "Reply in thread"
+    end
+
+    assert_selector ".thread-panel"
+
+    within ".thread-panel .thread-panel__parent" do
+      find(".message__actions", visible: :all).hover
+
+      assert_selector ".message__hover-actions > form", count: EmojiHelper::QUICK_REACTION_LIMIT, visible: true
+      assert_selector ".message__reaction-picker summary[aria-label='Emoji menu']", visible: true
+      assert_selector ".message__boost-btn", visible: true
+
+      find(".message__reaction-picker summary[aria-label='Emoji menu']").click
+      within ".message__reaction-menu" do
+        assert_selector "button[title='Fire']", visible: true
+        assert_selector ".message__reaction-field", visible: true
+      end
+    end
+  end
+
   test "deleting a boost" do
     using_session("David") do
       sign_in "david@37signals.com"

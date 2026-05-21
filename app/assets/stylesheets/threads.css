@@ -159,19 +159,6 @@ body:has(.thread-panel) .message-area__return-to-latest {
   display: none;
 }
 
-/* Keep author and timestamp on one row in the narrow panel. The wrap
-   normally happens because the inline action toolbar (quick reactions,
-   boost, reply, etc.) competes for horizontal space in the same flex row.
-   Hiding the inline action buttons in the panel frees the full column
-   for the heading. The overflow menu (3-dot) remains so all actions stay
-   accessible. */
-.thread-panel .message__actions form,
-.thread-panel .message__reaction-picker,
-.thread-panel .message__boost-btn,
-.thread-panel .message__inline-action {
-  display: none !important;
-}
-
 .thread-panel .message__heading,
 .thread-panel .message--me .message__heading {
   flex-wrap: nowrap !important;
