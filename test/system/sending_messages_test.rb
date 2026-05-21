@@ -26,6 +26,30 @@ class SendingMessagesTest < ApplicationSystemTestCase
     assert_message_text "👍👍"
   end
 
+  test "desktop messages use the available text width" do
+    message = "Desktop text should use the available message column width. " * 16
+
+    send_message message
+    assert_message_text "Desktop text should use the available message column width."
+
+    width_ratio = page.evaluate_script(<<~JS)
+      (() => {
+        const message = Array.from(document.querySelectorAll('.message')).find((element) => element.textContent.includes('Desktop text should use the available message column width.'))
+        const bodyRect = message.querySelector('.message__body').getBoundingClientRect()
+        const messageRect = message.getBoundingClientRect()
+        const avatarRect = message.querySelector('.message__avatar').getBoundingClientRect()
+        const styles = getComputedStyle(message)
+        const padding = parseFloat(styles.paddingInlineStart) + parseFloat(styles.paddingInlineEnd)
+        const columnGap = parseFloat(styles.columnGap)
+        const availableWidth = messageRect.width - padding - avatarRect.width - columnGap
+
+        return bodyRect.width / availableWidth
+      })()
+    JS
+
+    assert_operator width_ratio, :>, 0.9
+  end
+
   test "inserting an emoji from the composer emoji menu" do
     find(".composer__emoji-picker summary[aria-label='Emoji menu']").click
     assert page.evaluate_script(<<~JS)

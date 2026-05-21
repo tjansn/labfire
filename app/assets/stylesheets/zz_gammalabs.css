@@ -3368,7 +3368,7 @@ body:not(.sidebar) .sidebar__toggle {
 /* Body grid area + meta — clean inline header (name · timestamp · room) */
 .message__body {
   grid-area: body;
-  max-inline-size: min(72ch, 100%);
+  max-inline-size: 100%;
   min-inline-size: 0;
 }
 
@@ -4267,7 +4267,7 @@ body:not(.sidebar) .sidebar__toggle {
 
 .message--me .message__body {
   flex-direction: row !important;
-  max-inline-size: min(72ch, 100%) !important;
+  max-inline-size: 100% !important;
 }
 
 .message--me .message__avatar {
