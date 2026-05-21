@@ -4499,7 +4499,7 @@ body { isolation: isolate; }
   border-color: var(--btn-border-color);
   box-shadow: none;
   inset-block-end: var(--latest-message-button-bottom, calc(var(--footer-height) + var(--gl-space-4)));
-  inset-inline-end: max(var(--aurora-row-gutter, var(--gl-space-4)), env(safe-area-inset-right));
+  inset-inline-end: calc(max(var(--aurora-row-gutter, var(--gl-space-4)), env(safe-area-inset-right)) + var(--latest-message-button-inline-offset, 0px));
   inset-inline-start: auto;
   outline: 0;
   position: fixed;

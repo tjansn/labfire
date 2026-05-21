@@ -8,6 +8,10 @@
 
 /* ----- Panel shell -------------------------------------------------------- */
 
+:root {
+  --thread-panel-inline-size: min(528px, 100vw);
+}
+
 .thread-panel {
   /* Inherit the same message spacing tokens that `.messages` defines so
      replies render with the identical avatar/heading/row spacing as the
@@ -24,13 +28,26 @@
   box-shadow: -8px 0 24px oklch(0 0 0 / 0.08);
   display: grid;
   grid-template-rows: auto 1fr auto;
-  inline-size: min(528px, 100vw);
+  inline-size: var(--thread-panel-inline-size);
   inset: var(--navbar-height) 0 0 auto;
   position: fixed;
   z-index: 20;
 
   @media (max-width: 60ch) {
-    inline-size: 100vw;
+    --thread-panel-inline-size: 100vw;
+  }
+}
+
+/* Keep the main feed's "latest message" affordance available while a thread
+   is open, but park it outside the panel. On narrow screens the thread owns
+   the full viewport, so hide the main-feed control entirely. */
+body:has(.thread-panel) .message-area__return-to-latest {
+  --latest-message-button-inline-offset: var(--thread-panel-inline-size);
+}
+
+@media (max-width: 60ch) {
+  body:has(.thread-panel) .message-area__return-to-latest {
+    display: none !important;
   }
 }
 
