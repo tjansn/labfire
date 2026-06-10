@@ -214,4 +214,20 @@ trix-editor,
     font-size: 1.4rem !important;
     margin: 0;
   }
+
+  h2, h3, h4, h5, h6 {
+    margin: 0;
+  }
+
+  h2 {
+    font-size: 1.25rem;
+  }
+
+  h3 {
+    font-size: 1.15rem;
+  }
+
+  h4, h5, h6 {
+    font-size: 1.05rem;
+  }
 }

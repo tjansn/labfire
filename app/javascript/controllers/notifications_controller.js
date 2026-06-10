@@ -95,12 +95,25 @@ export default class extends Controller {
     this.#markFirstRunSeen()
   }
 
-  async #subscribe(registration) {
+  async #subscribe(registration, retryOnFailure = true) {
     registration.pushManager
       .subscribe({ userVisibleOnly: true, applicationServerKey: this.#vapidPublicKey })
       .then(subscription => {
         this.#syncPushSubscription(subscription)
         this.dispatch("ready")
+      })
+      .catch(async (error) => {
+        // A stale subscription made under a different VAPID key blocks new
+        // subscriptions; drop it and retry once.
+        const existingSubscription = await registration.pushManager.getSubscription()
+
+        if (existingSubscription && retryOnFailure) {
+          await existingSubscription.unsubscribe()
+          this.#subscribe(registration, false)
+        } else {
+          console.error("Push subscription failed", error)
+          this.#revealNotAllowedNotice()
+        }
       })
   }
 
@@ -111,7 +124,14 @@ export default class extends Controller {
 
   async #requestPermissionAndSubscribe(registration) {
     const permission = await Notification.requestPermission()
-    if (permission === "granted") this.#subscribe(registration)
+
+    if (permission === "granted") {
+      this.#subscribe(registration)
+    } else {
+      // Dismissed, denied, or silently suppressed by the browser — show the
+      // help dialog instead of doing nothing.
+      this.#revealNotAllowedNotice()
+    }
   }
 
   get #vapidPublicKey() {
