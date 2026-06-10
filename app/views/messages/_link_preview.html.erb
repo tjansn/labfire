@@ -1,0 +1,29 @@
+<% preview = message.link_preview %>
+
+<% if preview["kind"] == "media" %>
+  <figure class="link-preview link-preview--media">
+    <a href="<%= preview["url"] %>" target="_blank" rel="noreferrer" class="inline-image__link flex"
+       aria-label="<%= preview["title"] %>"
+       data-lightbox-target="image" data-action="lightbox#open"
+       data-lightbox-url-value="<%= preview["image"] %>" data-lightbox-filename-value="<%= preview["title"] %>">
+      <img src="<%= preview["image"] %>" alt="<%= preview["title"] %>" loading="lazy" class="inline-image__img">
+    </a>
+  </figure>
+<% else %>
+  <figure class="link-preview">
+    <div class="link-preview__content">
+      <div class="link-preview__site"><%= URI.parse(preview["url"]).host rescue nil %></div>
+      <div class="link-preview__title">
+        <%= link_to truncate(preview["title"], length: 280, omission: "…"), preview["url"], target: "_blank", rel: "noreferrer" %>
+      </div>
+      <% if preview["description"].present? %>
+        <div class="link-preview__description"><%= truncate(preview["description"], length: 360, omission: "…") %></div>
+      <% end %>
+    </div>
+    <% if preview["image"].present? %>
+      <a href="<%= preview["url"] %>" target="_blank" rel="noreferrer" class="link-preview__image" tabindex="-1">
+        <img src="<%= preview["image"] %>" alt="" loading="lazy">
+      </a>
+    <% end %>
+  </figure>
+<% end %>

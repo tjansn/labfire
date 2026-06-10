@@ -18,6 +18,11 @@ module Message::Broadcasts
     end
   end
 
+  def broadcast_presentation_update
+    stream = reply? ? [ parent_message, :replies ] : [ room, :messages ]
+    broadcast_replace_to(*stream, target: [ self, :presentation ], partial: "messages/presentation", attributes: { maintain_scroll: true })
+  end
+
   def broadcast_replies_indicator
     broadcast_replace_to room, :messages,
       target: ActionView::RecordIdentifier.dom_id(self, :replies_indicator),

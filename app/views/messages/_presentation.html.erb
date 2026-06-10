@@ -1,3 +1,4 @@
 <div id="<%= dom_id(message, :presentation) %>" dir="auto" data-reply-target="body" data-messages-target="body">
   <%= message_presentation(message) %>
+  <%= render "messages/link_preview", message: message if message.link_preview.present? %>
 </div>

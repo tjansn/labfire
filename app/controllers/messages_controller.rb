@@ -36,8 +36,8 @@ class MessagesController < ApplicationController
   def update
     @message.update!(message_params)
 
-    stream = @message.reply? ? [ @message.parent_message, :replies ] : [ @room, :messages ]
-    @message.broadcast_replace_to(*stream, target: [ @message, :presentation ], partial: "messages/presentation", attributes: { maintain_scroll: true })
+    @message.broadcast_presentation_update
+    @message.unfurl_link_later
     redirect_to room_message_url(@room, @message)
   end
 
