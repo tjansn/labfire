@@ -1,5 +1,8 @@
-self.addEventListener("push", async (event) => {
-  const data = await event.data.json()
+// The listener must stay synchronous: Safari rejects waitUntil() calls made
+// after an await, and iOS revokes push subscriptions when a push event ends
+// without a visible notification.
+self.addEventListener("push", (event) => {
+  const data = event.data.json()
   event.waitUntil(Promise.all([ showNotification(data), updateBadgeCount(data.options) ]))
 })
 
@@ -7,8 +10,8 @@ async function showNotification({ title, options }) {
   return self.registration.showNotification(title, options)
 }
 
-async function updateBadgeCount({ data: { badge } }) {
-  return self.navigator.setAppBadge?.(badge || 0)
+async function updateBadgeCount({ data } = {}) {
+  return self.navigator.setAppBadge?.(data?.badge || 0)
 }
 
 self.addEventListener("notificationclick", (event) => {
